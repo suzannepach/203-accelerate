@@ -328,10 +328,15 @@ Our plugin uses a cookie in order to function properly. It does not store person
 
 == Changelog ==
 
+= Version 7.0.7 =
+Release Date: March 24th, 2022
+
+* Image deletion refactoring
+
 = Version 7.0.6 =
 Release Date: March 4th, 2022
 
-* Improved installation for users not hosted on SiteGround.
+* Improved installation for users not hosted on SiteGround
 
 = Version 7.0.5 =
 Release Date: March 2nd, 2022

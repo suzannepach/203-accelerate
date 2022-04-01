@@ -1,22 +1,22 @@
 <?php return array(
     'root' => array(
-        'pretty_version' => 'dev-develop',
-        'version' => 'dev-develop',
+        'pretty_version' => 'dev-master',
+        'version' => 'dev-master',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => '74700de2f3c14951756c29de69e26a5cc9f786a3',
+        'reference' => 'c38dea9e2fb74148a26becb10d97c6e0e41b036b',
         'name' => '__root__',
         'dev' => true,
     ),
     'versions' => array(
         '__root__' => array(
-            'pretty_version' => 'dev-develop',
-            'version' => 'dev-develop',
+            'pretty_version' => 'dev-master',
+            'version' => 'dev-master',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => '74700de2f3c14951756c29de69e26a5cc9f786a3',
+            'reference' => 'c38dea9e2fb74148a26becb10d97c6e0e41b036b',
             'dev_requirement' => false,
         ),
         'a5hleyrich/wp-background-processing' => array(
