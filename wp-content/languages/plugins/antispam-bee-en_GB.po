@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the Plugins - Antispam Bee - Stable (latest release) package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2021-08-07 13:30:40+0000\n"
+"PO-Revision-Date: 2022-04-01 11:19:11+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -15,6 +15,10 @@ msgstr ""
 #: inc/gui.class.php:516
 msgid "Uses output buffering instead of the %s filter."
 msgstr "Uses output buffering instead of the %s filter."
+
+#: inc/gui.class.php:512
+msgid "Check complete site markup for comment forms"
+msgstr "Check complete site markup for comment forms"
 
 #: inc/gui.class.php:336
 msgid "https://antispambee.pluginkollektiv.org/documentation/#allow-comments-only-in-certain-language"
