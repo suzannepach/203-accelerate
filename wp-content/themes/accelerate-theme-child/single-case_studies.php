@@ -29,7 +29,7 @@ get_header(); ?>
 
 						<?php the_content(); ?>
 
-						<p class="read-more-link"><a href="<?php echo $link; ?>">Visit Live Site &rsaquo;</a></p>
+						<p><a href="<?php echo $link; ?>" class="read-more-link">Visit Live Site &rsaquo;</a></p>
 					</aside>
 					<div class="case-study-images">
 						<?php if($image_1) { 

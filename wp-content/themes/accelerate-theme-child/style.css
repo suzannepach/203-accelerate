@@ -56,8 +56,10 @@ Text Domain:  accelerate-theme-child
     clear: both;
 }
 .case-study h2 {
-    font: 700 1.5em/1.5 'Open Sans Semibold';
+    font: 700 1.5em/1.5 'Open Sans';
+    font-weight: 600;
 }
+
 .case-study h4 {
     font: 400 .875em/1.25 'Open Sans';
     margin: 1em 0;
