@@ -25,13 +25,40 @@ Text Domain:  accelerate-theme-child
 	background: #45ac9d;
 }
 
-/* Change the blog post on the home page */
+/* Featured work on homepage */
 
-.blog-post {
-	width: 50%;
-	float: left;
-	margin-bottom: 2em;
+.featured-work .site-content {
+    margin: 6em auto;
 }
+
+.featured-work h4 {
+    font: 700 1em/1.75 'Montserrat', 'Open Sans', Arial, sans-serif;
+    text-align: center;
+    text-transform: uppercase;
+    margin-bottom: 2.25em;
+}
+
+.homepage-featured-work {
+    list-style: none;
+    margin: 0 auto;
+	padding: 0;
+	text-align: center;
+	width: 100%;
+}
+
+.individual-featured-work {
+    margin-bottom: 2em;
+}
+
+.individual-featured-work a {
+    display: block;
+}
+
+.individual-featured-work h3 {
+    font: 500 1em/1.75 'Open Sans', Arial, sans-serif;
+}
+
+/* Change the blog post on the home page */
 
 .blog-post h4 {
     font: 700 1em/1.75 'Montserrat', 'Open Sans', Arial, sans-serif;
@@ -83,6 +110,14 @@ div.case-study-images img {
 
 /* Media Queries */
 @media (min-width: 768px) {
+    .featured-work .site-content {
+        margin: auto auto 3em;
+    }
+    .individual-featured-work {
+    	float: left;
+        width: 33%;
+        padding: 0 .5em;
+    }
     .blog-post {
     	width: 50%;
     	float: left;
