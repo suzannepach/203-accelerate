@@ -11,7 +11,8 @@ License URI: http://www.gnu.org/licenses/gpl-3.0.html
 SiteGround Security is the all-in-one security solution for your WordPress website.
 
 == Description ==
-With the carefully selected and easy to configure functions the plugin provides everything you need to secure your website and prevent a number of threats such as brute-force attacks, compromised login, data leaks, and more.
+
+With the carefully selected and easy to configure functions the [SiteGround Security](https://www.siteground.com/wordpress-plugins/siteground-security) plugin provides everything you need to secure your website and prevent a number of threats such as brute-force attacks, compromised login, data leaks, and more.
 
 == Login Settings ==
 
@@ -47,13 +48,17 @@ function remove_login_access_data() {
 Two-factor Authentication for Admin User will force all admins to provide a token, generated from the Google Authentication application when logging in. 
 
 **Important!**
-You can force other roles to use the Two-Factor authentication as well. Once enabled, you can add your filter as the following.
-
+You can force other roles to use the Two-Factor authentication as well. Once enabled, you can use the following code snippet.
+The 'sg_security_2fa_roles' filter was <strong>deprecated</strong>, so please use the method provided below.
 `
-add_filter( 'sg_security_2fa_roles', 'add_user_roles_to_2fa' );
-function add_user_roles_to_2fa( $roles ) {
-    $roles[] = 'your_role';
-    return $roles;
+add_action( 'init', 'add_user_roles_to_2fa' );
+function add_user_roles_to_2fa() {
+    $roles = array(
+        'your-role',
+        'your-role-2',
+    );
+
+    update_option( 'sg_security_2fa_roles', $roles );
 }
 `
 
@@ -173,6 +178,13 @@ In version 1.0.2 we've added full WP-CLI support for all plugin options and func
 1. Go to Plugins -> Installed Plugins and click the 'Activate' link under the WordPress SiteGround Security listing
 
 == Changelog ==
+
+= Version 1.2.5 =
+Release Date: April 6th, 2022
+
+* 2FA Authentication refactoring
+* Improved Weekly Emails
+* HTST service deprecated
 
 = Version 1.2.4 =
 Release Date: March 16th, 2022

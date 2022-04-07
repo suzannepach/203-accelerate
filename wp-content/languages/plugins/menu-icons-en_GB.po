@@ -1,0 +1,228 @@
+# Translation of Plugins - Menu Icons by ThemeIsle - Development (trunk) in English (UK)
+# This file is distributed under the same license as the Plugins - Menu Icons by ThemeIsle - Development (trunk) package.
+msgid ""
+msgstr ""
+"PO-Revision-Date: 2019-01-22 19:36:06+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: GlotPress/3.0.0-alpha.2\n"
+"Language: en_GB\n"
+"Project-Id-Version: Plugins - Menu Icons by ThemeIsle - Development (trunk)\n"
+
+#. Author URI of the plugin
+msgid "https://themeisle.com"
+msgstr "https://themeisle.com/"
+
+#. Author of the plugin
+msgid "ThemeIsle"
+msgstr "ThemeIsle"
+
+#. Plugin URI of the plugin
+msgid "https://github.com/Codeinwp/wp-menu-icons"
+msgstr "https://github.com/Codeinwp/wp-menu-icons"
+
+#: includes/settings.php:790
+msgid "the customizer"
+msgstr "the customiser"
+
+#: menu-icons.php:163
+msgid "Looks like Menu Icons was installed via Composer. Please activate Icon Picker first."
+msgstr "Looks like Menu Icons was installed via Composer. Please activate Icon Picker first."
+
+#: includes/settings.php:781
+msgid "Change"
+msgstr "Change"
+
+#: includes/settings.php:597
+msgid "SVG Width"
+msgstr "SVG Width"
+
+#: includes/picker.php:74
+msgid "Type"
+msgstr "Type"
+
+#. Description of the plugin
+msgid "Spice up your navigation menus with pretty icons, easily."
+msgstr "Spice up your navigation menus with pretty icons, easily."
+
+#. Plugin Name of the plugin
+msgid "Menu Icons"
+msgstr "Menu Icons"
+
+#: menu-icons.php:134
+msgid "Menu Icons: No registered icon types found."
+msgstr "Menu Icons: No registered icon types found."
+
+#: includes/settings.php:608
+msgid "Image Size"
+msgstr "Image Size"
+
+#: includes/library/functions.php:82
+msgid "Full Size"
+msgstr "Full Size"
+
+#: includes/library/functions.php:81
+msgid "Large"
+msgstr "Large"
+
+#: includes/library/functions.php:80
+msgid "Medium"
+msgstr "Medium"
+
+#: includes/library/functions.php:79
+msgid "Thumbnail"
+msgstr "Thumbnail"
+
+#: includes/library/font-awesome5/font-awesome.php:108
+msgid "Deselect"
+msgstr "Deselect"
+
+#: includes/settings.php:579
+msgid "Sub"
+msgstr "Sub"
+
+#: includes/settings.php:575
+msgid "Bottom"
+msgstr "Bottom"
+
+#: includes/settings.php:571
+msgid "Text Bottom"
+msgstr "Text Bottom"
+
+#: includes/settings.php:567
+msgid "Baseline"
+msgstr "Baseline"
+
+#: includes/settings.php:563
+msgid "Middle"
+msgstr "Middle"
+
+#: includes/settings.php:559
+msgid "Text Top"
+msgstr "Text Top"
+
+#: includes/settings.php:555
+msgid "Top"
+msgstr "Top"
+
+#: includes/settings.php:551
+msgid "Super"
+msgstr "Super"
+
+#: includes/settings.php:546
+msgid "Vertical Align"
+msgstr "Vertical Align"
+
+#: includes/settings.php:586
+msgid "Font Size"
+msgstr "Font Size"
+
+#: includes/settings.php:430
+msgid "Save Settings"
+msgstr "Save Settings"
+
+#: includes/settings.php:421
+msgid "Reset"
+msgstr "Reset"
+
+#: includes/settings.php:420
+msgid "Discard all changes and reset to default state"
+msgstr "Discard all changes and reset to default state"
+
+#: includes/settings.php:373 includes/settings.php:401
+msgid "Extensions"
+msgstr "Extensions"
+
+#: includes/settings.php:488
+msgid "\"%s\" menu settings"
+msgstr "\"%s\" menu settings"
+
+#: includes/settings.php:486
+msgid "Current Menu"
+msgstr "Current Menu"
+
+#: includes/settings.php:463
+msgid "Icon Types"
+msgstr "Icon Types"
+
+#: includes/settings.php:458
+msgid "Global settings"
+msgstr "Global settings"
+
+#: includes/settings.php:457
+msgid "Global"
+msgstr "Global"
+
+#: includes/settings.php:539
+msgid "After"
+msgstr "After"
+
+#: includes/settings.php:535
+msgid "Before"
+msgstr "Before"
+
+#: includes/settings.php:530
+msgid "Position"
+msgstr "Position"
+
+#: includes/settings.php:523
+msgid "Yes"
+msgstr "Yes"
+
+#: includes/settings.php:519
+msgid "No"
+msgstr "No"
+
+#: includes/settings.php:514
+msgid "Hide Label"
+msgstr "Hide Label"
+
+#: includes/settings.php:301
+msgid "Menu Icons Settings"
+msgstr "Menu Icons Settings"
+
+#: includes/settings.php:336
+msgid "<strong>Menu Icons Settings</strong> have been successfully reset."
+msgstr "<strong>Menu Icons Settings</strong> have been successfully reset."
+
+#: includes/settings.php:335
+msgid "<strong>Menu Icons Settings</strong> have been successfully updated."
+msgstr "<strong>Menu Icons Settings</strong> have been successfully updated."
+
+#: includes/library/form-fields.php:152
+msgid "%1$s: Type %2$s is not supported, reverting to text."
+msgstr "%1$s: Type %2$s is not supported, reverting to text."
+
+#: includes/picker.php:79 includes/picker.php:177
+msgid "Icon"
+msgstr "Icon"
+
+#: includes/picker.php:129 includes/settings.php:780
+msgid "Remove"
+msgstr "Remove"
+
+#: includes/picker.php:127
+msgid "Icon:"
+msgstr "Icon:"
+
+#: includes/settings.php:783
+msgid "Preview"
+msgstr "Preview"
+
+#: includes/settings.php:782
+msgid "All"
+msgstr "All"
+
+#: includes/picker.php:128 includes/settings.php:779
+msgid "Select"
+msgstr "Select"
+
+#: includes/settings.php:778
+msgid "Select Icon"
+msgstr "Select Icon"
+
+#: includes/library/form-fields.php:528
+msgid "&mdash; Select &mdash;"
+msgstr "&mdash; Select &mdash;"

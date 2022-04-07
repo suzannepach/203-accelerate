@@ -8,6 +8,7 @@
 
 namespace SiteGround_Optimizer\File_Cacher;
 
+use SiteGround_Optimizer\Helper\Helper;
 use SiteGround_Optimizer\Helper\File_Cacher_Trait;
 /**
  * SG File Cacher main class
@@ -105,7 +106,86 @@ class Cache {
 	 * @return boolean True if the user is logged in, false otherwise.
 	 */
 	public function is_logged_in() {
-		return in_array( $this->logged_in_cookie, array_keys( $_COOKIE ) );
+		// Bail, if user not logged in.
+		if ( ! in_array( $this->logged_in_cookie, array_keys( $_COOKIE ), true ) ) {
+			return false;
+		}
+
+		// Include class, since we are performing those checks before the plugin is loaded.
+		require_once dirname( __DIR__ ) . '/Helper/Helper.php';
+
+		// Get the active plugins.
+		$active_plugins = Helper::sg_get_db_entry( 'options', 'option_value', 'option_name', 'active_plugins' );
+
+		// Bail if we do not fetch the active plugins.
+		if ( empty( $active_plugins ) ) {
+			return true;
+		}
+
+		// Bail if the SG-Security is not enabled.
+		if( ! preg_match( '~sg-security\/sg-security.php~', $active_plugins[0]['option_value'] ) ) {
+			return true;
+		}
+
+		$sg_2fa_option = Helper::sg_get_db_entry( 'options', 'option_value', 'option_name', 'sg_security_sg2fa' );
+
+		// Check if 2fa option is enabled.
+		if ( empty( $sg_2fa_option ) ) {
+			return true;
+		}
+
+		// Bail if the option is disabled.
+		if ( 0 === (int) $sg_2fa_option[0]['option_value'] ) {
+			return true;
+		}
+
+		// Get the user data.
+		$user_data = Helper::sg_get_db_entry( 'users', 'ID', 'user_login', $this->get_user_login() );
+
+		// Bail if no user data is found.
+		if ( empty( $user_data ) ) {
+			return false;
+		}
+
+		// Get the user ID.
+		$user_id = $user_data[0]['ID'];
+
+		// Get all 2fa users' ids.
+		$users_with_2fa = Helper::sg_get_2fa_users();
+
+		// Check if current user's ID is in the array.
+		if ( ! in_array( $user_id, array_column( $users_with_2fa, 'ID' ), true ) ) {
+			return true;
+		}
+
+		// Get the cookie name for this user.
+		$cookie = 'sg_security_2fa_' . $user_id . '_cookie';
+
+		// Bail if cookie is not set.
+		if ( ! isset( $_COOKIE[ $cookie ] ) ) {
+			return false;
+		}
+
+		// Get the 2FA cookie data.
+		$token = Helper::sg_get_user_meta( $user_id, 'sg_security_2fa_secret' );
+
+		// Bail, if secret is not set.
+		if ( false === $token ) {
+			return false;
+		}
+
+		// Require the Helper class so we can use the sgs_decrypt from the SG-Security plugin.
+		require_once preg_replace( '~sg-cachepress~', 'sg-security', dirname( __DIR__ ) . '/Helper/Helper.php' );
+
+		// Decrypt the user's 2fa cookie.
+		$data = \SG_Security\Helper\Helper::sgs_decrypt( $_COOKIE[ $cookie ], md5( $token ) ); // phpcs:ignore
+
+		// Return true if the cookie is valid.
+		if ( $data[0] === $this->get_user_login() ) {
+			return true;
+		}
+
+		return false;
 	}
 
 	/**

@@ -9,7 +9,7 @@ License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
 == Description ==
 
-This plugin is developed by SiteGround to dramatically improve WordPress website performance on any hosting environment.
+The [SiteGround Optimizer](https://www.siteground.com/wordpress-plugins/siteground-optimizer) plugin is developed by SiteGround to dramatically improve WordPress website performance on any hosting environment.
 
 Initially designed for SiteGround’s servers and already used by almost 2 Million SiteGround clients, with the release of SiteGround Optimizer 7.0.0 the plugin will work on any hosting platform. All WordPress users, regardless  of their hosting provider, can take advantage of its unmatched WordPress speed-boosting features, no tech knowledge required.
 
@@ -328,6 +328,14 @@ Our plugin uses a cookie in order to function properly. It does not store person
 
 == Changelog ==
 
+= Version 7.0.8 =
+Release Date: April 6th, 2022
+
+* Improved File-Based cache checks
+* Improved Memcached service checks
+* Improved activation checks
+* Code Refactoring
+
 = Version 7.0.7 =
 Release Date: March 24th, 2022
 
@@ -336,7 +344,7 @@ Release Date: March 24th, 2022
 = Version 7.0.6 =
 Release Date: March 4th, 2022
 
-* Improved installation for users not hosted on SiteGround
+* Improved installation for users not hosted on SiteGround.
 
 = Version 7.0.5 =
 Release Date: March 2nd, 2022
