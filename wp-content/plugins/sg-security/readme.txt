@@ -48,17 +48,13 @@ function remove_login_access_data() {
 Two-factor Authentication for Admin User will force all admins to provide a token, generated from the Google Authentication application when logging in. 
 
 **Important!**
-You can force other roles to use the Two-Factor authentication as well. Once enabled, you can use the following code snippet.
-The 'sg_security_2fa_roles' filter was <strong>deprecated</strong>, so please use the method provided below.
-`
-add_action( 'init', 'add_user_roles_to_2fa' );
-function add_user_roles_to_2fa() {
-    $roles = array(
-        'your-role',
-        'your-role-2',
-    );
+You can force other roles to use the Two-Factor authentication as well. Once enabled, you can add your filter as the following.
 
-    update_option( 'sg_security_2fa_roles', $roles );
+`
+add_filter( 'sg_security_2fa_roles', 'add_user_roles_to_2fa' );
+function add_user_roles_to_2fa( $roles ) {
+    $roles[] = 'your_role';
+    return $roles;
 }
 `
 
@@ -178,6 +174,11 @@ In version 1.0.2 we've added full WP-CLI support for all plugin options and func
 1. Go to Plugins -> Installed Plugins and click the 'Activate' link under the WordPress SiteGround Security listing
 
 == Changelog ==
+
+= Version 1.2.6 =
+Release Date: April 7th, 2022
+
+* 2FA Refactoring
 
 = Version 1.2.5 =
 Release Date: April 6th, 2022

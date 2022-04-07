@@ -328,6 +328,11 @@ Our plugin uses a cookie in order to function properly. It does not store person
 
 == Changelog ==
 
+= Version 7.0.9 =
+Release Date: April 7th, 2022
+
+* Improved SG Security plugin support
+
 = Version 7.0.8 =
 Release Date: April 6th, 2022
 

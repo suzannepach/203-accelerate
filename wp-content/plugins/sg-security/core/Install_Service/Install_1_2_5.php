@@ -27,26 +27,7 @@ class Install_1_2_5 extends Install {
 	 * @since 1.2.5
 	 */
 	public function install() {
-		$this->convert_2fa_roles_filter_to_db();
 		$this->remove_hsts_settings();
-	}
-
-	/**
-	 * Convert custom 2fa roles from the filter to a record in the db.
-	 *
-	 * @since  1.2.5
-	 */
-	public function convert_2fa_roles_filter_to_db() {
-		// Get any custom roles added with the filter.
-		$custom_user_roles = apply_filters( 'sg_security_2fa_roles', array() );
-
-		// Bail if no custom user roles are present.
-		if ( empty( $custom_user_roles ) ) {
-			return;
-		}
-
-		// Save the custom 2fa roles in the db.
-		update_option( 'sg_security_2fa_roles', $custom_user_roles );
 	}
 
 	/**

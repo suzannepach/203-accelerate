@@ -321,10 +321,7 @@ class Loader {
 			return;
 		}
 
-		add_filter( 'determine_current_user', array( $this->sg_2fa, 'verify_2fa' ), 30 );
-		add_action( 'wp_logout', array( $this->sg_2fa, 'logout' ) );
 		add_action( 'wp_login', array( $this->sg_2fa, 'init_2fa' ), 10, 2 );
-		add_action( 'admin_page_access_denied', array( $this->sg_2fa, 'maybe_redirect_to_login' ), 10, 2 );
 		add_action( 'login_form_sgs2fa', array( $this->sg_2fa, 'validate_2fa_login' ) );
 		add_action( 'login_form_sgs2fabc', array( $this->sg_2fa, 'validate_2fabc_login' ) );
 		add_action( 'login_form_load_sgs2fabc', array( $this->sg_2fa, 'load_backup_codes_form' ) );
