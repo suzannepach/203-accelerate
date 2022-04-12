@@ -124,11 +124,6 @@ div.case-study-images img {
     display: inline;
 }
 
-/* Hide label (but still keep it visible for scree-readers) */
-.social-media-menu li a span {
-    display: none;
-}
-
 /* Styles the social menu icons */
 .social-media-menu li i {
     border-radius: 50%;
