@@ -175,6 +175,11 @@ In version 1.0.2 we've added full WP-CLI support for all plugin options and func
 
 == Changelog ==
 
+= Version 1.2.7 =
+Release Date: April 8th, 2022
+
+* Minor bug fixes
+
 = Version 1.2.6 =
 Release Date: April 7th, 2022
 
@@ -185,7 +190,7 @@ Release Date: April 6th, 2022
 
 * 2FA Authentication refactoring
 * Improved Weekly Emails
-* HTST service deprecated
+* HSTS service deprecated
 
 = Version 1.2.4 =
 Release Date: March 16th, 2022

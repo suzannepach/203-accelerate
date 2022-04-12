@@ -10,9 +10,13 @@ Tags:     	light, dark, two-columns, right-sidebar, responsive-layout, accessibi
 Text Domain:  accelerate-theme-child
 */
 
- /* Changing the hero image */
+ /* Changing the hero image and h3 font-weight */
 .home-page {
     background: url("img/taxi-photo.jpg") no-repeat scroll right center / cover rgba(0, 0, 0, 0);
+}
+
+.hero-content h3 {
+    font-weight: 600;
 }
 
 /* Changing the navigation bar background colour */
@@ -165,6 +169,78 @@ div.case-study-images img {
 }
 
 /* END Contact form styles*/
+
+/* About page styles */
+.page-id-47369 .main-content {
+    padding: 0 0 2em 0;
+}
+
+.about-header {
+    background: url("img/taxi-photo.jpg") no-repeat scroll right center / cover rgba(0, 0, 0, 0);
+    height: auto;
+    padding: 3em 0 4em 0;
+}
+
+.about-header .wp-block-group__inner-container {
+    display: flex;
+    justify-content: center;
+}
+
+.about-header h3 {
+    color: #fff;
+    font-family: 'Open Sans';
+    font-size: 1.4em;
+    font-weight: 600;
+    margin: 0;
+    width: 50%;
+	text-align: center;
+}
+
+.about-content {
+    width: 90%;
+    max-width: 960px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+}
+
+.about-intro {
+    margin: 4em 0 3em 0;
+}
+
+.about-intro h4 {
+    font: 700 1em/1.75 'Montserrat', 'Open Sans', Arial, sans-serif;
+    text-align: center;
+    text-transform: uppercase;
+    margin: 0  0 1em 0;
+}
+
+.about-intro p {
+    margin: 0;
+}
+
+.about-group .wp-block-group__inner-container {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+}
+
+.about-group figure {
+    flex-basis: 30%;
+}
+
+.about-text {
+    flex-basis: 70%;
+}
+
+.about-text .wp-block-group__inner-container {
+    display: block;
+} 
+
+/* .about-group-2, .about-group-3, .about-group-4  {
+    display: none;
+} */
 
 /* Media Queries */
 @media (min-width: 768px) {
