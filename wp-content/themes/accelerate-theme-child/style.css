@@ -137,10 +137,12 @@ div.case-study-images img {
 
 /* Contact form styles */
 
+/* To prevent a double header */
 .page-id-47361 h1 {
     display: none;
 }
 
+/* I want to use the header that is part of the form, so it dissapears once the confirmation message comes up. */
 #nf-form-1-cont h3 {
    font-size: 1.5em;
 }
@@ -149,24 +151,9 @@ div.case-study-images img {
     margin-top: 1em;
 }
 
+/* Removes padding around the form. */
 .nf-form-layout form div div:nth-child(2n)  {
     padding: 0;
-}
-
-nf-fields-wrap {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-}
-
-nf-field {
-    width: 48%;
-}
-
-nf-field:nth-child(3n-2),
-nf-field:nth-child(4n),
-nf-field:nth-child(5n) {
-    width: 100%;
 }
 
 /* I couldn't add a instruction 
@@ -188,42 +175,44 @@ one I added. */
     margin-bottom: 3em;
 }
 
-nf-field:nth-child(2n) label,
-nf-field:nth-child(3n) label,
-nf-field:nth-child(4n) label {
+/* Changes the label font of th name, email and message box. */
+#nf-label-field-1,
+#nf-label-field-2,
+#nf-label-field-3
+ {
     font-size: 0.85em;
     font-weight: 600;
 }
 
+/* Removes the default red star next to each label */
 .nf-form-fields-required,
-nf-field:nth-child(2n) label span,
-nf-field:nth-child(3n) label span,
-nf-field:nth-child(4n) label span {
+#nf-label-field-1 span,
+#nf-label-field-2 span,
+#nf-label-field-3 span {
     display: none;
 }
 
-nf-field:nth-child(2n) input,
-nf-field:nth-child(3n) input,
-nf-field:nth-child(4n) input {
+/* Removes the grey background in the input boxes. */
+#nf-field-1,
+#nf-field-2,
+#nf-field-3 {
     background: none;
 }
 
-nf-field:nth-child(5n) .nf-field-element {
-    display: block;
-}
-
+/* Changes the font of the send button and makes it 100% wide for mobile */
 #nf-field-4 {
-    width: 33%;
-    float: right; 
+    width: 100%;
     background: #45ac9d;
     font-size: 1.125em;  
 }
 
+/* Removes exclamation mark in fields and message under form when one or more fields are left empty.  */
 .nf-field-element::after,
 .nf-error-field-errors {
     display: none;
 }
 
+/* Changes font error message under field when it is left empty. */
 .nf-error-required-error {
     font-size: 0.8125em;
 }
@@ -317,6 +306,8 @@ nf-field:nth-child(5n) .nf-field-element {
     	float: left;
         margin-bottom: 2em;
     }
+
+    /* Case study styles */
     aside.case-study-sidebar {
         float: left;
         width: 34%;
@@ -326,4 +317,44 @@ nf-field:nth-child(5n) .nf-field-element {
         float: left;
         width: 60%;
     }
+    /* END Case study styles */
+
+    /* Contact styles */
+
+    /* Adds flex to containers of each label plus field. */
+    nf-fields-wrap {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+    
+    /* Makes each field a bit more then half width */
+    nf-field {
+        width: 48%;
+    }
+    
+    /* Makes the instruction paragraph (which is a label in disguise) the message
+    box and the box around the send button full width. I used the nth-child technique 
+    to be able to select individual nf-field divs, because they didn't have any specific 
+    classes/id's and I couldn't add any in Ninja Forms. 3n-2 means the first child, because 
+    just using nth-child(1) won't work */
+    nf-field:nth-child(3n-2),
+    nf-field:nth-child(4n),
+    nf-field:nth-child(5n) {
+        width: 100%;
+    }
+
+    /* Selects the div around the input button and removes flex. That way I can use the float 
+    property on the button */
+    #nf-field-4-wrap .nf-field-element {
+        display: block;
+    }
+
+    /* Makes the button one third width and float to the right. */
+    #nf-field-4 {
+        width: 33%;
+        float: right; 
+    }
+
+    /* END Contact study styles */
 }
