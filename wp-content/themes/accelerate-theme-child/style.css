@@ -217,6 +217,24 @@ one I added. */
     font-size: 0.8125em;
 }
 
+/* Above I added daisplay:none to the main header h1 of the page, 
+but the h1 in the confirmation page does need to show. Also this 
+changes the styles of confirmation h1 and h2. */
+.nf-response-msg h1 {
+    display: block;
+    font-size: 2.1875em;
+    font-weight: bold;
+    color: #45ac9d;
+    text-align: center;
+    margin-top: 1em;
+}
+
+.nf-response-msg h2 {
+    font-weight: normal;
+    text-align: center;
+    margin-top: 1em;
+}
+
 /* END Contact form styles*/
 
 /* About page styles */
