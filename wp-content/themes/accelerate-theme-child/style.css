@@ -115,6 +115,22 @@ div.case-study-images img {
 
 /* Footer Styles */
 
+/* This makes sure on mobile the social icons are positioned above the site
+ description instead of next to each other */
+.site-info .social-media-navigation,
+.site-info .site-description {
+    width: 100%;
+}
+
+.site-info .social-media-navigation {
+    text-align: center;
+}
+
+.site-info .site-description {
+    margin-top: 2em;
+    text-align: center;
+}
+
 /* Show nav list items horizontally and without bullets */
 .social-media-menu {
     list-style: none;
@@ -324,6 +340,35 @@ changes the styles of confirmation h1 and h2. */
     	float: left;
         margin-bottom: 2em;
     }
+
+    /* Footer styles */
+
+    /* These styles make sure the site description and the social icons 
+    are positioned in the right place on bigger screens. On mobile the social icons are 
+    positioned above the site description, so I had to use row-reverse to make sure 
+    they are positioned on the right rather than the left. */
+    .site-info {
+        display: flex;
+        flex-direction: row-reverse;
+        align-items: center;
+    }
+    
+    .site-info .social-media-navigation,
+    .site-info .site-description {
+        width: 49%;
+        display: block;
+    }
+    
+    .site-info .menu-social-media-nav-container {
+        float: right;
+    }
+
+    .site-info .site-description {
+        margin-top: 0;
+        text-align: left;
+    }
+
+    /* END Footer styles */
 
     /* Case study styles */
     aside.case-study-sidebar {
