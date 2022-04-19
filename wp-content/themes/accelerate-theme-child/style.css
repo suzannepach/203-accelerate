@@ -355,6 +355,7 @@ changes the styles of confirmation h1 and h2. */
     .site-info {
         display: flex;
         flex-direction: row-reverse;
+        justify-content: space-between;
         align-items: center;
     }
     
