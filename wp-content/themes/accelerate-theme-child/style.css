@@ -10,6 +10,11 @@ Tags:     	light, dark, two-columns, right-sidebar, responsive-layout, accessibi
 Text Domain:  accelerate-theme-child
 */
 
+/* Setting an em font-size (in the parent theme it was set as 17px) */
+p {
+    font-size: 1em;
+}
+
  /* Changing the hero image and h3 font-weight */
 .home-page {
     background: url("img/taxi-photo.jpg") no-repeat scroll right center / cover rgba(0, 0, 0, 0);
@@ -263,12 +268,14 @@ changes the styles of confirmation h1 and h2. */
     padding: 0 0 2em 0;
 }
 
+/* I have copied this code from the homepage styles only with different padding */
 .about-header {
     background: url("img/taxi-photo.jpg") no-repeat scroll right center / cover rgba(0, 0, 0, 0);
     height: auto;
     padding: 3em 0 4em 0;
 }
 
+/* I have added flex to position the h3 */
 .about-header .wp-block-group__inner-container {
     display: flex;
     justify-content: center;
@@ -280,7 +287,8 @@ changes the styles of confirmation h1 and h2. */
     font-size: 1.4em;
     font-weight: 600;
     margin: 0;
-    width: 50%;
+    max-width: 500px;
+    width: 80%;
 	text-align: center;
 }
 
@@ -288,8 +296,6 @@ changes the styles of confirmation h1 and h2. */
     width: 90%;
     max-width: 960px;
     margin: 0 auto;
-    display: flex;
-    justify-content: center;
     text-align: center;
 }
 
@@ -297,6 +303,7 @@ changes the styles of confirmation h1 and h2. */
     margin: 4em 0 3em 0;
 }
 
+/* The same styles as the Featured work title (h4) on the front page */
 .about-intro h4 {
     font: 700 1em/1.75 'Montserrat', 'Open Sans', Arial, sans-serif;
     text-align: center;
@@ -307,28 +314,6 @@ changes the styles of confirmation h1 and h2. */
 .about-intro p {
     margin: 0;
 }
-
-.about-group .wp-block-group__inner-container {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-}
-
-.about-group figure {
-    flex-basis: 30%;
-}
-
-.about-text {
-    flex-basis: 70%;
-}
-
-.about-text .wp-block-group__inner-container {
-    display: block;
-} 
-
-/* .about-group-2, .about-group-3, .about-group-4  {
-    display: none;
-} */
 
 /* Media Queries */
 @media (min-width: 768px) {
@@ -426,4 +411,38 @@ changes the styles of confirmation h1 and h2. */
     }
 
     /* END Contact study styles */
+
+    /* About styles */
+
+    .about-header h3 {
+        width: 50%;
+    }
+
+    .about-content {
+        display: flex;
+        justify-content: center;
+        text-align: center;
+    }
+    
+    .about-group .wp-block-group__inner-container {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+    }
+    
+    .about-group figure {
+        flex-basis: 30%;
+    }
+    
+    .about-text {
+        flex-basis: 70%;
+    }
+
+    /* This removes the flex which means the header and paragraph are positioned on 
+    top of each other rather than next to each other. */
+    .about-text .wp-block-group__inner-container {
+        display: block;
+    }
+
+    /* END About styles */
 }
