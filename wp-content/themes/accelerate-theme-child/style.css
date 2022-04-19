@@ -149,6 +149,11 @@ div.case-study-images img {
     background-color: #45ac9d;
 }
 
+.site-info .menu-social-media-nav-container ul
+{ 
+    margin-left: 0;
+}
+
 /* END Footer styles*/
 
 /* Contact form styles */
