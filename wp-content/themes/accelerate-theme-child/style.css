@@ -287,7 +287,6 @@ changes the styles of confirmation h1 and h2. */
     font-size: 1.4em;
     font-weight: 600;
     margin: 0;
-    max-width: 500px;
     width: 80%;
 	text-align: center;
 }
@@ -313,6 +312,14 @@ changes the styles of confirmation h1 and h2. */
 
 .about-intro p {
     margin: 0;
+}
+
+.about-group {
+    margin-top: 3.75em;
+}
+
+.about-text {
+   text-align: left;
 }
 
 /* Media Queries */
@@ -416,6 +423,7 @@ changes the styles of confirmation h1 and h2. */
 
     .about-header h3 {
         width: 50%;
+        max-width: 500px;
     }
 
     .about-content {
@@ -423,11 +431,18 @@ changes the styles of confirmation h1 and h2. */
         justify-content: center;
         text-align: center;
     }
-    
+
     .about-group .wp-block-group__inner-container {
         display: flex;
         align-items: flex-start;
         justify-content: space-between;
+        align-items: center;
+    }
+
+    /* This code makes sure for every second about group the picture is shown 
+    on the right of the text  */
+    .about-group-even .wp-block-group__inner-container {
+        flex-direction: row-reverse;
     }
     
     .about-group figure {
@@ -442,6 +457,23 @@ changes the styles of confirmation h1 and h2. */
     top of each other rather than next to each other. */
     .about-text .wp-block-group__inner-container {
         display: block;
+    }
+
+    .about-text {
+        flex-basis: 66%;
+    }
+
+    .about-text h3 {
+        margin-top: 0;
+    }
+
+    .about-text p {
+        margin-bottom: 0;
+    }
+
+    .about-group figure {
+        margin-bottom: 0;
+        flex-basis: 23%;
     }
 
     /* END About styles */
