@@ -18,6 +18,7 @@ p {
  /* Changing the hero image and h3 font-weight */
 .home-page {
     background: url("img/taxi-photo.jpg") no-repeat scroll right center / cover rgba(0, 0, 0, 0);
+    background-position: left;
 }
 
 .hero-content h3 {
@@ -271,6 +272,7 @@ changes the styles of confirmation h1 and h2. */
 /* I have copied this code from the homepage styles only with different padding */
 .about-header {
     background: url("img/taxi-photo.jpg") no-repeat scroll right center / cover rgba(0, 0, 0, 0);
+    background-position: left;
     height: auto;
     padding: 3em 0 4em 0;
 }
@@ -321,6 +323,49 @@ changes the styles of confirmation h1 and h2. */
 .about-text {
    text-align: left;
 }
+
+/* 404 styles */
+
+/* Styles copied from front page */
+.hero-404 {
+    background: url("img/taxi-photo.jpg") no-repeat scroll right center / cover rgba(0, 0, 0, 0);
+    background-position: left;
+    height: auto;
+    margin: 0 0 5em;
+    padding: 4em 0 12em 0;
+	text-align: center;
+}
+
+/* Unlike on hte homepage, I chose to use the same font-size and line-height for 
+mobile and desktop, because I like the font to be big on mobile as well. */
+.content-404 h1 {
+	color: #fff;
+	font-weight:bold;
+	font-size: 3.3em;
+	line-height: 2.25;
+	margin: 0 2%;
+}
+
+.content-404 h3 {
+    color: white;
+    font-family: 'Open Sans';
+    font-size: 1.4em;
+    font-weight: normal;
+    margin: 0 0 1em;
+    font-weight: 600;
+}
+
+.take-home h3 {
+    margin: 0;
+}
+
+/* I have chosen to keep the image/button the same size on tablet and mobile, 
+just like the text. */
+.take-home img {
+    width: 200px;
+}
+
+/* END 404 styles */
 
 /* Media Queries */
 @media (min-width: 768px) {
@@ -477,4 +522,9 @@ changes the styles of confirmation h1 and h2. */
     }
 
     /* END About styles */
+
+    /* 404 styles */
+
+
+    /* END 404 styles */
 }
