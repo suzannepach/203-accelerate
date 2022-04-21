@@ -16,7 +16,7 @@ get_header(); ?>
 				<div class="take-home">
 					<h3>No worries.<br>
 						We will take you</h3>
-					<a href="<?php echo home_url(); ?>"><img src="wp-content\themes\accelerate-theme-child\img\mini-taxi-home.png" alt='Mini taxi with "Home" written on top.'></a>
+					<a href="<?php echo home_url(); ?>"><img src="<?php echo get_stylesheet_directory_uri(); ?>/img/mini-taxi-home.png" alt='Mini taxi with "Home" written on top.'></a>
 				</div>
 		</div>
 	</div><!-- .main-content -->
