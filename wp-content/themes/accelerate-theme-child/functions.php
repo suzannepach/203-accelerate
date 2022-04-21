@@ -14,6 +14,7 @@
 function accelerate_child_scripts(){
 	wp_enqueue_style( 'accelerate-style', get_template_directory_uri() . '/style.css' );
 	wp_enqueue_style( 'child-style', get_stylesheet_directory_uri() . '/style.css', array( 'accelerate-style' ));
+    wp_enqueue_style( 'accelerate-child-google-fonts', 'https://fonts.googleapis.com/css2?family=Londrina+Solid:wght@400;900&display=swap' );
 }
 add_action( 'wp_enqueue_scripts', 'accelerate_child_scripts' );
 

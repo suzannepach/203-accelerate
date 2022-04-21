@@ -326,7 +326,9 @@ changes the styles of confirmation h1 and h2. */
 
 /* 404 styles */
 
-/* Styles copied from front page */
+/* Styles copied from front page. 
+I added background-postion:left; to make sure if the screen size is 
+smaller, the taxi will still be visible. */
 .hero-404 {
     background: url("img/taxi-photo.jpg") no-repeat scroll right center / cover rgba(0, 0, 0, 0);
     background-position: left;
@@ -336,14 +338,17 @@ changes the styles of confirmation h1 and h2. */
 	text-align: center;
 }
 
-/* Unlike on hte homepage, I chose to use the same font-size and line-height for 
-mobile and desktop, because I like the font to be big on mobile as well. */
+/* Unlike on the homepage, I chose to use the same font-size and line-height for 
+mobile and desktop, because I like the font to be big on mobile as well.
+I am using Londrina Solid to make the h1 stand out more. I have enqueded this google font 
+to my child theme's functions.php file. */
 .content-404 h1 {
 	color: #fff;
 	font-weight:bold;
-	font-size: 3.3em;
+	font-size: 5em;
 	line-height: 2.25;
 	margin: 0 2%;
+    font-family: 'Londrina Solid', 'Montserrat', 'Open Sans', Arial, sans-serif;
 }
 
 .content-404 h3 {
