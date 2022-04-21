@@ -63,10 +63,23 @@ get_header(); ?>
 	</div>
 </section>
 
-<?php if ( is_active_sidebar( 'sidebar-2' ) ) : ?>
-	<div id="secondary" class="widget-area" role="complementary">
-		<?php dynamic_sidebar( 'sidebar-2' ); ?>
+<!-- RECENT TWEET -->
+<section class="recent-tweets">
+	<div class="site-content">
+		<div class="tweet">
+			<h4>Recent Tweet</h4>
+			<?php if ( is_active_sidebar( 'sidebar-2' ) ) : ?>
+				<div id="secondary" class="widget-area" role="complementary">
+					<?php dynamic_sidebar( 'sidebar-2' ); ?>
+				</div>
+			<?php endif; ?>
+		</div>
+		<div class="read-more-link">
+			<a href="<?php echo home_url(); ?>/wordpress-for-fun-profit/">
+				<span>Follow Us</span> 
+			</a>
+		</div>
 	</div>
-<?php endif; ?>
+</section>
 
 <?php get_footer(); ?>

@@ -68,16 +68,18 @@ p {
     font: 500 1em/1.75 'Open Sans', Arial, sans-serif;
 }
 
-/* Change the blog post on the home page */
+/* Change the blog post and recent tweet on the home page */
 
-.blog-post h4 {
+.blog-post h4,
+.tweet h4 {
     font: 700 1em/1.75 'Montserrat', 'Open Sans', Arial, sans-serif;
     color: #a6a6a6;
     text-transform: uppercase;
     margin: 2em 0 .5em;
 }
 
-.blog-post h3 {
+.blog-post h3,
+.tweet h3 {
 	font-size: 1.5em;
 }
 
@@ -87,6 +89,18 @@ p {
 	color: #45ac9d;
 	text-transform: uppercase;
 }
+
+/* This doesn't work, I still need to find out how to add the right
+padding and margins to the twitter feed
+
+#ctf .ctf-item {
+    padding: 0;
+}
+
+#ctf .ctf-tweet-content {
+    padding: 0;
+    margin: 2em 0 .5em;
+} */
 
 /*Case Studies*/
 .case-study {
@@ -374,6 +388,8 @@ just like the text. */
 
 /* Media Queries */
 @media (min-width: 768px) {
+
+    /* Homepgae styles */
     .featured-work .site-content {
         margin: auto auto 3em;
     }
@@ -382,11 +398,14 @@ just like the text. */
         width: 33%;
         padding: 0 .5em;
     }
-    .blog-post {
+    .blog-post,
+    .tweet {
     	width: 50%;
     	float: left;
         margin-bottom: 2em;
     }
+
+    /* END Homepage styles */
 
     /* Footer styles */
 
