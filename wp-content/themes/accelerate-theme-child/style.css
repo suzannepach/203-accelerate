@@ -90,17 +90,24 @@ p {
 	text-transform: uppercase;
 }
 
-/* This doesn't work, I still need to find out how to add the right
-padding and margins to the twitter feed
+/* Removing/adding margins to recent tweet on homepage to make it level
+to recent blog on homepage */
+
+.recent-tweets .tweet {
+    margin: 0;
+}
 
 #ctf .ctf-item {
     padding: 0;
 }
 
-#ctf .ctf-tweet-content {
+/* Just adding  "#ctf .ctf-tweet-content" didn't remove the padding.
+In devtools I saw in the ctf stylesheetpadding was added to 
+"#ctf.ctf-narrow .ctf-tweet-content" and that did work */
+#ctf.ctf-narrow .ctf-tweet-content {
     padding: 0;
-    margin: 2em 0 .5em;
-} */
+    margin: 0;
+}
 
 /*Case Studies*/
 .case-study {
