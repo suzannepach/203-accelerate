@@ -74,7 +74,7 @@ get_header(); ?>
 			</div>
 			<div class="read-more-link">
 				<a href="<?php echo home_url(); ?>/wordpress-for-fun-profit/">
-					<span>Follow Us</span> 
+					<span>Follow Us</span> &rsaquo; 
 				</a>
 			</div>
 	</section>
