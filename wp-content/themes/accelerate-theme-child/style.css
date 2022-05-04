@@ -21,7 +21,20 @@ p {
     background-position: left;
 }
 
-.hero-content h3 {
+.home-page.hero-content {
+    margin: 0;
+}
+
+.home-page.hero-content .main-content {
+    padding-top: 0;
+}
+
+.home-page.hero-content .main-content h1 {
+    line-height: 1;
+    padding-bottom: .5em;
+}
+
+.home-page.hero-content h3 {
     font-weight: 600;
 }
 
@@ -403,9 +416,10 @@ just like the text. */
     .individual-featured-work {
     	float: left;
         width: 33%;
-        padding: 0 .5em;
+        padding: 0;
     }
 
+    /* Adding flexbox styles to homepage recent tweet and recent blog */.
     .homepage-recent {
         display: flex;
         align-items: flex-start;
