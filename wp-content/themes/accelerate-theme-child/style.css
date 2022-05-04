@@ -21,7 +21,20 @@ p {
     background-position: left;
 }
 
-.hero-content h3 {
+.home-page.hero-content {
+    margin: 0;
+}
+
+.home-page.hero-content .main-content {
+    padding-top: 0;
+}
+
+.home-page.hero-content .main-content h1 {
+    line-height: 1;
+    padding-bottom: .5em;
+}
+
+.home-page.hero-content h3 {
     font-weight: 600;
 }
 
@@ -66,6 +79,8 @@ p {
 
 .individual-featured-work h3 {
     font: 500 1em/1.75 'Open Sans', Arial, sans-serif;
+    padding: 1em 0;
+    margin: 0;
 }
 
 /* Change the blog post and recent tweet on the home page */
@@ -400,12 +415,20 @@ just like the text. */
     .featured-work .site-content {
         margin: auto auto 3em;
     }
-    .individual-featured-work {
-    	float: left;
-        width: 33%;
-        padding: 0 .5em;
+
+    /* Adding flexbox styles to homepage featured work */
+    .homepage-featured-work {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
     }
 
+    .individual-featured-work {
+        width: 31%;
+        padding: 0;
+    }
+
+    /* Adding flexbox styles to homepage recent tweet and recent blog */.
     .homepage-recent {
         display: flex;
         align-items: flex-start;
