@@ -520,7 +520,6 @@ just like the text. */
 
     .about-group .wp-block-group__inner-container {
         display: flex;
-        align-items: flex-start;
         justify-content: space-between;
         align-items: center;
     }
