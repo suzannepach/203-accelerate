@@ -405,10 +405,20 @@ just like the text. */
         width: 33%;
         padding: 0 .5em;
     }
+
+    .homepage-recent {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+    }
+
+    .recent-posts,
+    .recent-tweets {
+    	width: 45%;
+    }
+
     .blog-post,
     .tweet {
-    	width: 50%;
-    	float: left;
         margin-bottom: 2em;
     }
 
