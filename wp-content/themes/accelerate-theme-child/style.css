@@ -428,7 +428,7 @@ just like the text. */
         padding: 0;
     }
 
-    /* Adding flexbox styles to homepage recent tweet and recent blog */.
+    /* Adding flexbox styles to homepage recent tweet and recent blog */
     .homepage-recent {
         display: flex;
         align-items: flex-start;
