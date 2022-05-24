@@ -161,6 +161,11 @@ class Minifier {
 			// Build the minified version filename.
 			$filename = $this->assets_dir . $wp_scripts->registered[ $handle ]->handle . '.min.js';
 
+			// Check if the handle of the script has forward slashes in it, if so - replace them with dashes.
+			if ( false !== strpos( $wp_scripts->registered[ $handle ]->handle, '/' ) ) {
+				$filename = dirname( $original_filepath ) . '/' . str_replace( '/', '-', $wp_scripts->registered[ $handle ]->handle ) . '.min.css';
+			}
+
 			// Check for original file modifications and create the minified copy.
 			$is_minified_file_ok = $this->check_and_create_file( $filename, $original_filepath );
 
@@ -311,6 +316,11 @@ class Minifier {
 
 			// Build the minified version filename.
 			$filename = dirname( $original_filepath ) . '/' . $wp_styles->registered[ $handle ]->handle . '.min.css';
+
+			// Check if the handle of the style has forward slashes in it, if so - replace them with dashes.
+			if ( false !== strpos( $wp_styles->registered[ $handle ]->handle, '/' ) ) {
+				$filename = dirname( $original_filepath ) . '/' . str_replace( '/', '-', $wp_styles->registered[ $handle ]->handle ) . '.min.css';
+			}
 
 			if ( ! empty( $parsed_url['query'] ) ) {
 				$filename = $filename . '?' . $parsed_url['query'];

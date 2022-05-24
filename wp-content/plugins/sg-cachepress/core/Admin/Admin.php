@@ -37,6 +37,11 @@ class Admin {
 		'sgo_environment' => 'siteground_optimizer_environment_permissions',
 	);
 
+	public $dequeued_styles = array(
+		'auxin-front-icon', // Phlox Theme.
+		'mks_shortcodes_simple_line_icons' // Meks Flexible Shortcodes.
+	);
+
 	/**
 	 * Get the subpages id.
 	 *
@@ -113,8 +118,10 @@ class Admin {
 			return;
 		}
 
-		// Removing conflicting fonts.
-		wp_dequeue_style( 'auxin-front-icon' );
+		// Dequeue conflicting styles.
+		foreach ( $this->dequeued_styles as $style ) {
+			wp_dequeue_style( $style );
+		}
 
 		wp_enqueue_style(
 			'siteground-optimizer-admin',

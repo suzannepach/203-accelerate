@@ -9,6 +9,7 @@ return array(
     'SiteGround_i18n\\' => array($vendorDir . '/siteground/siteground-i18n/src'),
     'SiteGround_Optimizer\\' => array($baseDir . '/core'),
     'SiteGround_Helper\\' => array($vendorDir . '/siteground/siteground-helper/src'),
+    'SiteGround_Emails\\' => array($vendorDir . '/siteground/siteground-emails/src'),
     'SiteGround_Data\\' => array($vendorDir . '/siteground/siteground-data/src'),
     'MatthiasMullie\\PathConverter\\' => array($vendorDir . '/matthiasmullie/path-converter/src'),
     'MatthiasMullie\\Minify\\' => array($vendorDir . '/matthiasmullie/minify/src'),

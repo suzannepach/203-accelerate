@@ -5,7 +5,7 @@
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => 'fa6b38a9c5a254651979fd3aa230eb938e5378cd',
+        'reference' => '2aca6cdc6a1f88b3720e06d66177969d641714c4',
         'name' => '__root__',
         'dev' => true,
     ),
@@ -16,7 +16,7 @@
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => 'fa6b38a9c5a254651979fd3aa230eb938e5378cd',
+            'reference' => '2aca6cdc6a1f88b3720e06d66177969d641714c4',
             'dev_requirement' => false,
         ),
         'a5hleyrich/wp-background-processing' => array(
@@ -40,12 +40,12 @@
             'dev_requirement' => false,
         ),
         'matthiasmullie/minify' => array(
-            'pretty_version' => '1.3.66',
-            'version' => '1.3.66.0',
+            'pretty_version' => '1.3.68',
+            'version' => '1.3.68.0',
             'type' => 'library',
             'install_path' => __DIR__ . '/../matthiasmullie/minify',
             'aliases' => array(),
-            'reference' => '45fd3b0f1dfa2c965857c6d4a470bea52adc31a6',
+            'reference' => 'c00fb02f71b2ef0a5f53fe18c5a8b9aa30f48297',
             'dev_requirement' => false,
         ),
         'matthiasmullie/path-converter' => array(
@@ -84,6 +84,17 @@
                 0 => '9999999-dev',
             ),
             'reference' => 'c1281835d47feb1f43d93ffa500e04856498362b',
+            'dev_requirement' => false,
+        ),
+        'siteground/siteground-emails' => array(
+            'pretty_version' => 'dev-master',
+            'version' => 'dev-master',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../siteground/siteground-emails',
+            'aliases' => array(
+                0 => '9999999-dev',
+            ),
+            'reference' => '488bda959c356fd330d0ecfb45885fc0f421f5b7',
             'dev_requirement' => false,
         ),
         'siteground/siteground-helper' => array(

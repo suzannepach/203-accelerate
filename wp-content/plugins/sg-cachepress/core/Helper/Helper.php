@@ -187,4 +187,33 @@ class Helper {
 
 		return preg_match( '/<\?xml version="/', $xml_part );
 	}
+
+
+	/**
+	 * Get script handle by substring
+	 *
+	 * @since  7.1.0
+	 *
+	 * @param  string $regex           Substring that is searched for.
+	 * @param  array  $scripts         Array of strings, containing all script handles.
+	 *
+	 * @return array  $matched_handles Array with all matching handles.
+	 */
+	public static function get_script_handle_regex( $regex, $scripts ) {
+		// Bail if regex or scripts are empty.
+		if ( empty( $regex ) || empty( $scripts ) ) {
+			return array();
+		}
+
+		$matched_handles = array();
+
+		// Go through all scripts and check for substring in each item.
+		foreach ( $scripts as $handle ) {
+			if ( false !== strpos( $handle, $regex ) ) {
+				$matched_handles[] = $handle;
+			}
+		}
+
+		return $matched_handles;
+	}
 }

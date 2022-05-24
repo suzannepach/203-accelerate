@@ -138,6 +138,16 @@ class Supercacher_Posts {
 		// Get the post.
 		$post = get_post( $post_id );
 
+		// Bail if the current hook is save_post and the post is scheduled.
+		if ( 'save_post' === current_action() && 'future' === get_post_status( $post_id ) ) {
+			return;
+		}
+
+		// Bail if the current hook is publish_post and the post isn't scheduled.
+		if ( 'publish_post' === current_action() && 'future' !== get_post_status( $post_id ) ) {
+			return;
+		}
+
 		// Bail if post type is excluded from cache purge.
 		if ( true === $this->is_post_excluded_from_cache_purge( $post ) ) {
 			return;

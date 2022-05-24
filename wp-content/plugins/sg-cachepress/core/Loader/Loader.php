@@ -45,6 +45,7 @@ class Loader {
 			'supercacher_helper'     => 'supercacher',
 			'file_cacher'            => 'file_cacher',
 			'ssl'                    => 'ssl',
+			'campaign_service'       => 'campaign_service',
 		),
 	);
 
@@ -684,5 +685,36 @@ class Loader {
 		if ( ! is_multisite() ) {
 			add_action( 'wp_login', array( $this->ssl, 'maybe_switch_option' ), 1 );
 		}
+	}
+
+	/**
+	 * Add the campaign service hooks.
+	 *
+	 * @since 7.1.0
+	 */
+	public function add_campaign_service_hooks() {
+		// Check if we need to start the campaign check.
+		if ( false === get_option( 'siteground_settings_optimizer_hello', false ) ) {
+			return;
+		}
+
+		// Check if we are suposed to send emails.
+		if ( $this->campaign_service->maybe_send_emails() ) {
+			// Check if we need to schedule the cron.
+			if ( ! wp_next_scheduled( 'sgo_campaign_cron' ) ) {
+				$this->campaign_service->campaign_service_email->schedule_event();
+			}
+		} else {
+			$this->campaign_service->campaign_service_email->unschedule_event();
+		}
+
+		// Update the campaing last timestamp before the mail is sent.
+		add_action( 'sgo_campaign_cron', array( $this->campaign_service, 'update_last_cron_run_timestamp' ), 1 );
+
+		// Sent the campaign email.
+		add_action( 'sgo_campaign_cron', array( $this->campaign_service->campaign_service_email, 'sg_handle_email' ) );
+
+		// Bump the campaign step counters after the mail is sent.
+		add_action( 'sgo_campaign_cron', array( $this->campaign_service, 'bump_campaign_count' ), PHP_INT_MAX );
 	}
 }

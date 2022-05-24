@@ -34,6 +34,11 @@ class Supercacher {
 				'hook'     => 'wp_trash_post',
 				'priority' => 1,
 			),
+			array(
+				'option'   => 'purge_all_post_cache',
+				'hook'     => 'publish_post',
+				'priority' => 1,
+			),
 		),
 		'supercacher_terms'    => array(
 			array(

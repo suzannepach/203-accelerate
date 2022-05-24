@@ -3,7 +3,7 @@ Contributors: Hristo Sg, siteground, sstoqnov, stoyangeorgiev, elenachavdarova, 
 Tags: nginx, caching, speed, memcache, memcached, performance, siteground, nginx, supercacher
 Requires at least: 4.7
 Requires PHP: 7.0
-Tested up to: 5.9
+Tested up to: 6.0
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -75,9 +75,57 @@ Here's an example of the code, you can add to your functions.php file:
 		return $xml_urls;
 	}
 
+Keep in mind that when modifying the file-cache related filters below, you need to flush the cache, so the sgo-config is re-generated and the filters are added to it.
+
+If you need to add a cache bypass cookie to the default ones, you can use the following filter:
+
+	add_filter( 'sgo_bypass_cookies', 'add_sgo_bypass_cookies');
+	function add_sgo_bypass_cookies( $bypass_cookies ) {
+		// Add the cookies, that you need to bypass the cache.
+		$bypass_cookies[] = 'cookie_name';
+		$bypass_cookies[] = 'cookie_name_2';
+
+		return $bypass_cookies;
+	}
+
+If you need to skip the cache for a specific query parameter, you can use the following filter:
+
+	add_filter( 'sgo_bypass_query_params', 'add_sgo_bypass_query_params');
+	function add_sgo_bypass_query_params( $bypass_query_params ) {
+		// Add custom query params, that will skip the cache.
+		$bypass_query_params[] = 'query_param';
+		$bypass_query_params[] = 'query_param2';
+
+		return $bypass_query_params;
+	}
+
+If you need to add a specific query parameter which will be ignored in the cache-creation and cache-spawn processes you can do it using this filter:
+
+	add_filter( 'sgo_ignored_query_params', 'add_sgo_ignored_query_params');
+	function add_sgo_ignored_query_params( $ignored_query_params ) {
+		// The query parameters which will be ignored.
+		$ignored_query_params[] = 'query_param';
+		$ignored_query_params[] = 'query_param2';
+
+		return $ignored_query_params;
+	}
+
 = SiteGround Optimizer Environment Page =
 
 Here, you can force HTTPS for your site and fix insecure content errors. You can activate Database Optimization which will remove all unnecessary items from your database and optimize its tables. If you are using the InnoDB storage engine, the optimization of tables is done automatically by the engine. Use DNS-Prefetching to increase load speeds for external resources. It works by resolving the domain name, before a resource is requested. You can also manage Heartbeat Control to modify the frequency of the WP Heartbeat for different locations. By default, the WordPress Heartbeat API checks every 15 seconds on your post edit pages and every 60 seconds on your dashboard and front end whether there are scheduled tasks to be executed. With this option, you can make the checks run less frequently or completely disable them.
+
+We have a filter that allows you to exclude specific tables from being optimized. You need to specify the table name without the database prefix.
+
+Here's an example of the code, you can add to your functions.php file:
+
+	add_filter( 'sgo_db_optimization_exclude', 'sgo_db_optimization_exclude_table' );
+	function sgo_db_optimization_exclude_table( $excluded_tables ) {
+		// Add tables that you need to exclude without the wpdb prefix.
+		$excluded_tables[] = 'table_name';
+		$excluded_tables[] = 'another_table_name';
+
+		return $excluded_tables;
+	}
 
 = SiteGround Optimizer Frontend Optimization Page =
 
@@ -328,6 +376,24 @@ Our plugin uses a cookie in order to function properly. It does not store person
 
 == Changelog ==
 
+= Version 7.1.1 =
+Release Date: May 20th, 2022
+
+* Improved default settings
+
+= Version 7.1.0 =
+Release Date: May 10th, 2022
+
+* Improved HTTPS Enforce
+* Improved Database Optimization
+* Improved Auto Purge functionality for scheduled posts
+* Improved File-Based cache exclude filtering
+* Improved CSS Combination
+* Improved JS Minification
+* Improved Meks Flexible Shortcodes plugin support
+* Improved All in One SEO plugin support
+* Improved Authorize.Net Gateway support
+
 = Version 7.0.9 =
 Release Date: April 7th, 2022
 
@@ -349,7 +415,7 @@ Release Date: March 24th, 2022
 = Version 7.0.6 =
 Release Date: March 4th, 2022
 
-* Improved installation for users not hosted on SiteGround.
+* Improved installation for users not hosted on SiteGround
 
 = Version 7.0.5 =
 Release Date: March 2nd, 2022

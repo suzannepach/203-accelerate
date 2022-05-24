@@ -41,12 +41,11 @@ trait File_Cacher_Trait {
 			$this->bypass_cookies = array_diff( $this->bypass_cookies, array( 'wordpress_logged_in_' ) );
 		}
 
-
 		if ( $this->has_bypass_cookies() ) {
 			return false;
 		}
 
-		if ( $this->has_ignore_query_params() ) {
+		if ( $this->has_skip_cache_query_params() ) {
 			return false;
 		}
 
@@ -60,11 +59,11 @@ trait File_Cacher_Trait {
 	 *
 	 * @return boolean True/False.
 	 */
-	public function has_ignore_query_params() {
-		// Iterate through the query array and unset the unneeded params.
+	public function has_skip_cache_query_params() {
+		// Iterate through the query array and check for skip cache params.
 		foreach ( $_GET as $param => $value ) {
-			if ( ! in_array( $param, $this->bypass_query_params, true ) ) {
-				true;
+			if ( in_array( $param, $this->bypass_query_params, true ) ) {
+				return true;
 			}
 		}
 

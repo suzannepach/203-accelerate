@@ -197,8 +197,25 @@ class Database_Optimizer {
 			return;
 		}
 
+		// Add filter to skip specific tables from being optimized.
+		$excluded_tables = apply_filters( 'sgo_db_optimization_exclude', array() );
+
+		// Add prefixes to all tables.
+		$prefix_tables = preg_filter( '/^/', $this->wpdb->prefix, $excluded_tables );
+
+		// Get the tables without prefix.
+		$diffs = array_diff( $excluded_tables, $prefix_tables );
+
+		// Merge user input and prefixed tables if custom tables are skipped.
+		$all_tables = array_merge( $diffs, $prefix_tables );
+
 		// Loop trough and optimize table.
 		foreach ( $tables as $table ) {
+			// Check if we need to skip that specific table from the optimization.
+			if ( in_array( $table->table_name, $all_tables ) ) {
+				continue;
+			}
+
 			$this->wpdb->query( "OPTIMIZE TABLE $table->table_name" );
 		}
 	}

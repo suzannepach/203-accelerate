@@ -1,6 +1,8 @@
 <?php
 namespace SiteGround_Optimizer\Install_Service;
 
+use SiteGround_Helper\Helper_Service;
+
 class Install_6_0_0 extends Install {
 
 	/**
@@ -58,6 +60,12 @@ class Install_6_0_0 extends Install {
 		// Loop legacy options and delete them.
 		foreach ( $this->legacy_options as $option ) {
 			delete_option( $this->prefix . $option );
+		}
+
+		// Automatically enable Dynamic Cache for SiteGround users.
+		if ( Helper_Service::is_siteground() ) {
+			update_option( 'siteground_optimizer_enable_cache', 1 );
+			update_option( 'siteground_optimizer_autoflush_cache', 1 );
 		}
 	}
 

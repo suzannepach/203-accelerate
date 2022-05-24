@@ -804,6 +804,10 @@ class Sg_2fa {
 		// Get the user nonce meta.
 		$meta_nonce = get_user_meta( $cookie_data[0], 'sgs_2fa_login_nonce', true );
 
+		if ( empty( $meta_nonce ) || empty( $cookie_data[0] ) ) {
+			return;
+		}
+
 		// Bail if the nonce is invalid.
 		if ( $meta_nonce !== $cookie_data[1] ) { // phpcs:ignore
 			return;

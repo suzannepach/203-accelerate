@@ -326,7 +326,7 @@ class Css_Combinator extends Abstract_Combinator {
 		// Get the file dir.
 		$dir = trailingslashit( dirname( $url ) );
 		// Check for imports in the style.
-		preg_match_all( '/@import\s+["\'](.+?)["\']/i', $content, $matches );
+		preg_match_all( '/@import\s+["\'](.+?)["\'];?/i', $content, $matches );
 
 		// Return the content if there are no matches.
 		if ( empty( $matches ) ) {

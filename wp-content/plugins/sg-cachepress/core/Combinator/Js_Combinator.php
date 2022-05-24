@@ -4,6 +4,7 @@ namespace SiteGround_Optimizer\Combinator;
 use SiteGround_Optimizer\Options\Options;
 use SiteGround_Optimizer\Front_End_Optimization\Front_End_Optimization;
 use SiteGround_Helper\Helper_Service;
+use SiteGround_Optimizer\Helper\Helper;
 
 /**
  * SG JS_Combinator main plugin class
@@ -503,6 +504,17 @@ class Js_Combinator extends Abstract_Combinator {
 	);
 
 	/**
+	 * Array containing all script handle regex' that should be excluded.
+	 *
+	 * @since 7.1.0
+	 *
+	 * @var   array Array containing all script handle regex' that should be excluded.
+	 */
+	private $combined_scripts_exclude_regex = array(
+		'sv-wc-payment-gateway-payment-form-', // Authorize.NET payment gateway payment form script.
+	);
+
+	/**
 	 * The singleton instance.
 	 *
 	 * @since 5.5.2
@@ -610,6 +622,11 @@ class Js_Combinator extends Abstract_Combinator {
 		// Get handles of all registered scripts.
 		$registered = array_keys( $wp_scripts->registered );
 		$excluded   = array();
+
+		// Remove excluded script handles using regex.
+		foreach( $this->combined_scripts_exclude_regex as $regex ) {
+			$excluded_handles = array_merge( $excluded_handles, Helper::get_script_handle_regex( $regex, $registered ) );
+		}
 
 		// Loop through all excluded handles and get their src.
 		foreach ( $excluded_handles as $handle ) {

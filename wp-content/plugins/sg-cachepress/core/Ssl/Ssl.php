@@ -91,13 +91,25 @@ class Ssl {
 			)
 		);
 
-		$read = @fopen( $site_url, 'rb', false, $stream );
+		// Parse the url.
+		$parse_url = parse_url( $site_url, PHP_URL_HOST );
 
-		// Check if the response from the url is 200, if not - return false.
+		// Create the stream socket client.
+		$read = @stream_socket_client(
+			'ssl://' . $parse_url . ':443' ,
+			$errno,
+			$errstr,
+			3,
+			STREAM_CLIENT_CONNECT,
+			$stream
+		);
+
+		// Bail if the stream failed.
 		if ( false === $read ) {
 			return false;
 		}
 
+		// Get the params we are checking.
 		$cont = @stream_context_get_params( $read );
 
 		return is_null( $cont['options']['ssl']['peer_certificate'] ) ? false : true;

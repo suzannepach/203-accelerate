@@ -4,6 +4,7 @@ namespace SiteGround_Optimizer\Front_End_Optimization;
 use SiteGround_Optimizer\Supercacher\Supercacher;
 use SiteGround_Optimizer\File_Cacher\File_Cacher;
 use SiteGround_Helper\Helper_Service;
+use SiteGround_Optimizer\Helper\Helper;
 
 /**
  * SG Front_End_Optimization main plugin class
@@ -55,6 +56,18 @@ class Front_End_Optimization {
 		'houzez-google-map-api',
 		'wpascript',
 	);
+
+	/**
+	 * Array containing all script handle regex' that should be excluded.
+	 *
+	 * @since 7.1.0
+	 *
+	 * @var   array Array containing all script handle regex' that should be excluded.
+	 */
+	private $blacklisted_async_regex = array(
+		'sv-wc-payment-gateway-payment-form-v', // Authorize.NET payment gateway payment form script.
+	);
+
 
 	/**
 	 * The singleton instance.
@@ -203,6 +216,11 @@ class Front_End_Optimization {
 		$scripts->all_deps( $scripts->queue );
 
 		$excluded_scripts = apply_filters( 'sgo_js_async_exclude', $this->blacklisted_async_scripts );
+
+		// Remove excluded script handles using regex.
+		foreach( $this->blacklisted_async_regex as $regex ) {
+			$excluded_scripts = array_merge( $excluded_scripts, Helper::get_script_handle_regex( $regex, $scripts->to_do ) );
+		}
 
 		// Get groups of handles.
 		foreach ( $scripts->to_do as $handle ) {

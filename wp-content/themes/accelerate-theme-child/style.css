@@ -12,7 +12,7 @@ Text Domain:  accelerate-theme-child
 
 /* Setting an em font-size (in the parent theme it was set as 17px) */
 p {
-    font-size: 1em;
+    font-size: 1.0625em;
 }
 
  /* Changing the hero image and h3 font-weight */
@@ -241,8 +241,7 @@ one I added. */
 /* Changes the label font of th name, email and message box. */
 #nf-label-field-1,
 #nf-label-field-2,
-#nf-label-field-3
- {
+#nf-label-field-3 {
     font-size: 0.85em;
     font-weight: 600;
 }
@@ -360,6 +359,8 @@ changes the styles of confirmation h1 and h2. */
    text-align: left;
 }
 
+/* END About page styles */
+
 /* 404 styles */
 
 /* Styles copied from front page. 
@@ -407,6 +408,58 @@ just like the text. */
 }
 
 /* END 404 styles */
+
+/* Blog sidebar styles */
+
+#sidebar {
+    padding: 0;
+}
+
+#primary-sidebar #block-4.widget {
+    padding-top: 2em;
+}
+
+/* Above the signup form an empty p is added with some javascript for Mailchimp
+and under the form an empty p.
+I don't really understand why they are there, but this code removes their margin. */
+#primary-sidebar #block-4.widget p {
+    margin: 0;
+}
+
+/* Adding styles to the the signup form header */
+#primary-sidebar .mc4wp-form-fields h4 {
+    font: 700 1em/1.75 'Montserrat', 'Open Sans', Arial, sans-serif;
+    text-transform: uppercase;
+    margin: 0  0 1em 0;
+}
+
+/* Changes the font and the padding of the label signup form */
+#primary-sidebar .mc4wp-form-fields #signup-label {
+    font-size: 0.85em;
+    font-weight: 600;
+    padding-top: 1.5625em;
+}
+
+/* Changes the padding around the email field in the signup form */
+#primary-sidebar .mc4wp-form-fields #signup-email-field {
+    padding-top: 0.625em;
+    padding-bottom: 1.5625em;
+}
+
+/* Makes the email input form 100% wide */
+#primary-sidebar .mc4wp-form-fields #signup-email-field input {
+    width: 100%;
+}
+
+/* Changes the font and colour of the subscribe button and makes it 100% wide */
+#primary-sidebar .mc4wp-form-fields #signup-sunscribe-button input {
+    width: 100%;
+    background: #45ac9d;
+    font-size: 1.125em;  
+    padding: 0;
+}
+
+/* END Blog sidebar styles */
 
 /* Media Queries */
 @media (min-width: 768px) {
