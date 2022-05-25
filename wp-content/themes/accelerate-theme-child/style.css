@@ -415,8 +415,20 @@ just like the text. */
     padding: 0;
 }
 
+#sidebar .widget {
+    padding: 1.75em 1.8em;
+    border-bottom: 1px solid #BFBFBF;
+}
+
+/* Removes border under last sidebar widget. */
+#sidebar .widget:last-of-type {
+    border-bottom: 0;
+}
+
 #primary-sidebar #block-4.widget {
     padding-top: 2em;
+    padding-bottom: 1.75em;
+    border-bottom: 1px solid #BFBFBF;
 }
 
 /* Above the signup form an empty p is added with some javascript for Mailchimp
@@ -442,7 +454,7 @@ I don't really understand why they are there, but this code removes their margin
 
 /* Changes the padding around the email field in the signup form */
 #primary-sidebar .mc4wp-form-fields #signup-email-field {
-    padding-top: 0.625em;
+    padding-top: 0.3em;
     padding-bottom: 1.5625em;
 }
 
@@ -457,6 +469,61 @@ I don't really understand why they are there, but this code removes their margin
     background: #45ac9d;
     font-size: 1.125em;  
     padding: 0;
+}
+
+/* Makes the searchbar 100% width. */
+#primary-sidebar .widget_search input[type="text"] {
+	width: 84%;
+}
+
+#primary-sidebar .widget_search input[type="submit"] {
+	width: 16%;
+}
+
+#primary-sidebar .widget_categories li:last-of-type,
+#primary-sidebar .widget_archive li:last-of-type {
+    margin-bottom: 0;
+} 
+
+/* I had to change some padding/margins, because the events part in the sidebar is 
+actually 4 different widgets, so there was too much padding/margin and
+a few unneccesary borders. */
+#primary-sidebar #block-6 {
+    padding-bottom: 0;
+    border-bottom: 0;
+}
+
+#primary-sidebar aside.widget.widget_block.widget_media_image {
+    padding-top: 0;
+    padding-bottom: 1em;
+    border-bottom: 0;
+}
+
+#primary-sidebar .wp-block-image {
+    padding: 0;
+    margin-bottom: 0;
+}
+
+#primary-sidebar #block-9 {
+    padding-bottom: 1.75em;
+    border-bottom: 1px solid #BFBFBF;
+}
+
+/* I had to change some padding/margins, because the about part in the sidebar is 
+actually 2 different widgets, so there was too much padding/margin and
+a few unneccesary borders. */ 
+
+#primary-sidebar #block-12 {
+    padding-bottom: 0;
+    border-bottom: 0;
+}
+
+#primary-sidebar #block-10 {
+    padding-top: 0;
+}
+
+#primary-sidebar #block-10 p {
+    margin-bottom: 0;
 }
 
 /* END Blog sidebar styles */
