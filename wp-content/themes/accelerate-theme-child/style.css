@@ -426,13 +426,18 @@ just like the text. */
     border-bottom: 1px solid #BFBFBF;
 }
 
+#sidebar .widget:first-of-type {
+    padding-top: 2em;
+}
+
 /* Removes border under last sidebar widget. */
 #sidebar .widget:last-of-type {
     border-bottom: 0;
 }
 
+/* Styles Newsletter sign up form */
 #primary-sidebar #block-4.widget {
-    padding-top: 2em;
+    padding-top: 1.75em;
     padding-bottom: 1.75em;
     border-bottom: 1px solid #BFBFBF;
 }
@@ -512,7 +517,6 @@ a few unneccesary borders. */
 
 #primary-sidebar #block-9 {
     padding-bottom: 1.75em;
-    border-bottom: 1px solid #BFBFBF;
 }
 
 /* I had to change some padding/margins, because the about part in the sidebar is 
