@@ -26,19 +26,36 @@ get_header(); ?>
 				<?php endif; ?>
 			</div>
 
-				<?php get_sidebar(); ?>
+			<!-- On mobile I want the nav section to show above the sidebar. To achieve this I 
+			have added an extra nav section (same as the one below only this one with class nav-mobile 
+			and the other one with class nav-desktop). I have added css so this nav only 
+			shows on mobile and the other only on desktop. (All of this is probably way easier with css grid!)-->
+			<nav id="navigation" class="container nav-mobile">
+				<div class="left"><?php next_posts_link('&larr; <span>Older Posts</span>'); ?></div>
+				<div class="pagination">
+					<?php $paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
+						echo 'Page '.$paged.' of '.$wp_query->max_num_pages;
+					?>
+				</div>
+				<div class="right"><?php previous_posts_link('<span>Newer Posts</span> &rarr;'); ?></div>
+			</nav>
+
+			<?php get_sidebar(); ?>
 
 		</div>
 	</section>
 
-	<nav id="navigation" class="container">
-		<div class="left"><?php next_posts_link('&larr; <span>Older Posts</span>'); ?></div>
+	<!-- I have added the class nav-desktop, see explaination in comment above.
+	I have also moved the older post link to the right and the newer post link to 
+	the left. This seems to make more sense, because newer post are shown first. -->
+	<nav id="navigation" class="container nav-desktop">
+		<div class="left"><?php previous_posts_link('&larr; <span>Newer Posts</span>'); ?></div>
 		<div class="pagination">
 			<?php $paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
 				echo 'Page '.$paged.' of '.$wp_query->max_num_pages;
 			?>
 		</div>
-		<div class="right"><?php previous_posts_link('<span>Newer Posts</span> &rarr;'); ?></div>
+		<div class="right"><?php next_posts_link('<span>Older Posts</span> &rarr;'); ?></div>
 	</nav>
-	
+
 <?php get_footer();

@@ -34,6 +34,6 @@ $config = array (
   ),
   'output_dir' => 'C:\\xampp\\htdocs\\accelerate/wp-content/cache/sgo-cache/',
   'logged_in_cache' => 0,
-  'cache_secret_key' => '40608be5d0e30651a93726392f6a7b77',
+  'cache_secret_key' => '76472976a8a3e984a233acbc46e2e27f',
   'logged_in_cookie' => 'wordpress_logged_in_c48c22b17669f4eff1dd1f8a2fdf9c6c',
 );

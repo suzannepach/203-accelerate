@@ -415,11 +415,19 @@ just like the text. */
 
 /* END 404 styles */
 
+/* Blog styles */
+
+.nav-desktop {
+    display: none;
+}
+
+/* END Blog styles */
+
 /* Blog sidebar styles */
 
 /* On the original site the sidebar wouldn't show on mobile. Now I have changed it so it will show under the blog. */
 #sidebar {
-    /* display: block; */
+    display: block;
     padding: 0;
 }
 
@@ -721,4 +729,16 @@ a few unneccesary borders. */
     /* Sidebar styles */
 
     /* END Sidebar */
+
+    /* Blog styles */
+
+    .nav-desktop {
+        display: block;
+    }
+
+    .nav-mobile {
+        display: none;
+    }
+
+    /* END Blog styles */
 }
