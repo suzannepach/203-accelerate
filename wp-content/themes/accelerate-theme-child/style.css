@@ -348,7 +348,13 @@ changes the styles of confirmation h1 and h2. */
 }
 
 .about-intro p {
-    margin: 0;
+    margin: 0 0 1em 0;
+}
+
+.about-intro a {
+	color: #3b3b3b;
+	font-weight: 700;
+	text-decoration: underline;
 }
 
 .about-group {

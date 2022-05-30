@@ -1342,7 +1342,7 @@ class CtfFeed
 		return $twitter_connect->performRequest();
 	}
 
-	private function getTweetsSinceID( $since_id, $end_point = 'search', $feed_term, $count )
+	private function getTweetsSinceID( $since_id, $end_point = 'search', $feed_term = '', $count = 0 )
 	{
 		// Only can be set in the options page
 		$request_settings = array(

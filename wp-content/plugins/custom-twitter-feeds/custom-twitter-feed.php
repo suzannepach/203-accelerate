@@ -9,7 +9,7 @@ Author URI: http://smashballoon.com/
 Text Domain: custom-twitter-feeds
 */
 /*
-Copyright 2021 Smash Balloon LLC (email : hey@smashballoon.com)
+Copyright 2022 Smash Balloon LLC (email : hey@smashballoon.com)
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or

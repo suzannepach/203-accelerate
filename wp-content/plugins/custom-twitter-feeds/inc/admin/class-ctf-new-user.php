@@ -19,7 +19,7 @@ class CTF_New_User extends CTF_Notifications {
 	 *
 	 * @var string
 	 */
-	const SOURCE_URL = 'http://plugin.smashballoon.com/newuser.json';
+	const SOURCE_URL = 'https://plugin.smashballoon.com/newuser.json';
 
 	/**
 	 * @var string

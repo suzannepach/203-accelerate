@@ -17,7 +17,7 @@ class CTF_Notifications {
 	 *
 	 * @var string
 	 */
-	const SOURCE_URL = 'http://plugin.smashballoon.com/notifications.json';
+	const SOURCE_URL = 'https://plugin.smashballoon.com/notifications.json';
 
 	/**
 	 * @var string
@@ -174,6 +174,35 @@ class CTF_Notifications {
 		$option = $this->get_option();
 
 		foreach ( $notifications as $notification ) {
+			// Ignore if not a targeted plugin
+			if ( ! empty( $notification['plugin'] ) && is_array( $notification['plugin'] ) && ! in_array( self::PLUGIN, $notification['plugin'], true ) ) {
+				continue;
+			}
+
+			// Ignore if max wp version detected
+			if ( ! empty( $notification['maxwpver'] ) && version_compare( get_bloginfo( 'version' ), $notification['maxwpver'], '>' ) ) {
+				continue;
+			}
+
+			// Ignore if max version has been reached
+			if ( ! empty( $notification['maxver'] ) && version_compare( $notification['maxver'],  CTF_VERSION ) < 0 ) {
+				continue;
+			}
+
+			// Ignore if min version has not been reached
+			if ( ! empty( $notification['minver'] ) && version_compare( $notification['minver'],  CTF_VERSION ) > 0 ) {
+				continue;
+			}
+
+			// Ignore if a specific ctf_status is empty or false
+			if ( ! empty( $notification['statuscheck'] ) ) {
+				$status_key          = sanitize_key( $notification['statuscheck'] );
+				$ctf_statuses_option = get_option( 'ctf_statuses', array() );
+
+				if ( empty( $ctf_statuses_option[ $status_key ] ) ) {
+					continue;
+				}
+			}
 
 			// The message and license should never be empty, if they are, ignore.
 			if ( empty( $notification['content'] ) || empty( $notification['type'] ) ) {
@@ -232,9 +261,58 @@ class CTF_Notifications {
 			     || ( ! empty( $notification['end'] ) && ctf_get_current_time() > strtotime( $notification['end'] ) ) ) {
 				unset( $notifications[ $key ] );
 			}
+
+			if ( empty( $notification['recent_install_override'] ) && $this->recently_installed() ) {
+				unset( $notifications[ $key ] );
+			}
+
+			// Ignore if max version has been reached
+			if ( ! empty( $notification['maxver'] ) && version_compare( $notification['maxver'],  CTF_VERSION ) < 0 ) {
+				unset( $notifications[ $key ] );
+			}
+
+			// Ignore if max wp version detected
+			if ( ! empty( $notification['maxwpver'] ) && version_compare( get_bloginfo( 'version' ), $notification['maxwpver'], '>' ) ) {
+				unset( $notifications[ $key ] );
+			}
+
+			// Ignore if min version has not been reached
+			if ( ! empty( $notification['minver'] ) && version_compare( $notification['minver'],  CTF_VERSION ) > 0 ) {
+				unset( $notifications[ $key ] );
+			}
+
+			// Ignore if a specific ctf_status is empty or false
+			if ( ! empty( $notification['statuscheck'] ) ) {
+				$status_key          = sanitize_key( $notification['statuscheck'] );
+				$ctf_statuses_option = get_option( 'ctf_statuses', array() );
+
+				if ( empty( $ctf_statuses_option[ $status_key ] ) ) {
+					unset( $notifications[ $key ] );
+				}
+			}
 		}
 
 		return $notifications;
+	}
+
+	/**
+	 * @return bool
+	 *
+	 * @since 1.4.5/1.4.2
+	 */
+	public function recently_installed() {
+		$ctf_statuses_option = get_option( 'ctf_statuses', array() );
+
+		if ( ! isset( $ctf_statuses_option['first_install'] ) ) {
+			return false;
+		}
+
+		// Plugin was installed less than a week ago
+		if ( (int) $ctf_statuses_option['first_install'] > time() - WEEK_IN_SECONDS ) {
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
@@ -418,6 +496,11 @@ class CTF_Notifications {
 	 * @since 1.7/1.11
 	 */
 	public function output() {
+		// if we are one single feed page then return
+		if ( isset( $_GET['feed_id'] ) ) {
+			return;
+		}
+
 		$notifications = $this->get();
 
 		if ( empty( $notifications ) ) {
