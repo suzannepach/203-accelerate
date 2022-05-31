@@ -10,6 +10,11 @@ Tags:     	light, dark, two-columns, right-sidebar, responsive-layout, accessibi
 Text Domain:  accelerate-theme-child
 */
 
+/* This makes sure the distance between the blog page navigation and the bottom border is better. */
+#main {
+    margin-bottom: 0;
+}
+
 /* Setting an em font-size (in the parent theme it was set as 17px) */
 p {
     font-size: 1.0625em;
@@ -417,8 +422,25 @@ just like the text. */
 
 /* Blog styles */
 
+/* Under each post there is some padding, a border and some margin and
+straight under there the mext post. The last post doesn't have a border, 
+so than you just see an extra big white gap. That's why I removed the margin
+of the last post entry. */
+.post-entry:last-child {
+	margin-bottom: 0;
+}
+
+/* On the blog overview page there is a nav bar at the bottom to navigate the different pages.
+I have made added to of those nav bars on index.php. One to show on mobile, above the sidebar 
+(which on mobile is at the bottom) and one for desktop (which is under the blogs and the sidebar. */
 .nav-desktop {
     display: none;
+}
+
+#navigation.nav-mobile {
+    margin-bottom: 0;
+    width: 100%;
+    border-bottom: 1px solid #bfbfbf;
 }
 
 /* END Blog styles */
@@ -431,8 +453,9 @@ just like the text. */
     padding: 0;
 }
 
+/* On mobile I want the sidebare widgets to be 100% width, so I have removed the padding. */
 #sidebar .widget {
-    padding: 1.75em 1.8em;
+    padding: 1.75em 0;
     border-bottom: 1px solid #BFBFBF;
 }
 
@@ -728,12 +751,20 @@ a few unneccesary borders. */
 
     /* Sidebar styles */
 
+    /* On desktop I want the sidebare widgets to have some padding on the sides, 
+    so I have added it again. */
+    #sidebar .widget {
+        padding: 1.75em 1.8em;
+        border-bottom: 1px solid #BFBFBF;
+    }
+    
     /* END Sidebar */
 
     /* Blog styles */
 
     .nav-desktop {
         display: block;
+        border-bottom: 1px solid #bfbfbf;
     }
 
     .nav-mobile {
