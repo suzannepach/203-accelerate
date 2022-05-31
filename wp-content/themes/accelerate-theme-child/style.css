@@ -447,16 +447,18 @@ I have made added to of those nav bars on index.php. One to show on mobile, abov
 
 /* Blog sidebar styles  */
 
-/* On the original site the sidebar wouldn't show on mobile. Now I have changed it so it will show under the blog. */
+/* On the original site the sidebar wouldn't show on mobile. Now I have changed it so it will show under the blog. 
+I have also added a light background colour. */
 #sidebar {
     display: block;
     padding: 0;
+    background-color: #EAFEFD;
 }
 
-/* On mobile I want the sidebare widgets to be 100% width, so I have removed the padding. */
+/* I have made sure each sidebar item has some padding and a border at the bottom. */
 #sidebar .widget {
-    padding: 1.75em 0;
     border-bottom: 1px solid #BFBFBF;
+    padding: 1.75em 1.8em;
 }
 
 #sidebar .widget:first-of-type {
@@ -750,13 +752,6 @@ a few unneccesary borders. */
     /* END About styles */
 
     /* Sidebar styles */
-
-    /* On desktop I want the sidebare widgets to have some padding on the sides, 
-    so I have added it again. */
-    #sidebar .widget {
-        padding: 1.75em 1.8em;
-        border-bottom: 1px solid #BFBFBF;
-    }
     
     /* END Sidebar */
 
