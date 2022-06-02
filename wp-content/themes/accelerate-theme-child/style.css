@@ -457,7 +457,7 @@ I have also added a light background colour. */
 #sidebar {
     display: block;
     padding: 0;
-    background-color: #EAFEFD;
+    background-color: #f3fffd;
 }
 
 /* I have made sure each sidebar item has some padding and a border at the bottom. */
