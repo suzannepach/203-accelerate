@@ -438,14 +438,32 @@ of the last post entry. */
 /* On the blog overview page there is a nav bar at the bottom to navigate the different pages.
 I have made added to of those nav bars on index.php. One to show on mobile, above the sidebar 
 (which on mobile is at the bottom) and one for desktop (which is under the blogs and the sidebar. */
-.nav-desktop {
+#navigation.nav-desktop {
     display: none;
 }
 
+/* I have added flex to lay out the left and right links and the pagination text (on mobile and desktop),
+because otherwise when there is no left or right link (on first or last page)
+the other parts are too much to the left or right. */
 #navigation.nav-mobile {
+    display: flex;
     margin-bottom: 0;
     width: 100%;
     border-bottom: 1px solid #bfbfbf;
+}
+
+#navigation.nav-mobile .left,
+#navigation.nav-mobile .pagination,
+#navigation.nav-mobile .right {
+    width: 33%;
+}
+
+#navigation.nav-mobile .left a {
+    float: left;
+}
+
+#navigation.nav-mobile .right a {
+    float: right;
 }
 
 /* END Blog styles */
@@ -786,14 +804,31 @@ I added !important */
     /* END Sidebar */
 
     /* Blog styles */
+    
+    #navigation.nav-mobile {
+        display: none;
+    }
 
-    .nav-desktop {
-        display: block;
+    /* I have added flex to lay out the left and right links and the pagination text,
+    because otherwise when there is no left or right link (on first or last page)
+    the other parts are too much to the left or right. */
+    #navigation.nav-desktop {
+        display: flex;
         border-bottom: 1px solid #bfbfbf;
     }
 
-    .nav-mobile {
-        display: none;
+    #navigation.nav-desktop .left,
+    #navigation.nav-desktop .pagination,
+    #navigation.nav-desktop .right {
+        width: 33%;
+    }
+
+    #navigation.nav-desktop .left a {
+        float: left;
+    }
+
+    #navigation.nav-desktop .right a {
+        float: right;
     }
 
     /* END Blog styles */
