@@ -578,6 +578,26 @@ a few unneccesary borders. */
 
 /* END Blog sidebar styles */
 
+/* Social sharing styles */
+
+/* The margin set by the plugin wouldn't be overridden, so 
+I added !important */
+.addtoany_content {
+    margin-top: 2em !important;
+    margin-bottom: .5em !important;
+}
+
+/* This removes padding in the left of the first social sharing button. */
+.addtoany_list a:first-of-type {
+    padding-left: 0;
+}
+
+.entry-footer {
+    margin-top: 0;
+}
+
+/* END Social sharing styles */
+
 /* Media Queries */
 @media (min-width: 768px) {
 
