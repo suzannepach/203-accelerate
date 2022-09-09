@@ -494,7 +494,8 @@ I have also added a light background colour. */
 }
 
 /* Styles Newsletter sign up form */
-#primary-sidebar #block-4.widget {
+/* #primary-sidebar #block-4.widget { */
+#primary-sidebar aside:nth-child(3).widget {
     padding-top: 1.75em;
     padding-bottom: 1.75em;
     border-bottom: 1px solid #BFBFBF;
@@ -503,7 +504,8 @@ I have also added a light background colour. */
 /* Above the signup form an empty p is added with some javascript for Mailchimp
 and under the form an empty p.
 I don't really understand why they are there, but this code removes their margin. */
-#primary-sidebar #block-4.widget p {
+/* #primary-sidebar #block-4.widget p { */
+#primary-sidebar aside:nth-child(3).widget p {
     margin: 0;
 }
 
@@ -557,7 +559,8 @@ I don't really understand why they are there, but this code removes their margin
 /* I had to change some padding/margins, because the events part in the sidebar is 
 actually 4 different widgets, so there was too much padding/margin and
 a few unneccesary borders. */
-#primary-sidebar #block-6 {
+/* #primary-sidebar #block-6 { */
+#primary-sidebar aside:nth-child(7) {
     padding-bottom: 0;
     border-bottom: 0;
 }
@@ -573,7 +576,8 @@ a few unneccesary borders. */
     margin-bottom: 0;
 }
 
-#primary-sidebar #block-9 {
+/* #primary-sidebar #block-9 { */
+#primary-sidebar aside:nth-child(10) {
     padding-bottom: 1.75em;
 }
 
@@ -581,16 +585,19 @@ a few unneccesary borders. */
 actually 2 different widgets, so there was too much padding/margin and
 a few unneccesary borders. */ 
 
-#primary-sidebar #block-12 {
+/* #primary-sidebar #block-12 { */
+#primary-sidebar aside:nth-child(1) {
     padding-bottom: 0;
     border-bottom: 0;
 }
 
-#primary-sidebar #block-10 {
+/* #primary-sidebar #block-10 { */
+#primary-sidebar aside:nth-child(2) {
     padding-top: 0;
 }
 
-#primary-sidebar #block-10 p {
+/* #primary-sidebar #block-10 p { */
+#primary-sidebar aside:nth-child(2) p {
     margin-bottom: 0;
 }
 

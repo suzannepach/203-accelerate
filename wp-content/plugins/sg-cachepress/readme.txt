@@ -289,6 +289,58 @@ You can exclude images from Lazy Load using the following filter:
 		return $classes;
 	}
 
+You can exclude specific post type from Lazy Load using the following filter:
+
+	add_filter( 'sgo_lazy_load_exclude_post_types', 'exclude_lazy_load_from_post_type' );
+	function exclude_lazy_load_from_post_type( $post_types ) {
+		// Add the post type that you want to exclude from using lazy load.
+		$post_types[] = 'post-type';
+
+		return $post_types;
+	}
+
+You can exclude a specific url from Lazy Load using the following filter:
+
+	add_filter( 'sgo_lazy_load_exclude_urls', 'exclude_lazy_load_for_url' );
+	function exclude_lazy_load_for_url( $excluded_urls ) {
+		// Add the url that you want to exclude from using lazy load.
+		$excluded_urls[] = 'http://mydomain.com/page-slug';
+
+		return $excluded_urls;
+	}
+
+With these new filters you can exclude specific assets from being lazy loaded. Keep in mind that using those filters can reduce perfomance in some cases.
+
+You can use this filter for excluding specific images by adding their source url:
+
+	add_filter( 'sgo_lazy_load_exclude_images', 'exclude_images_from_lazy_load );
+	function exclude_images_from_lazy_load( $excluded_images ) {
+		// Add the src url of the image that you want to exclude from using lazy load.
+		$excluded_images[] = 'http://mydomain.com/wp-content/uploads/your-image.jpeg';
+
+		return $excluded_images;
+	}
+
+You can use this filter for excluding specific videos by adding their source url:
+
+	add_filter( 'sgo_lazy_load_exclude_videos', 'exclude_videos_from_lazy_load );
+	function exclude_videos_from_lazy_load( $excluded_videos ) {
+		// Add the src url of the video that you want to exclude from using lazy load.
+		$excluded_videos[] = 'http://mydomain.com/wp-content/uploads/your-video.mp4';
+
+		return $excluded_videos;
+	}
+
+You can use this filter for excluding specific iframe by adding their source url:
+
+	add_filter( 'sgo_lazy_load_exclude_iframe', 'exclude_iframe_from_lazy_load );
+	function exclude_iframe_from_lazy_load( $excluded_iframe ) {
+		// Add the src url of the iframe that you want to exclude from using lazy load.
+		$excluded_iframe[] = 'http://mydomain.com/wp-content/uploads/iframe-src.mp4';
+
+		return $excluded_iframe;
+	}
+
 = WP-CLI Support = 
 
 In version 5.0 we've added full WP-CLI support for all plugin options and functionalities. 
@@ -375,6 +427,46 @@ Our plugin uses a cookie in order to function properly. It does not store person
 1. Go to Plugins -> Installed Plugins and click the 'Activate' link under the WordPress SiteGround Optimizer listing
 
 == Changelog ==
+= Version 7.2.1 =
+Release Date: August 10th, 2022
+
+* Improved Cloudflare detection
+
+= Version 7.2.0 =
+Release Date: July 14th, 2022
+
+* Brand New Design
+* Improved Dynamic cache purge
+* Improved data collection
+
+= Version 7.1.5 =
+Release Date: June 23rd, 2022
+
+* Improved Memcached service
+
+= Version 7.1.4 =
+Release Date: June 21th, 2022
+
+* Improved older PHP versions support
+
+= Version 7.1.3 =
+Release Date: June 20th, 2022
+
+* NEW Lazy Load exclude filters
+* Improved Max Image Width
+* Improved .htaccess modifications checks
+* Improved File-Based cache Elementor support
+* Improved Password Protected pages excluded from File-Based caching by default
+* Improved Single Image compression functionality
+* Improved Image Optimization for custom image sizes
+* Improved Divi theme support
+* Minor fixes
+
+= Version 7.1.2 =
+Release Date: June 16th, 2022
+
+* Adding Memcached UNIX socket support
+* Improved data collection
 
 = Version 7.1.1 =
 Release Date: May 20th, 2022

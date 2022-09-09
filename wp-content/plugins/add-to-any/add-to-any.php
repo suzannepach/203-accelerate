@@ -3,7 +3,7 @@
  * Plugin Name: AddToAny Share Buttons
  * Plugin URI: https://www.addtoany.com/
  * Description: Share buttons for your pages including AddToAny's universal sharing button, Facebook, Twitter, LinkedIn, Pinterest, WhatsApp and many more.
- * Version: 1.8.4
+ * Version: 1.8.5
  * Author: AddToAny
  * Author URI: https://www.addtoany.com/
  * Text Domain: add-to-any
@@ -918,81 +918,86 @@ add_shortcode( 'addtoany', 'A2A_SHARE_SAVE_shortcode' );
 
 
 function A2A_SHARE_SAVE_stylesheet() {
+	// Hook to disable script output.
+	// Example: add_filter( 'addtoany_script_disabled', '__return_true' );
+	$script_disabled = apply_filters( 'addtoany_script_disabled', false );
+	
+	if (is_admin() || $script_disabled)
+		return;
+
 	global $A2A_SHARE_SAVE_options;
 	
 	$options = $A2A_SHARE_SAVE_options;
 	
-	if ( ! is_admin() ) {
-		// Prepare inline CSS.
-		$inline_css = '';
-		$is_amp = function_exists( 'is_amp_endpoint' ) && is_amp_endpoint() ? true : false;
-		$html_amp = $is_amp ? 'html[amp] ' : '';
+	// Prepare inline CSS.
+	$inline_css = '';
+	$is_amp = function_exists( 'is_amp_endpoint' ) && is_amp_endpoint() ? true : false;
+	$html_amp = $is_amp ? 'html[amp] ' : '';
 
-		// Load AMP stylesheet first so its declarations are overridable by the main stylesheet.
-		if ( $is_amp ) {
-			wp_enqueue_style( 'addtoany-amp', plugins_url('/addtoany.amp.css', __FILE__ ), false, '1.0' );
-		}
+	// Load AMP stylesheet first so its declarations are overridable by the main stylesheet.
+	if ( $is_amp ) {
+		wp_enqueue_style( 'addtoany-amp', plugins_url('/addtoany.amp.css', __FILE__ ), false, '1.0' );
+	}
 
-		// Load main stylesheet last so its declarations can override the AMP stylesheet.
-		wp_enqueue_style( 'addtoany', plugins_url('/addtoany.min.css', __FILE__ ), false, '1.16' );
+	// Load main stylesheet last so its declarations can override the AMP stylesheet.
+	wp_enqueue_style( 'addtoany', plugins_url('/addtoany.min.css', __FILE__ ), false, '1.16' );
+	
+	$vertical_type = ( isset( $options['floating_vertical'] ) && 'none' != $options['floating_vertical'] ) ? $options['floating_vertical'] : false;
+	$horizontal_type = ( isset( $options['floating_horizontal'] ) && 'none' != $options['floating_horizontal'] ) ? $options['floating_horizontal'] : false;
+	
+	// If vertical bar is enabled
+	if ( $vertical_type && 
+		// and respsonsiveness is enabled
+		( ! isset( $options['floating_vertical_responsive'] ) || '-1' != $options['floating_vertical_responsive'] )
+	) {
+		// Get min-width for media query.
+		$vertical_max_width = ( 
+			isset( $options['floating_vertical_responsive_max_width'] ) && 
+			is_numeric( $options['floating_vertical_responsive_max_width'] ) 
+		) ? $options['floating_vertical_responsive_max_width'] : '980';
 		
-		$vertical_type = ( isset( $options['floating_vertical'] ) && 'none' != $options['floating_vertical'] ) ? $options['floating_vertical'] : false;
-		$horizontal_type = ( isset( $options['floating_horizontal'] ) && 'none' != $options['floating_horizontal'] ) ? $options['floating_horizontal'] : false;
+		// Set media query.
+		$inline_css .= '@media screen and (max-width:' . $vertical_max_width . 'px){' . "\n"
+			. $html_amp . '.a2a_floating_style.a2a_vertical_style{display:none;}' . "\n"
+			. '}';
+	}
+	
+	// If horizontal bar is enabled
+	if ( $horizontal_type && 
+		// and respsonsiveness is enabled
+		( ! isset( $options['floating_horizontal_responsive'] ) || '-1' != $options['floating_horizontal_responsive'] )
+	) {
+		// Get max-width for media query.
+		$horizontal_min_width = ( 
+			isset( $options['floating_horizontal_responsive_min_width'] ) && 
+			is_numeric( $options['floating_horizontal_responsive_min_width'] ) 
+		) ? $options['floating_horizontal_responsive_min_width'] : '981';
 		
-		// If vertical bar is enabled
-		if ( $vertical_type && 
-			// and respsonsiveness is enabled
-			( ! isset( $options['floating_vertical_responsive'] ) || '-1' != $options['floating_vertical_responsive'] )
-		) {
-			// Get min-width for media query.
-			$vertical_max_width = ( 
-				isset( $options['floating_vertical_responsive_max_width'] ) && 
-				is_numeric( $options['floating_vertical_responsive_max_width'] ) 
-			) ? $options['floating_vertical_responsive_max_width'] : '980';
-			
-			// Set media query.
-			$inline_css .= '@media screen and (max-width:' . $vertical_max_width . 'px){' . "\n"
-				. $html_amp . '.a2a_floating_style.a2a_vertical_style{display:none;}' . "\n"
-				. '}';
-		}
+		// Insert newline if there is inline CSS already.
+		$inline_css = 0 < strlen( $inline_css ) ? $inline_css . "\n" : $inline_css;
 		
-		// If horizontal bar is enabled
-		if ( $horizontal_type && 
-			// and respsonsiveness is enabled
-			( ! isset( $options['floating_horizontal_responsive'] ) || '-1' != $options['floating_horizontal_responsive'] )
-		) {
-			// Get max-width for media query.
-			$horizontal_min_width = ( 
-				isset( $options['floating_horizontal_responsive_min_width'] ) && 
-				is_numeric( $options['floating_horizontal_responsive_min_width'] ) 
-			) ? $options['floating_horizontal_responsive_min_width'] : '981';
-			
-			// Insert newline if there is inline CSS already.
-			$inline_css = 0 < strlen( $inline_css ) ? $inline_css . "\n" : $inline_css;
-			
-			// Set media query.
-			$inline_css .= '@media screen and (min-width:' . $horizontal_min_width . 'px){' . "\n"
-				. $html_amp . '.a2a_floating_style.a2a_default_style{display:none;}' . "\n"
-				. '}';
-		}
+		// Set media query.
+		$inline_css .= '@media screen and (min-width:' . $horizontal_min_width . 'px){' . "\n"
+			. $html_amp . '.a2a_floating_style.a2a_default_style{display:none;}' . "\n"
+			. '}';
+	}
+	
+	// If additional CSS (custom CSS for AddToAny) is set
+	if ( ! empty( $options['additional_css'] ) ) {
+		$custom_css = stripslashes( $options['additional_css'] );
 		
-		// If additional CSS (custom CSS for AddToAny) is set
-		if ( ! empty( $options['additional_css'] ) ) {
-			$custom_css = stripslashes( $options['additional_css'] );
-			
-			// Insert newline if there is inline CSS already.
-			$inline_css = 0 < strlen( $inline_css ) ? $inline_css . "\n" : $inline_css;
-			
-			$inline_css .= $custom_css;
-		}
+		// Insert newline if there is inline CSS already.
+		$inline_css = 0 < strlen( $inline_css ) ? $inline_css . "\n" : $inline_css;
 		
-		// If there is inline CSS
-		if ( 0 < strlen( $inline_css ) ) {
-			// Strip any HTML tags.
-			$inline_css = strip_tags( $inline_css );
-			// Insert inline CSS.
-			wp_add_inline_style( 'addtoany', $inline_css );
-		}
+		$inline_css .= $custom_css;
+	}
+	
+	// If there is inline CSS
+	if ( 0 < strlen( $inline_css ) ) {
+		// Strip any HTML tags.
+		$inline_css = strip_tags( $inline_css );
+		// Insert inline CSS.
+		wp_add_inline_style( 'addtoany', $inline_css );
 	}
 }
 

@@ -148,7 +148,7 @@ class Supercacher {
 	 * @return bool True on success, false on failure.
 	 */
 	public static function purge_cache() {
-		return Supercacher::get_instance()->purge_everything();
+		return self::get_instance()->purge_everything();
 	}
 
 	/**
@@ -199,9 +199,13 @@ class Supercacher {
 	 * @return bool True if the cache is deleted, false otherwise.
 	 */
 	public static function purge_cache_request( $url, $include_child_paths = true ) {
-		// Check if the user is hosted on SiteGround.
+		// Check if the user has file cache enabled, clear the file cache and bail if the user is not hosted on SiteGround.
+		if ( Options::is_enabled( 'siteground_optimizer_file_caching' ) ) {
+			File_Cacher::get_instance()->purge_cache_request( $url, $include_child_paths );
+		}
+
 		if ( ! Helper_Service::is_siteground() ) {
-			return;
+			return true;
 		}
 
 		// Bail if the url is empty.
@@ -231,29 +235,72 @@ class Supercacher {
 			$main_path .= '(.*)';
 		}
 
-		// Flush the cache.
-		exec(
-			sprintf(
-				"site-tools-client domain-all update id=%s flush_cache=1 path='%s'",
-				$hostname,
-				$main_path
+		// Flush the cache for the URL.
+		return self::call_site_tools_client( $hostname, $main_path, $url );
+	}
+
+	/**
+	 * Call site tools client to purge the cache.
+	 *
+	 * @param      string $hostname  The domain which cache will be flushed.
+	 * @param      string $main_path The path to be flushed.
+	 * @param      string $main_path The URL to be flushed.
+	 *
+	 * @return     bool              True if the cache is purged successfully, false otherwise.
+	 */
+	public static function call_site_tools_client( $hostname, $main_path, $url ) {
+		// Full path to the Unix socket.
+		$sock_addr = '/chroot/tmp/site-tools.sock';
+
+		// Bail if the socket does not exists.
+		if ( ! file_exists( $sock_addr ) ) {
+			return false;
+		}
+
+		// Open unix socket connection.
+		$fp = stream_socket_client( 'unix://' . $sock_addr, $errno, $errstr, 5 );
+
+		// Bail if the connection fails.
+		if ( false === $fp ) {
+			return false;
+		}
+
+		// Build the request params.
+		$request = array(
+			'api' => 'domain-all',
+			'cmd' => 'update',
+			'settings' => array( 'json' => 1 ),
+			'params' => array(
+				'flush_cache' => '1',
+				'id'          => $hostname,
+				'path'        => $main_path,
 			),
-			$output,
-			$status
 		);
 
-		// Clear the file cache as well, if enabled.
-		if ( Options::is_enabled( 'siteground_optimizer_file_caching' ) ) {
-			File_Cacher::get_instance()->purge_cache_request( $url, $include_child_paths );
-		}
+		// Sent the params to the Unix socket.
+		fwrite( $fp, json_encode( $request, JSON_FORCE_OBJECT ) . "\n" );
+
+		// Fetch the response.
+		$response = fgets( $fp, 32 * 1024 );
+
+		// Close the connection.
+		fclose( $fp );
+
+		// Decode the response.
+		$result = @json_decode( $response, true );
 
 		do_action( 'siteground_optimizer_flush_cache', $url );
 
-		if ( 0 === $status ) {
-			return true;
+		if ( false === $result ) {
+			return false;
 		}
 
-		return false;
+		if ( isset( $result['err_code'] ) ) {
+			error_log( 'There was an issue purging the cache for this URL: ' . $url . '. Error code: ' . $result['err_code'] . '. Message: ' . $result['message'] . '.' );
+			return false;
+		}
+
+		return true;
 	}
 
 	/**

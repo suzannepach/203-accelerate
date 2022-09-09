@@ -81,6 +81,41 @@ With this toolset you can harden your WordPress аpplication and keep it safe fr
 
 = Lock and Protect System Folders =
 Lock and Protect System Folders allows you to block any malicious or unauthorized scripts to be executed in your applications system folders. 
+If the Lock and Protect System Folders option blocks a specific script used by another plugin on the website, you can easily whitelist the specific script by using the snippets provided below.
+
+Use this one to whitelist a file in the wp_includes folder:
+`
+add_filter( 'sgs_whitelist_wp_includes' , 'whitelist_file_in_wp_includes' );
+function whitelist_file_in_wp_includes( $whitelist ) {
+
+    $whitelist[] = 'file_name.php';
+    $whitelist[] = 'another_file_name.php';
+
+    return $whitelist;
+}
+`
+
+Use this one to whitelist a file in the wp_uploads folder:
+`
+add_filter( 'sgs_whitelist_wp_uploads' , 'whitelist_file_in_wp_uploads' );
+function whitelist_file_in_wp_uploads( $whitelist ) {
+    $whitelist[] = 'file_name.php';
+    $whitelist[] = 'another_file_name.php';
+
+    return $whitelist;
+}
+`
+
+Use this one the whitelist a file in the wp_content folder:
+`
+add_filter( 'sgs_whitelist_wp_content' , 'whitelist_file_in_wp_content' );
+function whitelist_file_in_wp_content( $whitelist ) {
+    $whitelist[] = 'file_name.php';
+    $whitelist[] = 'another_file_name.php';
+
+    return $whitelist;
+}
+`
 
 = Hide WordPress Version =
 When using Hide WordPress Version you can avoid being marked for mass attacks due to version specific vulnerabilities. 
@@ -175,6 +210,26 @@ In version 1.0.2 we've added full WP-CLI support for all plugin options and func
 
 == Changelog ==
 
+= Version 1.3.0 =
+Release Date: July 14th, 2022
+
+* Brand New Design
+* Improved 2FA Authentication compatibility with Elementor custom login pages
+* Improved data collection
+* Minor fixes
+
+= Version 1.2.9 =
+Release Date: June 20th, 2022
+
+* NEW Filters for "Lock and Protect System Folders" excludes
+* Improved IP Ranges support
+* Improved Blocked IP addresses list
+* Improved Delete the Default Readme.html
+* Improved 2FA Authentication validation
+* Improved 2FA Authentication support for "My Account" login
+* Improved Data Collection
+* Minor fixes
+
 = Version 1.2.8 =
 Release Date: May 18th, 2022
 
@@ -195,7 +250,7 @@ Release Date: April 6th, 2022
 
 * 2FA Authentication refactoring
 * Improved Weekly Emails
-* HSTS service deprecated
+* HTST service deprecated
 
 = Version 1.2.4 =
 Release Date: March 16th, 2022

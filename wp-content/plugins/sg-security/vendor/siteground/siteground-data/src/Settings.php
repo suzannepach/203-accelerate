@@ -8,18 +8,31 @@ if ( ! class_exists( 'SiteGround_Data/Settings' ) ) {
 	class Settings {
 
 		/**
-		 * The Tracking API url.
+		 * The unique instance of the data setting.
 		 *
-		 * @var string
+		 * @var Settings
 		 */
-		public $api_url = false;
+		private static $instance;
+
+		/**
+		 * Gets an instance of our data setting.
+		 *
+		 * @return Settings
+		 */
+		public static function get_instance() {
+			if ( null === self::$instance ) {
+				self::$instance = new self();
+			}
+
+			return self::$instance;
+		}
 
 		/**
 		 * The Tracking API url.
 		 *
 		 * @var string
 		 */
-		public $api_checker_url = 'https://sgwpdemo.com/jsons/data-collector.json';
+		const API_URL = 'https://wpreports.sgvps.net';
 
 		/**
 		 * The default tracking period in days.
@@ -84,32 +97,6 @@ if ( ! class_exists( 'SiteGround_Data/Settings' ) ) {
 		);
 
 		/**
-		 * The constructor.
-		 *
-		 * @since 1.0.0
-		 */
-		public function __construct() {
-			if ( 0 === intval( get_option( 'siteground_data_consent', 0 ) ) ) {
-				return;
-			}
-
-			$this->api_url = get_option( 'siteground_data_api_url', false );
-
-			add_action( 'admin_init', array( $this, 'handle_settings_update' ) );
-
-			// Hook on wp login to send data, when the cron is disabled.
-			if ( defined( 'DISABLE_WP_CRON' ) && 1 === intval( DISABLE_WP_CRON ) ) {
-				add_action( 'wp_login', array( $this, 'send_data_on_login' ) );
-			}
-
-			// Add the cron callback.
-			add_action( 'siteground_data_collector_cron', array( $this, 'check_for_old_data' ), 9 );
-			add_action( 'siteground_data_collector_cron', array( $this, 'send_data' ), 10 );
-			// Add the custom cron interval.
-			add_action( 'cron_schedules', array( $this, 'add_siteground_data_interval' ) );
-		}
-
-		/**
 		 * Handle settings page update
 		 *
 		 * @since  1.0.0
@@ -142,18 +129,14 @@ if ( ! class_exists( 'SiteGround_Data/Settings' ) ) {
 		/**
 		 * Prepare the tracking data.
 		 *
-		 * @param int $retry Whether to retry if the first try fails.
+		 * @param int   $retry    Whether to retry if the first try fails.
+		 * @param array $old_data Locally stored data to sent to the API when ready.
 		 *
 		 * @since  1.0.0
 		 */
-		public function send_data( $retry = 0 ) {
+		public function send_data( $retry = 0, $old_data = array() ) {
 			// Prepare the data.
-			$data = $this->prepare_data();
-
-			// Bail if the api is not ready to collect data.
-			if ( false === $this->check_if_api_is_ready() ) {
-				return $this->store_data_locally( $data );
-			}
+			$data = ! empty( $old_data ) ? $old_data : $this->prepare_data();
 
 			// Refresh the auth token if we retry to send the statistics.
 			if ( 1 === $retry ) {
@@ -162,8 +145,9 @@ if ( ! class_exists( 'SiteGround_Data/Settings' ) ) {
 
 			// Prepare the resposne.
 			$response = wp_remote_post(
-				$this->api_url . '/collect_plugin_data',
+				self::API_URL . '/collect_plugin_data',
 				array(
+					'timeout' => 10,
 					'headers' => array(
 						'Content-Type' => 'application/json',
 						'X-auth-token' => $this->get_auth_token(),
@@ -175,14 +159,14 @@ if ( ! class_exists( 'SiteGround_Data/Settings' ) ) {
 				)
 			);
 
-			switch ( wp_remote_retrieve_response_code( $response ) ) {
-				// Maybe retry if the status code is not 200.
-				case 401:
-					return 0 === $retry ? $this->send_data( 1 ) : false;
-				case 200:
-					update_option( $this->tracking_option, time() );
-					return true;
+			// Retry if the request fails.
+			if ( 200 !== wp_remote_retrieve_response_code( $response ) ) {
+				return wp_schedule_single_event( strtotime( '+' . rand( 12, 24 ) . ' hours' ), 'siteground_data_collector_cron', array( 1 ) );
 			}
+
+			update_option( $this->tracking_option, time() );
+			return true;
+
 		}
 
 		/**
@@ -199,15 +183,8 @@ if ( ! class_exists( 'SiteGround_Data/Settings' ) ) {
 				return;
 			}
 
-			// Bail if the api is not ready to collect data.
-			if ( false === $this->check_if_api_is_ready() ) {
-				return;
-			}
-
-			// Send each data entry to the api.
-			foreach ( $data as $entry ) {
-				$this->send_data( $entry );
-			}
+			// Send the data entry to the api.
+			$this->send_data( 0, $data );
 
 			delete_option( 'siteground_data_store' );
 		}
@@ -242,7 +219,6 @@ if ( ! class_exists( 'SiteGround_Data/Settings' ) ) {
 
 			return $data;
 		}
-
 
 		/**
 		 * Get the last time we've sent data to the API
@@ -329,6 +305,10 @@ if ( ! class_exists( 'SiteGround_Data/Settings' ) ) {
 		 */
 		public function get_hosting_provider() {
 
+			if ( $this->is_siteground() ) {
+				return 'SiteGround';
+			}
+
 			if ( class_exists( 'WPaaS\Plugin' ) ) {
 				return 'GoDaddy';
 			}
@@ -352,9 +332,6 @@ if ( ! class_exists( 'SiteGround_Data/Settings' ) ) {
 				'wpe-backend'                      => 'WP Engine',
 				'wp engine'                        => 'WP Engine',
 				'x-kinsta-cache'                   => 'Kinsta',
-				'b7440e60b07ee7b8044761568fab26e8' => 'SiteGround',
-				'624d5be7be38418a3e2a818cc8b7029b' => 'SiteGround',
-				'6b7412fb82ca5edfd0917e3957f05d89' => 'SiteGround',
 				'x-github-request'                 => 'GitHub',
 				'alproxy'                          => 'AlwaysData',
 				'flywheel'                         => 'Flywheel',
@@ -446,7 +423,7 @@ if ( ! class_exists( 'SiteGround_Data/Settings' ) ) {
 			$token = get_option( 'siteground_data_token', false );
 
 			// Return the token if exists in database.
-			if ( ! empty( $tken ) ) {
+			if ( ! empty( $token ) ) {
 				return $token;
 			}
 
@@ -464,8 +441,9 @@ if ( ! class_exists( 'SiteGround_Data/Settings' ) ) {
 		public function refresh_auth_token() {
 			// Get a new token from the api.
 			$response = wp_remote_post(
-				$this->api_url . '/auth/get_authenticated_response',
+				self::API_URL . '/auth/get_authenticated_response',
 				array(
+					'timeout' => 10,
 					'body' => json_encode(
 						array( 'url' => home_url() )
 					),
@@ -496,7 +474,7 @@ if ( ! class_exists( 'SiteGround_Data/Settings' ) ) {
 		}
 
 		/**
-		 * Schedule a cron jon to collect the data.
+		 * Schedule a cron job to collect the data.
 		 *
 		 * @since  1.0.0
 		 */
@@ -523,57 +501,19 @@ if ( ! class_exists( 'SiteGround_Data/Settings' ) ) {
 		}
 
 		/**
-		 * Check if the api is ready to collect data.
+		 * Checks if the plugin run on the new SiteGround interface.
 		 *
 		 * @since  1.0.0
 		 *
-		 * @return bool True if the api is ready, false otherwise.
+		 * @return boolean True/False.
 		 */
-		public function check_if_api_is_ready() {
-			// Bail if we've detected that the api is ready.
-			if ( 1 === intval( get_option( 'siteground_data_api_ready', 0 ) ) ) {
-				return true;
+		public function is_siteground() {
+			// Bail if open_basedir restrictions are set, and we are not able to check certain directories.
+			if ( ! empty( ini_get( 'open_basedir' ) ) ) {
+				return 0;
 			}
 
-			$response = wp_remote_get( $this->api_checker_url );
-
-			if ( 200 !== wp_remote_retrieve_response_code( $response ) ) {
-				return false;
-			}
-
-			$body = json_decode( wp_remote_retrieve_body( $response ), true );
-
-			// Bail if the api is not ready yet.
-			if ( 0 === intval( $body['ready'] ) ) {
-				return false;
-			}
-
-			// Bail if the api url is not provided.
-			if ( empty( $body['api_url'] ) ) {
-				return false;
-			}
-
-			update_option( 'siteground_data_api_ready', 1 );
-			update_option( 'siteground_data_api_url', $body['api_url'] );
-
-			return true;
-		}
-
-		/**
-		 * Store the data locally, since the api is not ready yet.
-		 *
-		 * @param array $latest_data An array of latest data.
-		 *
-		 * @since  1.0.0
-		 */
-		public function store_data_locally( $latest_data ) {
-			// Get the current data from the database.
-			$data = get_option( 'siteground_data_store', array() );
-			// Add the latest information.
-			$data[] = $latest_data;
-
-			// Update the datastore option.
-			update_option( 'siteground_data_store', $data );
+			return (int) ( @file_exists( '/etc/yum.repos.d/baseos.repo' ) && @file_exists( '/Z' ) );
 		}
 	}
 }

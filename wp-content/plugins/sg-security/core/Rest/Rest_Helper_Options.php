@@ -67,6 +67,7 @@ class Rest_Helper_Options extends Rest_Helper {
 				'xss_protection'      => intval( get_option( 'sg_security_xss_protection', 0 ) ),
 				'xss_protection'      => intval( get_option( 'sg_security_xss_protection', 0 ) ),
 				'hsts_protection'     => intval( get_option( 'sg_security_hsts_protection', 0 ) ),
+				'delete_readme'       => intval( get_option( 'sg_security_delete_readme', 0 ) ),
 			),
 			'login'    => array(
 				'sg2fa'             => intval( get_option( 'sg_security_sg2fa', 0 ) ),

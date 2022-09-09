@@ -84,12 +84,9 @@
                         style="color: #363636; font-weight: 700; font-family: 'Roboto', Arial, Helvetica, sans-serif; font-size: 26px; line-height: 38px; padding: 0 0 25px 0"><?php esc_html_e( 'Hey there,', 'sg-security' ); ?>
                     </td>
                 </tr>
-                <tr>
-                    <td class="body-text"
-                        style="color: #444444; font-weight: 400; font-family: 'Open Sans', Arial, Helvetica, sans-serif; font-size: 16px; line-height: 26px; padding: 0px 0 40px 0">
-                        <?php esc_html_e( 'Below you can find a summary of your site ', 'sg-security' ); ?><a href="<?php echo $args['domain']; ?>" target="_blank" rel="noreferrer" style="color: #22b8d1; text-decoration: none;"><?php echo $args['domain']; ?></a><?php esc_html_e( ' traffic for the past week. Visit the ', 'sg-security' ); ?><a href="<?php echo $args['activity_log_link'] ?>" target="_blank" rel="noreferrer" style="color: #22b8d1; text-decoration: none;"><?php esc_html_e( 'SiteGround Security Activity Log', 'sg-security' ); ?></a><?php esc_html_e( ' page in your WordPress admin for more information.', 'sg-security' ); ?>
-                    </td>
-                </tr>
+                <?php
+                    include_once( $args['intro_path'] );
+                ?>
                 <tr>
                     <td class="body-text"
                         style="color: #363636; font-weight: 700; font-family: 'Roboto', Arial, Helvetica, sans-serif; font-size: 20px; line-height: 30px; padding: 0 0 20px 0"><?php esc_html_e( 'Traffic summary for ', 'sg-security' ); echo $args['start_time'] ?> - <?php echo $args['end_time'] ?>
@@ -136,13 +133,9 @@
                         </table>
                     </td>
                 </tr>
-                <tr>
-                    <td class="body-text"
-                        style="color: #444444; font-style: italic; font-weight: 400; font-family: 'Open Sans', Arial, Helvetica, sans-serif; font-size: 16px; line-height: 26px; padding: 0px 0 25px 0">
-                        <?php esc_html_e( 'You can learn more about blocked traffic and how you can manage it in your plugin in our ', 'sg-security' ); ?><a href="https://www.siteground.com/tutorials/wordpress/sg-security/activity-log/" target="_blank" rel="noreferrer" style="color: #22b8d1; text-decoration: none;"><?php esc_html_e( 'Blocked Login and Visit Attempts ', 'sg-security' ); ?></a><?php esc_html_e( 'article.', 'sg-security' ); ?>
-                        </a>
-                    </td>
-                </tr>
+                <?php
+                    include_once( $args['learn_more_path'] );
+                ?>
                 <?php if (
                     0 === $args['is_siteground'] &&
                     1 === $args['agreed_email_consent']
@@ -152,7 +145,7 @@
                 <tr>
                     <td class="body-text"
                         style="color: #a4a4a4; font-weight: 400; font-family: 'Open Sans', Arial, Helvetica, sans-serif; font-size: 13px; line-height: 20px; padding: 0px 0 25px 0">
-                        <?php esc_html_e( 'You are receiving this email because you have a SiteGround security plugin installed on one or more of your WordPress sites. If you no longer wish to receive these emails, you can ', 'sg-security' ); ?><a href="<?php echo $args['activity_log_link']; ?>" target="_blank" rel="noreferrer" style="color: #22b8d1; text-decoration: none;"><?php esc_html_e( 'unsubscribe', 'sg-security' ); ?></a>.
+                        <?php echo $args['unsubscribe']['text']; ?><a href="<?php echo $args['activity_log_link']; ?>" target="_blank" rel="noreferrer" style="color: #22b8d1; text-decoration: none;"><?php echo $args['unsubscribe']['button']; ?></a>.
                     </td>
                 </tr>
 

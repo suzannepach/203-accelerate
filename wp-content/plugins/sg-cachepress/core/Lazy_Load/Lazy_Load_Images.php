@@ -43,6 +43,13 @@ class Lazy_Load_Images extends Abstract_Lazy_Load {
 	);
 
 	/**
+	 * Filter for excluding specific image.
+	 *
+	 * @var string
+	 */
+	public $exclude_assets_filter = 'sgo_lazy_load_exclude_images';
+
+	/**
 	 * Add classname to the html element.
 	 *
 	 * @since  5.6.0

@@ -133,6 +133,11 @@ class Email_Service {
 		// Generate the message body from the callable method.
 		$body = call_user_func( $this->sg_mail_body );
 
+		// Get the specific subject for the SGO email.
+		if ( 'sgo_campaign_cron' === $this->sg_cron_name ) {
+			$this->sg_mail_subject = call_user_func( $this->sg_mail_subject );
+		}
+
 		// Bail if we fail to build the body of the message.
 		if ( false === $body ) {
 			// Unschedule the event, so we don't make additional actions if the body is empty.

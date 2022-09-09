@@ -55,7 +55,6 @@ class Rest {
 		'disable_emojis',
 		// Media Optimization.
 		'lazyload_images',
-		'resize_images',
 		'backup_media',
 	);
 
@@ -401,6 +400,13 @@ class Rest {
 				'callback'            => array( $this->rest_helper_images, 'get_preview_images' ),
 				'permission_callback' => array( $this, 'check_permissions' ),
 				'args'                => array( array( 'id' ) ),
+			)
+		);
+		register_rest_route(
+			self::REST_NAMESPACE, '/image-resize', array(
+				'methods'             => 'PUT',
+				'callback'            => array( $this->rest_helper_images, 'manage_resize_images' ),
+				'permission_callback' => array( $this, 'check_permissions'),
 			)
 		);
 	}

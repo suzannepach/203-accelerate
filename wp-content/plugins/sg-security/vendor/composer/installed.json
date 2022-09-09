@@ -308,10 +308,13 @@
             "version_normalized": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://gitlab.siteground.com/wordpress/siteground-data.git",
-                "reference": "c1281835d47feb1f43d93ffa500e04856498362b"
+                "url": "git@gitlab.siteground.com:wordpress/siteground-data.git",
+                "reference": "8c6d89492847e43aeef2d5d0cb8860aa1e0220c3"
             },
-            "time": "2022-02-08T14:32:06+00:00",
+            "require": {
+                "siteground/siteground-helper": "master@dev"
+            },
+            "time": "2022-07-14T12:26:29+00:00",
             "default-branch": true,
             "type": "library",
             "installation-source": "source",
@@ -334,10 +337,10 @@
             "version_normalized": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://gitlab.siteground.com/wordpress/siteground-emails.git",
-                "reference": "c0a215b4d90ce33879f0df075b765057c951270a"
+                "url": "git@gitlab.siteground.com:wordpress/siteground-emails.git",
+                "reference": "488bda959c356fd330d0ecfb45885fc0f421f5b7"
             },
-            "time": "2022-03-15T11:33:14+00:00",
+            "time": "2022-05-04T06:04:35+00:00",
             "default-branch": true,
             "type": "library",
             "installation-source": "source",

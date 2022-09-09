@@ -345,10 +345,10 @@
             "version_normalized": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://gitlab.siteground.com/wordpress/siteground-data.git",
-                "reference": "c1281835d47feb1f43d93ffa500e04856498362b"
+                "url": "git@gitlab.siteground.com:wordpress/siteground-data.git",
+                "reference": "58ba53b8a5711c0cd33be62ebedf99cc2ec180ec"
             },
-            "time": "2022-02-08T14:32:06+00:00",
+            "time": "2022-06-09T12:55:21+00:00",
             "default-branch": true,
             "type": "library",
             "installation-source": "source",

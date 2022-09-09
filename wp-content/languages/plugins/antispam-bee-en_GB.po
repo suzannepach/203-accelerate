@@ -2,12 +2,12 @@
 # This file is distributed under the same license as the Plugins - Antispam Bee - Stable (latest release) package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2022-04-01 11:19:11+0000\n"
+"PO-Revision-Date: 2022-06-24 07:19:35+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: GlotPress/3.0.0-alpha.2\n"
+"X-Generator: GlotPress/4.0.0-alpha.1\n"
 "Language: en_GB\n"
 "Project-Id-Version: Plugins - Antispam Bee - Stable (latest release)\n"
 
@@ -32,7 +32,7 @@ msgstr "https://antispambee.pluginkollektiv.org/documentation/#block-comments-fr
 msgid "https://antispambee.pluginkollektiv.org/documentation/#trust-commenters-with-a-gravatar"
 msgstr "https://antispambee.pluginkollektiv.org/documentation/#trust-commenters-with-a-gravatar"
 
-#: antispam_bee.php:2604
+#: antispam_bee.php:2607
 msgid "Pingback"
 msgstr "Pingback"
 
@@ -69,7 +69,7 @@ msgid "Manually"
 msgstr "Manually"
 
 #. Plugin URI of the plugin
-#: antispam_bee.php:2659
+#: antispam_bee.php:2662
 msgid "https://antispambee.pluginkollektiv.org/"
 msgstr "https://antispambee.pluginkollektiv.org/"
 
@@ -77,14 +77,14 @@ msgstr "https://antispambee.pluginkollektiv.org/"
 #. Asian characters), enter 'characters_excluding_spaces' or
 #. 'characters_including_spaces'. Otherwise, enter 'words'. Do not translate
 #. into your own language.
-#: antispam_bee.php:1939
+#: antispam_bee.php:1942
 msgctxt "Word count type. Do not translate!"
 msgid "words"
 msgstr "words"
 
 #: inc/gui.class.php:537
 msgid "https://wordpress.org/support/plugin/antispam-bee"
-msgstr "https://en-gb.wordpress.org/support/plugin/antispam-bee/"
+msgstr "https://wordpress.org/support/plugin/antispam-bee"
 
 #: inc/gui.class.php:468
 msgid "If checked, you will delete all data Antispam Bee creates, when uninstalling the plugin."
@@ -94,11 +94,11 @@ msgstr "If checked, you will delete all data Antispam Bee creates, when uninstal
 msgid "Delete Antispam Bee data when uninstalling"
 msgstr "Delete Antispam Bee data when uninstalling"
 
-#: antispam_bee.php:2601
+#: antispam_bee.php:2604
 msgid "Trackback"
 msgstr "Trackback"
 
-#: antispam_bee.php:2599
+#: antispam_bee.php:2602
 msgid "Comment"
 msgstr "Comment"
 
@@ -395,47 +395,47 @@ msgstr "Antispam filter"
 msgid "Cheatin&#8217; uh?"
 msgstr "Cheatin&#8217; uh?"
 
-#: antispam_bee.php:2658
+#: antispam_bee.php:2661
 msgid "Notify message by Antispam Bee"
 msgstr "Notify message by Antispam Bee"
 
-#: antispam_bee.php:2654
+#: antispam_bee.php:2657
 msgid "Spam list"
 msgstr "Spam list"
 
-#: antispam_bee.php:2650
+#: antispam_bee.php:2653
 msgid "Approve it"
 msgstr "Approve it"
 
-#: antispam_bee.php:2644
+#: antispam_bee.php:2647
 msgid "Delete it"
 msgstr "Delete it"
 
-#: antispam_bee.php:2638
+#: antispam_bee.php:2641
 msgid "Trash it"
 msgstr "Trash it"
 
-#: antispam_bee.php:2629 inc/columns.class.php:28 inc/gui.class.php:453
+#: antispam_bee.php:2632 inc/columns.class.php:28 inc/gui.class.php:453
 msgid "Spam Reason"
 msgstr "Spam Reason"
 
-#: antispam_bee.php:2622
+#: antispam_bee.php:2625
 msgid "Type"
 msgstr "Type"
 
-#: antispam_bee.php:2614
+#: antispam_bee.php:2617
 msgid "Author"
 msgstr "Author"
 
-#: antispam_bee.php:2610
+#: antispam_bee.php:2613
 msgid "New spam comment on your post"
 msgstr "New spam comment on your post"
 
-#: antispam_bee.php:2594
+#: antispam_bee.php:2597
 msgid "Content removed by Antispam Bee"
 msgstr "Content removed by Antispam Bee"
 
-#: antispam_bee.php:2586
+#: antispam_bee.php:2589
 msgid "Comment marked as spam"
 msgstr "Comment marked as spam"
 

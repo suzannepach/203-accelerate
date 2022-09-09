@@ -156,4 +156,25 @@ class Rest_Helper_Images extends Rest_Helper {
 			)
 		);
 	}
+
+	/**
+	 * Sets the maximum image width.
+	 *
+	 * @since 7.0.10
+	 *
+	 * @param  object $request Request data.
+	 */
+	public function manage_resize_images( $request ) {
+		// Retrieve the value from the request.
+		$value = $this->validate_and_get_option_value( $request, 'image_resize' );
+
+		// Update the option in the DB.
+		update_option( 'siteground_optimizer_resize_images', intval( $value ) );
+
+		// Check if body of the request is empty, if so - send default response.
+		self::send_json_success(
+			Message_Service::get_response_message( 1, 'resize_images' ),
+			$this->images_optimizer->prepare_max_width_sizes()
+		);
+	}
 }

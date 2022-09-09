@@ -39,6 +39,13 @@ class Lazy_Load_Iframes extends Abstract_Lazy_Load {
 	);
 
 	/**
+	 * Filter for excluding specific iframe by source.
+	 *
+	 * @var string
+	 */
+	public $exclude_assets_filter = 'sgo_lazy_load_exclude_iframes';
+
+	/**
 	 * Add classname to the html element.
 	 *
 	 * @since  5.6.0

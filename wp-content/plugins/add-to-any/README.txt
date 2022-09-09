@@ -2,9 +2,9 @@
 Contributors: micropat, addtoany
 Tags: buttons, share, icons, social media, share buttons, sharing, share button, media, social, marketing, links, email, seo, woocommerce, google, linkedin, reddit, facebook, twitter, pinterest, whatsapp, instagram, youtube, share this, sharethis, feed
 Requires at least: 4.5
-Tested up to: 6.0
+Tested up to: 6.1
 Requires PHP: 5.6
-Stable tag: 1.8.4
+Stable tag: 1.8.5
 
 Share buttons for WordPress including the AddToAny sharing button, Facebook, Twitter, WhatsApp, Pinterest, Reddit, many more, and follow icons too.
 
@@ -346,6 +346,12 @@ Upload (or move) the `add-to-any` plugin directory into the `/wp-content/mu-plug
 
 == Changelog ==
 
+= 1.8.5 =
+* The `addtoany_script_disabled` hook now additionally disables the plugin's local JS & CSS
+* Update AddToAny core load detection in admin
+* Remove Google Bookmarks (discontinued by Google)
+* Remove other discontinued services
+
 = 1.8.4 =
 * Update admin for jQuery UI 1.13.0 in WordPress 5.9
 
@@ -373,7 +379,6 @@ Upload (or move) the `add-to-any` plugin directory into the `/wp-content/mu-plug
 * Load the local JS file asynchronously by default
 * Update allowed HTML output for the floating bars
 * A centered horizontal floating bar now requires WordPress 5.5.0+ (or some custom CSS)
-* The `addtoany_script_disabled` hook now additionally disables the plugin's local JS & CSS
 * Additional input validation & sanitization in admin
 * Additional output escaping
 

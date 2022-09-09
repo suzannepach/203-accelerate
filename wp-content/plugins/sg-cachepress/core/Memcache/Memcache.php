@@ -169,16 +169,28 @@ class Memcache {
 	 * @return bool True on retrieving exactly the value set, false otherwise.
 	 */
 	public function is_connection_working() {
-		// Tyr to get the port.
-		$port = $this->get_memcached_port();
+		// Do we have memcached UNIX socket?
+		$use_unix = 0;
+		$per_user_unix_socket = "/home/.tmp/memcached.sock";
+		$stat = @stat( $per_user_unix_socket );
+		if ( $stat !== false && ( $stat["mode"] & 0140000 ) == 0140000 ) {
+			// We have UNIX socket, use it
+			$addr = $per_user_unix_socket;
+			$port = 0;
+			$use_unix = 1;
+		}
 
-		// Bail if the port doesn't exists.
-		if ( empty( $port ) ) {
-			return false;
+		if ( ! $use_unix ) {
+			$addr = self::IP;
+			$port = $this->get_memcached_port();
+			// Bail if the port doesn't exists.
+			if ( empty( $port ) ) {
+				return false;
+			}
 		}
 
 		$memcache = new \Memcached();
-		$memcache->addServer( self::IP, $port );
+		$memcache->addServer( $addr, $port );
 		$memcache->set( 'SGCP_Memcached_Test', 'Test!1', 50 );
 
 		if ( 'Test!1' === $memcache->get( 'SGCP_Memcached_Test' ) ) {
@@ -319,9 +331,10 @@ class Memcache {
 			SELECT option_name
 			FROM $wpdb->options
 			WHERE autoload = 'yes'
-			AND option_name NOT IN ( " . implode( array_map( function( $item ) {
-				return "'" . $item . "'";
-			}, $excludes ), ',') . " )
+			AND option_name NOT IN ( " . implode( ',', array_map( function( $item ) {
+				return "'" . esc_sql( $item ) . "'";
+			}, $excludes )
+			) . " )
 			ORDER BY LENGTH(option_value) DESC
 			LIMIT 1"
 		);

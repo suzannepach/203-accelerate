@@ -69,6 +69,14 @@ class Activity_Log_Weekly_Emails extends Activity_Log_Helper {
 		// Get assets from remote server.
 		$assets = $weekly_emails->get_remote_assets();
 
+		// Bail if we do not get the templates.
+		if ( false === $assets ) {
+			return false;
+		}
+
+		// Sanitize paths.
+		$assets = $weekly_emails->prepare_paths( $assets );
+
 		// Mail template arguments.
 		$args = array(
 			'domain'               => Helper_Service::get_site_url(),
@@ -82,7 +90,12 @@ class Activity_Log_Weekly_Emails extends Activity_Log_Helper {
 			'total_bots'           => $total_bots,
 			'total_blocked_login'  => $total_blocked_login,
 			'total_blocked_visits' => $total_blocked_visits,
-			'email_image'          => is_array( $assets ) ? $assets['image'] : '',
+			'email_image'          => $assets['image'],
+			'email_body'           => $assets['email_body'],
+			'intro_path'           => $assets['intro_path'],
+			'learn_more_path'      => $assets['learn_more_path'],
+			'non_sg'               => $assets['non_sg'],
+			'unsubscribe'          => $assets['unsubscribe'],
 		);
 
 		// Turn on output buffering.
@@ -126,8 +139,20 @@ class Activity_Log_Weekly_Emails extends Activity_Log_Helper {
 		// Decode the json response.
 		$assets = json_decode( $body, true );
 
+		// Check if we need to return a specific locale assets.
+		if ( array_key_exists( $locale, $assets ) ) {
+			// Add the locale name so we skip re-use of get_locale in message builder.
+			$assets[ $locale ]['lang'] = $locale;
+
+			// Return the locale specific assets.
+			return $assets[ $locale ];
+		}
+
+		// Set the default locale.
+		$assets['default']['lang'] = 'default';
+
 		// Return the correct assets, title and marketing urls.
-		return array_key_exists( $locale, $assets) ? $assets[ $locale ] : $assets['default'];
+		return $assets['default'];
 	}
 
 	/**
@@ -237,5 +262,61 @@ class Activity_Log_Weekly_Emails extends Activity_Log_Helper {
 
 		// Return the data.
 		return $data;
+	}
+
+	/**
+	 * Prepare safe paths for templates.
+	 *
+	 * @since  1.3.0
+	 *
+	 * @param  array $assets The assets array from sgwpdemo.
+	 *
+	 * @return array $assets The assets array from sgwpdemo.
+	 */
+	private function prepare_paths( $assets ) {
+		// Set the default paths.
+		$default_paths = array(
+			'intro_path'      => \SG_Security\DIR . '/templates/partials/weekly-report/intro/default.php',
+			'learn_more_path' => \SG_Security\DIR . '/templates/partials/weekly-report/learn-more/default.php',
+		);
+
+		// Skip path traversal if any.
+		$file = str_replace(
+			'../',
+			'',
+			$assets['lang']
+		);
+
+		// Merge the default ones with the assets and send them if we have default locale.
+		if ( 'default' === $file ) {
+			return array_merge( $assets, $default_paths );
+		}
+
+		// Prepare path based on type and language.
+		$paths = preg_replace(
+			'~{LANG}~',
+			$file,
+			array(
+				'intro_path' => \SG_Security\DIR . '/templates/partials/weekly-report/intro/{LANG}.php',
+				'learn_more_path' => \SG_Security\DIR . '/templates/partials/weekly-report/learn-more/{LANG}.php',
+			)
+		);
+
+		// Loop the new paths.
+		foreach ( $paths as $type => $path ) {
+
+			// Check if the file exists.
+			if ( file_exists( $path ) ) {
+				// Add the new path based on language.
+				$assets[ $type ] = $path;
+				continue;
+			}
+
+			// Set the default one if the file is trying to traverse.
+			$assets[ $type ] = $default_paths[ $type ];
+		}
+
+		// Return the assets array.
+		return $assets;
 	}
 }

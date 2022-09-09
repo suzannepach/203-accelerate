@@ -89,6 +89,9 @@ class Directory_Service extends Abstract_Htaccess_Service {
 	 * @return string $content The modified rule, containing the whitelist.
 	 */
 	public function do_replacement( $content ) {
+		// Add custom whitelist.
+		$this->types[ $this->type ]['whitelist'] = apply_filters( 'sgs_whitelist_wp_' . $this->type, $this->types[ $this->type ]['whitelist'] );
+
 		// Bail the there is nothing to whitelist.
 		if ( empty( $this->types[ $this->type ]['whitelist'] ) ) {
 			return str_replace( '{REPLACEMENT}', '', $content );

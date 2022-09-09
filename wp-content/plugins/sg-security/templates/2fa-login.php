@@ -8,6 +8,9 @@
 ?>
 
 <style>#login { width:360px; padding:5% 0 0; }</style>
+<?php if ( ! $args['is_wp_login'] ) : ?>
+<style>.login-action- > div#login:first-of-type{ display: none; } .login-action- > div#login:nth-last-of-type(2){ display: block !important; } </style>
+<?php endif ?>
 
 <?php if ( ! empty( $args['error'] ) ) : ?>
 	<div id="login_error"><strong><?php echo $args['error']; ?></strong><br /></div>
@@ -16,7 +19,7 @@
 <form name="sgs2fa_form" id="loginform" action="<?php echo $args['action']; ?>" method="post">
 	<h1><?php esc_html_e( '2-factor Authentication', 'sg-security' ); ?></h1>
 	<br />
-	<p class="sg-2fa-title"><?php esc_html_e( 'In order to log in, please enter the verification code from you Authenticator app:', 'sg-security' ); ?></p>
+	<p class="sg-2fa-title"><?php esc_html_e( 'In order to log in, please enter the verification code from your Authenticator app:', 'sg-security' ); ?></p>
 		<br />
 		<label for="sgc2facode"><?php esc_html_e( 'Authentication Code:', 'sg-security' ); ?></label>
 		<input name="sgc2facode" id="sgc2facode" class="input" value="" size="20" pattern="[0-9]*" autofocus />

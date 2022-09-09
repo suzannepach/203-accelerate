@@ -567,6 +567,41 @@ class Rest_Helper_Activity extends Rest_Helper {
 	}
 
 	/**
+	 * Unblock an IP address, blocked by the Limit Login Attempts functionality.
+	 *
+	 * @since  1.2.2
+	 *
+	 * @param  object $request Request data.
+	 */
+	public function login_unblock( $request ) {
+		// Get the request body.
+		$body = json_decode( $request->get_body(), true );
+
+		// Bail if IP is not passed.
+		if ( empty( $body['ip'] ) ) {
+			self::send_json(
+				__( 'Missing IP param!', 'sg-security' ),
+				0
+			);
+		}
+
+		// Get the unsuccessfull login attempts data.
+		$login_attempts = get_option( 'sg_security_unsuccessful_login', array() );
+
+		// Remove the IP from the option.
+		unset( $login_attempts[ $body['ip'] ] );
+
+		// Update the option with the new value.
+		update_option( 'sg_security_unsuccessful_login', $login_attempts );
+
+		// Send the response.
+		self::send_json(
+			__( 'IP Unblocked.', 'sg-security' ),
+			1
+		);
+	}
+
+	/**
 	 * Limit  user capabilities based on ID.
 	 *
 	 * @since  1.0.0
@@ -654,6 +689,10 @@ class Rest_Helper_Activity extends Rest_Helper {
 		);
 
 		$data = array();
+
+		// Get the unsuccessfull login attempts data.
+		$limit_login_attempts = get_option( 'sg_security_unsuccessful_login', array() );
+
 		foreach ( $results as $entry ) {
 			$log = array(
 				'ts'         => get_date_from_gmt( date( 'Y-m-d H:i', $entry['blocked_on'] ), 'Y-m-d H:i' ),
@@ -667,6 +706,23 @@ class Rest_Helper_Activity extends Rest_Helper {
 				$user_data = $this->get_user_data( $log, $visitors );
 				$log['user'] = $user_data['nicename'];
 			}
+
+			$data[] = $log;
+		}
+
+		foreach ( $limit_login_attempts as $ip => $attempt ) {
+			// Check if IP is blocked.
+			if ( empty ( $attempt['timestamp'] ) ) {
+				continue;
+			}
+
+			$log = array(
+				'ts'         => get_date_from_gmt( date( 'Y-m-d H:i', $attempt['timestamp'] ), 'Y-m-d H:i' ),
+				'user'       => $ip,
+				'visitor_id' => 0,
+				'object_id'  => $ip,
+				'type'       => 'ip',
+			);
 
 			$data[] = $log;
 		}

@@ -386,6 +386,15 @@ class Sg_2fa {
 
 		$args = $this->get_args_for_template( $args );
 
+		// Check if the referer matches wp-login url.
+		if ( strtok( wp_get_raw_referer(), '?' ) === wp_login_url() ) {
+			$args['is_wp_login'] = true;
+		}
+
+		if ( ! empty( $this->get_2fa_nonce_cookie() ) ) {
+			$args['is_wp_login'] = true;
+		}
+
 		// Include the login header if the function doesn't exists.
 		if ( ! function_exists( 'login_header' ) ) {
 			include_once ABSPATH . 'wp-login.php';
@@ -397,7 +406,7 @@ class Sg_2fa {
 		}
 
 		login_header();
-
+		
 		// Include the template.
 		include_once $path;
 
@@ -458,6 +467,7 @@ class Sg_2fa {
 				'interim_login' => ( isset( $_REQUEST['interim-login'] ) ) ? filter_var( wp_unslash( $_REQUEST['interim-login'] ), FILTER_VALIDATE_BOOLEAN ) : false,
 				'redirect_to'   => isset( $_REQUEST['redirect_to'] ) ? esc_url_raw( wp_unslash( $_REQUEST['redirect_to'] ) ) : admin_url(),
 				'rememberme'    => ( ! empty( $_REQUEST['rememberme'] ) ) ? true : false,
+				'is_wp_login'   => false,
 			)
 		);
 	}
@@ -661,11 +671,16 @@ class Sg_2fa {
 			return;
 		}
 
-		// Validate the backup code.
-		$result = $this->validate_backup_login(
-			wp_unslash( $_POST['sgc2fabackupcode'] ),
-			wp_unslash( $cookie_data[0] )
-		); // phpcs:ignore
+		$result = false;
+
+		// Check if the 2fa backup code is set, if not, don't try to apply it's value.
+		if ( isset( $_POST['sgc2fabackupcode'] ) ) {
+			// Validate the backup code.
+			$result = $this->validate_backup_login(
+				wp_unslash( $_POST['sgc2fabackupcode'] ),
+				wp_unslash( $cookie_data[0] )
+			); // phpcs:ignore
+		}
 
 		// Check the result of the authtication.
 		if ( false === $result ) {
@@ -710,8 +725,11 @@ class Sg_2fa {
 			return;
 		}
 
-		$result = $this->check_authentication_code( wp_unslash( $_POST['sgc2facode'] ), wp_unslash( $cookie_data[0] ) ); // phpcs:ignore
-
+		$result = false;
+		// Check if the 2fa code is set, if not, don't try to apply it's value.
+		if ( isset( $_POST['sgc2facode'] ) ) {
+			$result = $this->check_authentication_code( wp_unslash( $_POST['sgc2facode'] ), wp_unslash( $cookie_data[0] ) ); // phpcs:ignore
+		}
 
 		// Check the result of the authtication.
 		if ( false === $result ) {

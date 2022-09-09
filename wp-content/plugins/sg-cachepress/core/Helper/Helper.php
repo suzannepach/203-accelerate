@@ -15,6 +15,7 @@ class Helper {
 	 */
 	public static $whitelisted_ajax_actions = array(
 		'et_fb_ajax_save',
+		'elementor_ajax',
 	);
 
 	/**
