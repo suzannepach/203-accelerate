@@ -35,12 +35,18 @@ class Message_Service {
 					__( 'Failed to log out all users.', 'sg-security' ),
 					__( 'All users are logged out.', 'sg-security' ),
 				),
-				'delete_readme' => array(
-					__( 'Failed to delete Readme.html.', 'sg-security' ),
-					__( 'Readme.html is deleted.', 'sg-security' ),
-				),
 			),
 			'complex' => array(
+				'delete_readme' => array(
+					array(
+						__( 'Failed to disble deletion of Readme.html.', 'sg-security' ),
+						__( 'Deletion of Readme.html is disabled.', 'sg-security' ),
+					),
+					array(
+						__( 'Failed to enable deletion of Readme.html.', 'sg-security' ),
+						__( 'Deletion of Readme.html is enabled.', 'sg-security' ),
+					),
+				),
 				'lock_system_folders' => array(
 					array(
 						__( 'Failed to disable System Folders protection.', 'sg-security' ),
@@ -87,48 +93,48 @@ class Message_Service {
 						__( 'RSS/ATOM feeds is enabled.', 'sg-security' ),
 					),
 					array(
-						__( 'Failed to Disable RSS/ATOM feeds', 'sg-security' ),
+						__( 'Failed to Disable RSS/ATOM feeds.', 'sg-security' ),
 						__( 'RSS/ATOM feeds is disabled.', 'sg-security' ),
 					),
 				),
 				'xss_protection' => array(
 					array(
-						__( 'Failed to disable Advanced XSS Protection', 'sg-security' ),
-						__( 'Advanced XSS Protection is disabled', 'sg-security' ),
+						__( 'Failed to disable Advanced XSS Protection.', 'sg-security' ),
+						__( 'Advanced XSS Protection is disabled.', 'sg-security' ),
 					),
 					array(
-						__( 'Failed to enable Advanced XSS Protection', 'sg-security' ),
-						__( 'Advanced XSS Protection is enabled', 'sg-security' ),
+						__( 'Failed to enable Advanced XSS Protection.', 'sg-security' ),
+						__( 'Advanced XSS Protection is enabled.', 'sg-security' ),
 					),
 				),
 				'sg2fa' => array(
 					array(
-						__( 'Failed to disable Two-factor Authentication for Admin Users', 'sg-security' ),
-						__( 'Two-factor Authentication for Admin Users is disabled', 'sg-security' ),
+						__( 'Failed to disable Two-factor Authentication for Admin Users.', 'sg-security' ),
+						__( 'Two-factor Authentication for Admin Users is disabled.', 'sg-security' ),
 					),
 					array(
-						__( 'Failed to enable Two-factor Authentication for Admin Users', 'sg-security' ),
-						__( 'Two-factor Authentication for Admin Users is enabled', 'sg-security' ),
+						__( 'Failed to enable Two-factor Authentication for Admin Users.', 'sg-security' ),
+						__( 'Two-factor Authentication for Admin Users is enabled.', 'sg-security' ),
 					),
 				),
 				'disable_usernames' => array(
 					array(
-						__( 'Failed to Enable Common usernames', 'sg-security' ),
-						__( 'Common usernames are enabled', 'sg-security' ),
+						__( 'Failed to Enable Common usernames.', 'sg-security' ),
+						__( 'Common usernames are enabled.', 'sg-security' ),
 					),
 					array(
-						__( 'Failed to Disable Common usernames', 'sg-security' ),
-						__( 'Common usernames are disabled', 'sg-security' ),
+						__( 'Failed to Disable Common usernames.', 'sg-security' ),
+						__( 'Common usernames are disabled.', 'sg-security' ),
 					),
 				),
 				'hsts_protection' => array(
 					array(
-						__( 'Failed to disable Force HTTP Strict-Transport-Security (HSTS)', 'sg-security' ),
-						__( 'Force HTTP Strict-Transport-Security (HSTS) is disabled', 'sg-security' ),
+						__( 'Failed to disable Force HTTP Strict-Transport-Security (HSTS).', 'sg-security' ),
+						__( 'Force HTTP Strict-Transport-Security (HSTS) is disabled.', 'sg-security' ),
 					),
 					array(
-						__( 'Failed to enable Force HTTP Strict-Transport-Security (HSTS)', 'sg-security' ),
-						__( 'Force HTTP Strict-Transport-Security (HSTS) is enabled', 'sg-security' ),
+						__( 'Failed to enable Force HTTP Strict-Transport-Security (HSTS).', 'sg-security' ),
+						__( 'Force HTTP Strict-Transport-Security (HSTS) is enabled.', 'sg-security' ),
 					),
 				),
 			),

@@ -1,24 +1,15 @@
 <?php return array(
     'root' => array(
-        'pretty_version' => 'dev-develop',
-        'version' => 'dev-develop',
-        'type' => 'library',
+        'pretty_version' => 'dev-master',
+        'version' => 'dev-master',
+        'type' => 'wordpress-plugin',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => '2aca6cdc6a1f88b3720e06d66177969d641714c4',
-        'name' => '__root__',
+        'reference' => 'eca681d69253003d423ddfccef2a3eb663b3a006',
+        'name' => 'siteground/sg-cachepress',
         'dev' => true,
     ),
     'versions' => array(
-        '__root__' => array(
-            'pretty_version' => 'dev-develop',
-            'version' => 'dev-develop',
-            'type' => 'library',
-            'install_path' => __DIR__ . '/../../',
-            'aliases' => array(),
-            'reference' => '2aca6cdc6a1f88b3720e06d66177969d641714c4',
-            'dev_requirement' => false,
-        ),
         'a5hleyrich/wp-background-processing' => array(
             'pretty_version' => '1.0.2',
             'version' => '1.0.2.0',
@@ -75,6 +66,15 @@
             'reference' => '8a6bbcd4a231b19e1b052c1c46b0fe2935331afe',
             'dev_requirement' => false,
         ),
+        'siteground/sg-cachepress' => array(
+            'pretty_version' => 'dev-master',
+            'version' => 'dev-master',
+            'type' => 'wordpress-plugin',
+            'install_path' => __DIR__ . '/../../',
+            'aliases' => array(),
+            'reference' => 'eca681d69253003d423ddfccef2a3eb663b3a006',
+            'dev_requirement' => false,
+        ),
         'siteground/siteground-data' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
@@ -83,7 +83,7 @@
             'aliases' => array(
                 0 => '9999999-dev',
             ),
-            'reference' => 'c1281835d47feb1f43d93ffa500e04856498362b',
+            'reference' => '58ba53b8a5711c0cd33be62ebedf99cc2ec180ec',
             'dev_requirement' => false,
         ),
         'siteground/siteground-emails' => array(

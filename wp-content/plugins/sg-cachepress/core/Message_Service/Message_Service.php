@@ -40,7 +40,7 @@ class Message_Service {
 			'backup_media'                                 => __( 'Backup Media', 'sg-cachepress' ),
 			'lazyload_images'                              => __( 'Lazy Loading Images', 'sg-cachepress' ),
 			'webp_support'                                 => __( 'WebP Generation for New Images', 'sg-cachepress' ),
-			'resize_images'                                => __( 'Maximum Image Width', 'sg-cachepress' ),
+			'resize_images'                                => __( 'Maximum Image Width is updated', 'sg-cachepress' ),
 			'supercacher_permissions'                      => __( 'Can Config SuperCacher', 'sg-cachepress' ),
 			'frontend_permissions'                         => __( 'Can Optimize Frontend', 'sg-cachepress' ),
 			'images_permissions'                           => __( 'Can Optimize Images', 'sg-cachepress' ),

@@ -211,7 +211,12 @@ div.case-study-images img {
 /* Contact form styles */
 
 /* To prevent a double header */
-.page-id-47361 h1 {
+/* local site */
+.page-id-47361 h1,
+/* live site */
+.page-id-47365 h1 {
+    display: none;
+} {
     display: none;
 }
 
@@ -494,6 +499,7 @@ I have also added a light background colour. */
 }
 
 /* Styles Newsletter sign up form */
+
 #primary-sidebar aside:nth-child(3).widget {
     padding-top: 1.75em;
     padding-bottom: 1.75em;

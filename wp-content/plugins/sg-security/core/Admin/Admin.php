@@ -23,6 +23,16 @@ class Admin {
 	);
 
 	/**
+	 * Styles to be dequeued.
+	 *
+	 * @var array
+	 */
+	public $dequeued_styles = array(
+		'auxin-front-icon', // Phlox Theme.
+		'mks_shortcodes_simple_line_icons', // Meks Flexible Shortcodes.
+	);
+
+	/**
 	 * Get the subpages id.
 	 *
 	 * @since  1.0.0
@@ -82,8 +92,11 @@ class Admin {
 			'all'
 		);
 
-		// Removing conflicting fonts.
-		wp_dequeue_style( 'auxin-front-icon' );
+		// Dequeue conflicting styles.
+		foreach ( $this->dequeued_styles as $style ) {
+			wp_dequeue_style( $style );
+		}
+
 	}
 
 	/**

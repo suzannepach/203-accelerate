@@ -8,6 +8,7 @@ use SiteGround_Optimizer\Helper\Helper;
 use SiteGround_Optimizer\Helper\Factory_Trait;
 use SiteGround_Optimizer\Install_Service\Install_6_0_0;
 use SiteGround_Helper\Helper_Service;
+use SiteGround_Data\Settings;
 
 /**
  * Loader functions and main initialization class.
@@ -55,10 +56,11 @@ class Loader {
 	 * @var array
 	 */
 	public $external_dependencies = array(
-		'Settings_Page'  => array(
+		'Settings_Page' => array(
 			'namespace' => 'Data',
+			'hook'      => 'settings_page',
 		),
-		'Settings'       => array(
+		'Settings'      => array(
 			'namespace' => 'Data',
 			'hook'      => 'settings',
 		),
@@ -82,11 +84,11 @@ class Loader {
 	}
 
 	/**
-	 * Add the data collector hooks.
+	 * Add the data collector page hooks.
 	 *
 	 * @since 7.0.6
 	 */
-	public function add_settings_hooks() {
+	public function add_settings_page_hooks() {
 
 		add_action( 'admin_menu', array( $this->settings_page, 'register_settings_page' ) );
 
@@ -96,10 +98,36 @@ class Loader {
 
 		// Register rest route.
 		add_action( 'rest_api_init', array( $this->settings_page, 'register_rest_routes' ) );
+	}
 
-		if ( 1 === intval( get_option( 'siteground_data_consenst', 0 ) ) ) {
-			$this->settings->schedule_cron_job();
+	/**
+	 * Add the data collector hooks.
+	 *
+	 * @since 7.1.6
+	 */
+	public function add_settings_hooks() {
+		if ( 0 === intval( get_option( 'siteground_data_consent', 0 ) ) ) {
+			return;
 		}
+
+		$settings = Settings::get_instance();
+
+		// Schedule Cron Job for sending the data.
+		$settings->schedule_cron_job();
+
+		add_action( 'admin_init', array( $settings, 'handle_settings_update' ) );
+
+		// Hook on wp login to send data, when the cron is disabled.
+		if ( defined( 'DISABLE_WP_CRON' ) && 1 === intval( DISABLE_WP_CRON ) ) {
+			add_action( 'wp_login', array( $settings, 'send_data_on_login' ) );
+		}
+
+		// Check if there is old data to be sent over.
+		add_action( 'siteground_data_collector_cron', array( $settings, 'check_for_old_data' ), 9 );
+		// Sent the data.
+		add_action( 'siteground_data_collector_cron', array( $settings, 'send_data' ), 10 );
+		// Add the custom cron interval.
+		add_action( 'cron_schedules', array( $settings, 'add_siteground_data_interval' ) );
 	}
 
 	/**
@@ -487,9 +515,13 @@ class Loader {
 	 * @since 5.9.0
 	 */
 	public function add_images_optimizer_hooks() {
-		// Resize newly uploaded images.
-		if ( Options::is_enabled( 'siteground_optimizer_resize_images' ) ) {
-			add_action( 'wp_generate_attachment_metadata', array( $this->images_optimizer, 'resize' ) );
+
+		// Get the resize_images option and apply filters to check the set value.
+		$resize_images = apply_filters( 'sgo_set_max_image_width', intval( get_option( 'siteground_optimizer_resize_images', 2560 ) ) );
+
+		// Resize newly uploaded images, if different than default.
+		if ( 2560 !== $resize_images ) {
+			add_filter( 'big_image_size_threshold', array( $this->images_optimizer, 'resize' ) );
 		}
 
 		// Image optimizations are not available for non SG users.

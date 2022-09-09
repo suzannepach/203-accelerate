@@ -3,6 +3,7 @@ namespace SG_Security\Loader;
 
 use SG_Security;
 use SG_Security\Options_Service\Options_Service;
+use SiteGround_Data\Settings;
 
 /**
  * Loader functions and main initialization class.
@@ -31,6 +32,7 @@ class Loader {
 		'cli',
 		'custom_login_url',
 		'headers_service',
+		'readme_service',
 	);
 
 	/**
@@ -39,10 +41,11 @@ class Loader {
 	 * @var array
 	 */
 	public $external_dependencies = array(
-		'Settings_Page'  => array(
+		'Settings_Page' => array(
 			'namespace' => 'Data',
+			'hook'      => 'settings_page',
 		),
-		'Settings'       => array(
+		'Settings'      => array(
 			'namespace' => 'Data',
 			'hook'      => 'settings',
 		),
@@ -70,7 +73,7 @@ class Loader {
 	 *
 	 * @since 1.2.1
 	 */
-	public function add_settings_hooks() {
+	public function add_settings_page_hooks() {
 		add_action( 'admin_menu', array( $this->settings_page, 'register_settings_page' ) );
 
 		add_action( 'admin_init', array( $this->settings_page, 'add_setting_fields' ) );
@@ -79,6 +82,36 @@ class Loader {
 
 		// Register rest route.
 		add_action( 'rest_api_init', array( $this->settings_page, 'register_rest_routes' ) );
+	}
+
+	/**
+	 * Add the data collector hooks.
+	 *
+	 * @since 1.3.0
+	 */
+	public function add_settings_hooks() {
+		if ( 0 === intval( get_option( 'siteground_data_consent', 0 ) ) ) {
+			return;
+		}
+
+		$settings = ! method_exists( 'Siteground_Data\\Settings', 'get_instance' ) ? new Settings() : Settings::get_instance();
+
+		// Schedule Cron Job for sending the data.
+		$settings->schedule_cron_job();
+
+		add_action( 'admin_init', array( $settings, 'handle_settings_update' ) );
+
+		// Hook on wp login to send data, when the cron is disabled.
+		if ( defined( 'DISABLE_WP_CRON' ) && 1 === intval( DISABLE_WP_CRON ) ) {
+			add_action( 'wp_login', array( $settings, 'send_data_on_login' ) );
+		}
+
+		// Check if there is old data to be sent over.
+		add_action( 'siteground_data_collector_cron', array( $settings, 'check_for_old_data' ), 9 );
+		// Sent the data.
+		add_action( 'siteground_data_collector_cron', array( $settings, 'send_data' ), 10 );
+		// Add the custom cron interval.
+		add_action( 'cron_schedules', array( $settings, 'add_siteground_data_interval' ) );
 	}
 
 	/**
@@ -495,8 +528,19 @@ class Loader {
 	 */
 	public function add_headers_service_hooks() {
 		// Add security headers.
-		add_action( 'wp_headers' , array( $this->headers_service, 'set_security_headers' ) );
+		add_action( 'wp_headers', array( $this->headers_service, 'set_security_headers' ) );
 		// Add security headers for rest.
 		add_filter( 'rest_post_dispatch', array( $this->headers_service, 'set_rest_security_headers' ) );
+	}
+	/**
+	 * Add readme_service hooks.
+	 *
+	 * @since 1.2.8
+	 */
+	public function add_readme_service_hooks() {
+		// Add action to delete the README on WP core update, if option is set.
+		if ( 1 === intval( get_option( 'sg_security_delete_readme', 0 ) ) ) {
+			add_action( '_core_updated_successfully', array( $this->readme_service, 'delete_readme' ) );
+		}
 	}
 }

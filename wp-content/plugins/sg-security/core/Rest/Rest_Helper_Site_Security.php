@@ -8,6 +8,8 @@ use SG_Security\Htaccess_Service\Headers_Service;
 use SG_Security\Htaccess_Service\Xmlrpc_Service;
 use SG_Security\Htaccess_Service\Hsts_Service;
 use SG_Security\Message_Service\Message_Service;
+use SG_Security\Options_Service\Options_Service;
+
 /**
  * Rest Helper class that manages the site security.
  */
@@ -123,11 +125,17 @@ class Rest_Helper_Site_Security extends Rest_Helper {
 	 *
 	 * @since  1.0.0
 	 */
-	public function delete_readme() {
-		$result = (int) $this->readme_service->delete_readme();
-		self::send_json(
-			$this->get_response_message( $result, 'delete_readme' ),
-			$result
-		);
+	public function delete_readme( $request ) {
+
+		// Get and validate value.
+		$value = $this->validate_and_get_option_value( $request, 'delete_readme' );
+
+		// If enabling, delete readme on request, continue if not.
+		if ( 1 === intval( $value ) ) {
+			$this->readme_service->delete_readme();
+		}
+
+		// Change the option in the DB, so that on the next update the hook for deleting the readme is called.
+		$this->rest_helper_options->change_option_from_rest( $request, 'delete_readme' );
 	}
 }

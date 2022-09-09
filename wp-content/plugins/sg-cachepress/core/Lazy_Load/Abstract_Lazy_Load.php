@@ -1,5 +1,6 @@
 <?php
 namespace SiteGround_Optimizer\Lazy_Load;
+use SiteGround_Optimizer\Helper\Helper;
 
 /**
  * SG Abstract_Lazy_load main plugin class.
@@ -23,6 +24,8 @@ abstract class Abstract_Lazy_Load {
 	 */
 	public function should_process( $content ) {
 		if (
+			$this->is_lazy_url_excluded() ||
+			$this->is_lazy_post_type_excluded() ||
 			is_feed() ||
 			empty( $content ) ||
 			is_admin() ||
@@ -56,10 +59,24 @@ abstract class Abstract_Lazy_Load {
 		$search  = array();
 		$replace = array();
 
+		// Check for specific asset being excluded.
+		$excluded_assets = apply_filters( $this->exclude_assets_filter, array() );
+
 		foreach ( $matches[0] as $item ) {
 			// Skip already replaced item.
 			if ( preg_match( $this->regex_replaced, $item ) ) {
 				continue;
+			}
+
+			// Check if we have a filter for excluding specific asset from being lazy loaded.
+			if ( ! empty( $excluded_assets ) ) {
+				// Match the url of the asset.
+				preg_match( '~(?:src=")([^"]*)"~', $item, $src_match );
+
+				// If we have a match and the array is part of the excluded assets bail from lazy loading.
+				if ( ! empty( $src_match ) && in_array( $src_match[1], $excluded_assets ) ) {
+					continue;
+				}
 			}
 
 			// Do some checking if there are any class matches.
@@ -100,5 +117,43 @@ abstract class Abstract_Lazy_Load {
 		}
 
 		return str_replace( $search, $replace, $content );
+	}
+
+	/**
+	 * Check if the specific url has been excluded from lazy loading.
+	 *
+	 * @since  7.1.3
+	 *
+	 * @return boolean True if it is excluded, false otherwise.
+	 */
+	public function is_lazy_url_excluded() {
+		// Get the urls where lazy load is excluded.
+		$excluded_urls = apply_filters( 'sgo_lazy_load_exclude_urls', array() );
+
+		// Bail if no excludes are found or we do not have a match.
+		if ( empty( $excluded_urls ) && ! in_array( Helper::get_current_url(), $excluded_urls ) ) {
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * Check if a specific post type is excluded for lazyloading.
+	 *
+	 * @since  7.1.3
+	 *
+	 * @return boolean True if it is excluded, false otherwise.
+	 */
+	public function is_lazy_post_type_excluded() {
+		// Get the post_types with excluded lazy load.
+		$excluded_post_types = apply_filters( 'sgo_lazy_load_exclude_post_types', array() );
+
+		// Bail if no excludes are found or we do not have a match.
+		if ( empty( $excluded_post_types ) && ! in_array( get_post_type(), $excluded_post_types ) ) {
+			return false;
+		}
+
+		return true;
 	}
 }

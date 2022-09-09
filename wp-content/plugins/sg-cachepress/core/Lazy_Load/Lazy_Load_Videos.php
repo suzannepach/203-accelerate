@@ -39,6 +39,13 @@ class Lazy_Load_Videos extends Abstract_Lazy_Load {
 	);
 
 	/**
+	 * Filter for excluding specific video.
+	 *
+	 * @var string
+	 */
+	public $exclude_assets_filter = 'sgo_lazy_load_exclude_videos';
+
+	/**
 	 * Add classname to the html element.
 	 *
 	 * @since  5.6.0

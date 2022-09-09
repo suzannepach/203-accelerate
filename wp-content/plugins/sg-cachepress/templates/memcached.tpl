@@ -242,7 +242,8 @@ class WP_Object_Cache {
 			$this->cache[$key] = $value = false;
 		} else {
 			$value = $mc->get( $key );
-			if ( empty( $value ) || ( is_integer( $value ) && -1 == $value ) ){
+			if ( ( empty( $value ) && ! strpos( $key, 'et_check_mod_pagespeed' ) ) || ( is_integer( $value ) && -1 == $value ) ){
+				$value = false;
 			    $value = false;
 				$found = $mc->getResultCode() !== Memcached::RES_NOTFOUND;
 			} else {
@@ -463,6 +464,16 @@ class WP_Object_Cache {
 			$instances = array();
 			foreach ( $servers as $server ) {
 				@list( $node, $port ) = explode( ':', $server );
+				// Use UNIX socket (if exists) for local connections
+				if ( $server == 'localhost:11211' || $server == '127.0.0.1:11211' ) {
+					$per_user_unix_socket = "/home/.tmp/memcached.sock";
+					$stat = @stat( $per_user_unix_socket );
+					if ( $stat !== false && ( $stat["mode"] & 0140000 ) == 0140000 ) {
+						// We have UNIX socket, use it
+						$instances[] = array( $per_user_unix_socket, 0, 1 );
+						break;
+					}
+				}
 				if ( empty( $port ) )
 					$port = ini_get( 'memcache.default_port' );
 				$port = intval( $port );

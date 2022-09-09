@@ -310,6 +310,14 @@ class Rest {
 		);
 
 		register_rest_route(
+			self::REST_NAMESPACE, '/login-unblock/', array(
+				'methods'             => 'POST',
+				'callback'            => array( $this->activity_helper, 'login_unblock' ),
+				'permission_callback' => array( $this, 'check_permissions' ),
+			)
+		);
+
+		register_rest_route(
 			self::REST_NAMESPACE, '/block-user/(?P<id>\d+)', array(
 				'methods'             => 'POST',
 				'callback'            => array( $this->activity_helper, 'block_user' ),

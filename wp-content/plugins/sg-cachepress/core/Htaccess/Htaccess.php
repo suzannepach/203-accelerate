@@ -78,7 +78,12 @@ class Htaccess {
 		}
 
 		if ( null === $this->path ) {
-			$this->set_htaccess_path();
+			$status = $this->set_htaccess_path();
+
+			// Bail if .htaccess is inaccessible.
+			if ( false === $status ) {
+				return false;
+			}
 		}
 
 		self::$instance = $this;
@@ -211,6 +216,11 @@ class Htaccess {
 	 * @return bool            True on success, false otherwise.
 	 */
 	private function lock_and_write( $content ) {
+		// Bail if .htaccess is not writable.
+		if ( ! $this->wp_filesystem->is_writable( $this->path ) ) {
+			return false;
+		}
+
 		$fp = fopen( $this->path, 'w+' );
 
 		if ( flock( $fp, LOCK_EX ) ) {

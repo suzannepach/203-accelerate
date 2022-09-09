@@ -909,8 +909,10 @@ function A2A_SHARE_SAVE_options_page() {
 	
 	<script src="https://static.addtoany.com/menu/page.js"></script>
 	<script>
-	if ( window.a2a && a2a.svg_css ) a2a.svg_css();
-	jQuery(document).ready( function() { if ( ! window.a2a) jQuery('<div class="error"><p><strong>Something is preventing AddToAny from loading. Try disabling content blockers such as ad-blocking add-ons, or try another web browser.</strong></p></div>').insertBefore('.nav-tab-wrapper:eq(0)'); });	
+	jQuery(document).on( 'load', function() {
+		if ( ! window.a2a) jQuery('<div class="error"><p><strong>Something is preventing AddToAny from loading. Try disabling content blockers such as ad-blocking add-ons, or try another web browser.</strong></p></div>').insertBefore('.nav-tab-wrapper:eq(0)');
+		if ( window.a2a && a2a.svg_css ) a2a.svg_css();
+	});
 	</script>
 
 <?php

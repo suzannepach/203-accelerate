@@ -327,6 +327,11 @@ class File_Cacher extends Supercacher {
 			return false;
 		}
 
+		// Check if the post is password-protected.
+		if ( ! empty( $GLOBALS['post'] ) && ! empty( $GLOBALS['post']->post_password ) ) {
+			return false;
+		}
+
 		// Bail if the page is excluded from the cache.
 		if ( ! $this->is_cacheable() ) {
 			header( 'SG-F-Cache: BYPASS' );

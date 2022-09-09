@@ -110,6 +110,34 @@ class Images_Optimizer extends Abstract_Images_Optimizer {
 	);
 
 	/**
+	 * The map for the maximum image width option.
+	 *
+	 * @var array
+	 */
+	public $default_max_width_sizes = array(
+		array(
+			'label' => '2560px',
+			'value' => 2560,
+			'selected' => 0,
+		),
+		array(
+			'label' => '2048px',
+			'value' => 2048,
+			'selected' => 0,
+		),
+		array(
+			'label' => '1920px',
+			'value' => 1920,
+			'selected' => 0,
+		),
+		array(
+			'label' => 'Disabled',
+			'value' => 0,
+			'selected' => 0,
+		),
+	);
+
+	/**
 	 * Optimize the image
 	 *
 	 * @since  5.0.0
@@ -172,35 +200,18 @@ class Images_Optimizer extends Abstract_Images_Optimizer {
 	 * @param array $image_data - contains file, url, type.
 	 */
 	public function resize( $image_data ) {
-		// Using default WordPress editor.
-		$editor = wp_get_image_editor( $image_data['file'] );
+		// Getting the option value from the db and applying additional filters, if any.
+		$image_resize_option = apply_filters( 'sgo_set_max_image_width', get_option( 'siteground_optimizer_resize_images', 2560 ) );
 
-		if ( is_wp_error( $editor ) ) {
-			return $image_data;
+		// Disable resize, if it's set so in the DB and no filters are found.
+		if ( 0 === intval ( $image_resize_option ) ) {
+			return false;
 		}
 
-		// Getting the image size.
-		$original_size = $editor->get_size();
+		// Adding a min value.
+		$image_resize_option = intval( $image_resize_option ) < 1200 ? 1200 : intval( $image_resize_option );
 
-		// Setting the max allowed width.
-		$max_allowed_width = intval( apply_filters( 'sgo_set_max_image_width', self::MAX_IMAGE_WIDTH ) );
-
-		// Set the max allowed dementions to 1200 if adjusted to lower values.
-		$max_allowed_width = $max_allowed_width < 1200 ? 1200 : $max_allowed_width;
-
-		// Bail if image is within the allowed size.
-		if ( $original_size['width'] < $max_allowed_width ) {
-			return $image_data;
-		}
-
-		// Resize the image.
-		$editor->resize( $max_allowed_width, false );
-
-		// Save the scaled image.
-		$editor->save( $image_data['file'] );
-
-		// Return the scaled image to WordPress.
-		return $image_data;
+		return intval( $image_resize_option );
 	}
 
 	/**
@@ -272,7 +283,10 @@ class Images_Optimizer extends Abstract_Images_Optimizer {
 			case IMAGETYPE_JPEG:
 				// DO NOT REMOVE THE LINE BELOW!
 				// The jpegoptim doesn't support input/output params, so we need to create a backup of the original image.
-				copy( $filepath, $output_filepath );
+				// However, if the filepaths are the same, this is skipped.
+				if ( $filepath !== $output_filepath ) {
+					copy( $filepath, $output_filepath );
+				}
 				$placeholder = 'jpegoptim %1$s %3$s 2>&1';
 				break;
 
@@ -493,12 +507,6 @@ class Images_Optimizer extends Abstract_Images_Optimizer {
 		// Get attachment's filepath.
 		$filepath = get_attached_file( $attachment_id );
 
-		// Revert to backup image, if None is selected.
-		if ( 1 === intval( $_REQUEST['compression_level'] ) ) {
-			// Optimize the image with the new compression level.
-			return $this->execute_optimization_command( $filepath, intval( $_REQUEST['compression_level'] ) );
-		}
-
 		// Find backup image path.
 		$backup_filepath = preg_replace( '~.(png|jpg|jpeg|gif)$~', '.bak.$1', $filepath );
 
@@ -506,5 +514,33 @@ class Images_Optimizer extends Abstract_Images_Optimizer {
 		if ( file_exists( $backup_filepath ) ) {
 			copy( $backup_filepath, $filepath );
 		}
+
+		// Compress the image only if the compression level is different than none.
+		if ( 0 !== intval( $_REQUEST['compression_level'] ) ) {
+			// Optimize the image with the new compression level.
+			return $this->execute_optimization_command( $filepath, intval( $_REQUEST['compression_level'] ) );
+		}
+	}
+
+	/**
+	 * Retrieves default sizes and sets the selected value.
+	 *
+	 * @since  7.1.1
+	 *
+	 * @return array Array with the labels, values and selected properties.
+	 */
+	public function prepare_max_width_sizes() {
+		// Get set option for the resize, using 2560 for default.
+		$image_resize_option = (int) get_option( 'siteground_optimizer_resize_images', 2560 );
+		// Retrieve local array.
+		$sizes = $this->default_max_width_sizes;
+		// Iterate and set the correct selected value.
+		foreach ( $sizes as $index => $size ) {
+			if ( $image_resize_option === $sizes[ $index ]['value'] ) {
+				$sizes[ $index ]['selected'] = 1;
+			}
+		}
+		// Returns the modified array.
+		return $sizes;
 	}
 }

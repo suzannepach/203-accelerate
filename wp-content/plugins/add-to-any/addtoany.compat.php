@@ -134,3 +134,13 @@ function addtoany_woocommerce_share() {
 		ADDTOANY_SHARE_SAVE_KIT();
 	}
 }
+
+/**
+ * Exclude AddToAny assets domain from WP Rocket.
+ */
+add_filter( 'rocket_minify_excluded_external_js', 'addtoany_wp_rocket_exclusion' );
+
+function addtoany_wp_rocket_exclusion( $excluded ) {
+	$excluded[] = 'static.addtoany.com';
+	return $excluded;
+}
