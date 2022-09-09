@@ -211,12 +211,7 @@ div.case-study-images img {
 /* Contact form styles */
 
 /* To prevent a double header */
-/* local site */
-.page-id-47361 h1,
-/* live site */
-.page-id-47365 h1 {
-    display: none;
-} {
+#nf-form-title-1 {
     display: none;
 }
 
