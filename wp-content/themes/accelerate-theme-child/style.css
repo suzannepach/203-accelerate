@@ -231,49 +231,47 @@ div.case-study-images img {
 
 /* I couldn't add a instruction 
 paragraph above the form, so I have added another form field to use the label
- as an instruction and I used code to make the form field invisible
-(it is the first field of the form but it is called field-5 because it is the last 
-one I added. */
-#nf-label-field-5  {
+ as an instruction and I used code to make the form field invisible */
+nf-field:nth-child(1) label  {
     font-size: 1em;
     font-family: 'Open Sans', Arial, sans-serif;
     font-weight: normal;
 }
 
-#nf-field-5  {
+nf-field:nth-child(1) div div textarea {
     display: none;   
 }
 
-#nf-field-5-container {
+nf-field:nth-child(1) .nf-field-container  {
     margin-bottom: 3em;
 }
 
 /* Changes the label font of th name, email and message box. */
-#nf-label-field-1,
-#nf-label-field-2,
-#nf-label-field-3 {
+nf-field:nth-child(2) label,
+nf-field:nth-child(3) label,
+nf-field:nth-child(4) label {
     font-size: 0.85em;
     font-weight: 600;
 }
 
 /* Removes the default red star next to each label */
 .nf-form-fields-required,
-#nf-label-field-1 span,
-#nf-label-field-2 span,
-#nf-label-field-3 span {
+nf-field:nth-child(2) label span,
+nf-field:nth-child(3) label span,
+nf-field:nth-child(4) label span {
     display: none;
 }
 
 /* Removes the grey background in the input boxes and gives the border a grey color. */
-#nf-field-1,
-#nf-field-2,
-#nf-field-3 {
+nf-field:nth-child(2) input.nf-element,
+nf-field:nth-child(3) input.nf-element,
+nf-field:nth-child(4) textarea.nf-element {
     background: none;
     border-color: #bfbfbf;
 }
 
 /* Changes the font of the send button and makes it 100% wide for mobile */
-#nf-field-4 {
+nf-field:nth-child(5) input.nf-element {
     width: 100%;
     background: #45ac9d;
     font-size: 1.125em;  
@@ -731,12 +729,12 @@ I added !important */
 
     /* Selects the div around the input button and removes flex. That way I can use the float 
     property on the button */
-    #nf-field-4-wrap .nf-field-element {
+    nf-field:nth-child(5) .nf-field-element {
         display: block;
     }
 
     /* Makes the button one third width and float to the right. */
-    #nf-field-4 {
+    nf-field:nth-child(5) input.nf-element {
         width: 33%;
         float: right; 
     }
