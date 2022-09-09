@@ -269,11 +269,12 @@ one I added. */
     display: none;
 }
 
-/* Removes the grey background in the input boxes. */
+/* Removes the grey background in the input boxes and gives the border a grey color. */
 #nf-field-1,
 #nf-field-2,
 #nf-field-3 {
     background: none;
+    border-color: #bfbfbf;
 }
 
 /* Changes the font of the send button and makes it 100% wide for mobile */
