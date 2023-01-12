@@ -1,11 +1,12 @@
 <?php
 namespace SiteGround_Optimizer\Supercacher;
 
-use SiteGround_Optimizer\DNS\Cloudflare;
 use SiteGround_Optimizer\File_Cacher\File_Cacher;
 use SiteGround_Optimizer\Front_End_Optimization\Front_End_Optimization;
 use SiteGround_Optimizer\Options\Options;
 use SiteGround_Helper\Helper_Service;
+use SiteGround_Optimizer\CDN\Cdn;
+use SiteGround_Optimizer\Site_Tools_Client\Site_Tools_Client;
 
 /**
  * SG CachePress main plugin class
@@ -236,7 +237,7 @@ class Supercacher {
 		}
 
 		// Flush the cache for the URL.
-		return self::call_site_tools_client( $hostname, $main_path, $url );
+		return self::flush_dynamic_cache( $hostname, $main_path, $url );
 	}
 
 	/**
@@ -248,55 +249,29 @@ class Supercacher {
 	 *
 	 * @return     bool              True if the cache is purged successfully, false otherwise.
 	 */
-	public static function call_site_tools_client( $hostname, $main_path, $url ) {
-		// Full path to the Unix socket.
-		$sock_addr = '/chroot/tmp/site-tools.sock';
-
-		// Bail if the socket does not exists.
-		if ( ! file_exists( $sock_addr ) ) {
-			return false;
-		}
-
-		// Open unix socket connection.
-		$fp = stream_socket_client( 'unix://' . $sock_addr, $errno, $errstr, 5 );
-
-		// Bail if the connection fails.
-		if ( false === $fp ) {
-			return false;
-		}
-
+	public static function flush_dynamic_cache( $hostname, $main_path, $url ) {
 		// Build the request params.
-		$request = array(
-			'api' => 'domain-all',
-			'cmd' => 'update',
+		$args = array(
+			'api'      => 'domain-all',
+			'cmd'      => 'update',
 			'settings' => array( 'json' => 1 ),
-			'params' => array(
+			'params'   => array(
 				'flush_cache' => '1',
 				'id'          => $hostname,
 				'path'        => $main_path,
 			),
 		);
 
-		// Sent the params to the Unix socket.
-		fwrite( $fp, json_encode( $request, JSON_FORCE_OBJECT ) . "\n" );
-
-		// Fetch the response.
-		$response = fgets( $fp, 32 * 1024 );
-
-		// Close the connection.
-		fclose( $fp );
-
-		// Decode the response.
-		$result = @json_decode( $response, true );
+		$site_tools_result = Site_Tools_Client::call_site_tools_client( $args, true );
 
 		do_action( 'siteground_optimizer_flush_cache', $url );
 
-		if ( false === $result ) {
+		if ( false === $site_tools_result ) {
 			return false;
 		}
 
-		if ( isset( $result['err_code'] ) ) {
-			error_log( 'There was an issue purging the cache for this URL: ' . $url . '. Error code: ' . $result['err_code'] . '. Message: ' . $result['message'] . '.' );
+		if ( isset( $site_tools_result['err_code'] ) ) {
+			error_log( 'There was an issue purging the cache for this URL: ' . $url . '. Error code: ' . $site_tools_result['err_code'] . '. Message: ' . $site_tools_result['message'] . '.' );
 			return false;
 		}
 
@@ -354,11 +329,10 @@ class Supercacher {
 	 *
 	 * @param  string $url           The url to test.
 	 * @param  bool   $maybe_dynamic Wheather to make additional request to check the cache again.
-	 * @param  bool   $is_cloudflare_check If we should check if url is excluded for dynamic checks only.
 	 *
 	 * @return bool                  True if the cache is enabled, false otherwise.
 	 */
-	public static function test_cache( $url, $maybe_dynamic = true, $is_cloudflare_check = false ) {
+	public static function test_cache( $url, $maybe_dynamic = true ) {
 		// Bail if the url is empty.
 		if ( empty( $url ) ) {
 			return;
@@ -369,16 +343,37 @@ class Supercacher {
 			$url = trailingslashit( $url );
 		}
 
-		// Check if the url is excluded for dynamic checks only.
-		if ( false === $is_cloudflare_check ) {
-			// Bail if the url is excluded.
-			if ( SuperCacher_Helper::is_url_excluded( $url ) ) {
-				return false;
-			}
+		// Bail if the url is excluded.
+		if ( SuperCacher_Helper::is_url_excluded( $url ) ) {
+			return false;
+		}
+
+		// Define the arguments. No arguments necessary by default.
+		$args = array();
+
+		// Check if SiteGround CDN is active.
+		if (
+			Cdn::is_siteground_cdn() &&
+			! Cdn::is_siteground_cdn_premium() ||
+			Cdn::is_siteground_cdn_premium_pending()
+		) {
+			// Get the proper domain.
+			$matches = Site_Tools_Client::get_site_tools_matching_domain();
+
+			// Set the Host header so we can test the cache status locally from the server.
+			$args['headers'] = array(
+				'Host' => $matches[1],
+			);
+
+			// Store the original url.
+			$initial_url = $url;
+
+			// Set the url to be the one of the host.
+			$url = 'https://' . \gethostname() . str_replace( $matches[0], '', $url );
 		}
 
 		// Make the request.
-		$response = wp_remote_get( $url );
+		$response = wp_remote_get( $url, $args );
 
 		// Check for errors.
 		if ( is_wp_error( $response ) ) {
@@ -392,17 +387,17 @@ class Supercacher {
 			return false;
 		}
 
-		$cache_header = false === $is_cloudflare_check ? 'x-proxy-cache' : 'cf-cache-status';
-
 		// Check if the url has a cache header.
 		if (
-			isset( $headers[ $cache_header ] ) &&
-			'HIT' === strtoupper( $headers[ $cache_header ] )
+			isset( $headers['x-proxy-cache'] ) &&
+			'HIT' === strtoupper( $headers['x-proxy-cache'] )
 		) {
 			return true;
 		}
 
 		if ( $maybe_dynamic ) {
+			// Restore the url in cases of CDN check's second attempt to get the proper caching status.
+			$url = isset( $initial_url ) ? $initial_url : $url;
 			return self::test_cache( $url, false );
 		}
 
@@ -476,11 +471,6 @@ class Supercacher {
 			}
 		} else {
 			$this->purge_everything();
-		}
-
-		// Flush the Cloudflare cache if the optimization is enabled.
-		if ( 1 === intval( get_option( 'siteground_optimizer_cloudflare_optimization_status', 0 ) ) ) {
-			Cloudflare::get_instance()->purge_cache();
 		}
 
 		// Empty the purge queue after cache is cleared.

@@ -4,6 +4,7 @@ namespace SG_Security\Admin;
 use SG_Security;
 use SiteGround_Helper\Helper_Service;
 use SiteGround_i18n\i18n_Service;
+use SG_Security\SG_2fa\Sg_2fa;
 
 /**
  * Handle all hooks for our custom admin page.
@@ -30,6 +31,7 @@ class Admin {
 	public $dequeued_styles = array(
 		'auxin-front-icon', // Phlox Theme.
 		'mks_shortcodes_simple_line_icons', // Meks Flexible Shortcodes.
+		'onthego-admin-styles', // Toolset Types
 	);
 
 	/**
@@ -59,6 +61,8 @@ class Admin {
 	 * @since  1.0.0
 	 */
 	public function hide_errors_and_notices() {
+		$sg_2fa = new SG_2fa();
+
 		// Hide all error in our page.
 		if (
 			isset( $_GET['page'] ) &&
@@ -70,6 +74,9 @@ class Admin {
 			remove_all_actions( 'all_admin_notices' );
 
 			error_reporting( 0 );
+
+			// Add 2FA notice action.
+			add_action( 'admin_notices', array( $sg_2fa, 'show_notices' ) );
 		}
 	}
 
@@ -250,10 +257,12 @@ class Admin {
 		// Load the global submenu.
 		global $submenu;
 		if ( empty( $submenu['sg-security'] ) ) {
-			return;
+			return $menu_order;
 		}
 
 		$submenu['sg-security'][0][0] = __( 'Dashboard', 'sg-security' );
+
+		return $menu_order;
 	}
 
 	/**

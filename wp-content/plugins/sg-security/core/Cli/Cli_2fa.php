@@ -24,6 +24,7 @@ class Cli_2fa {
 	 * ## OPTIONS
 	 * <action>
 	 * : Action name.
+	 * default: reset
 	 * options:
 	 * - reset
 	 * 
@@ -32,14 +33,19 @@ class Cli_2fa {
 	 * options:
 	 * - id
 	 * - username
+	 * - all
 	 * ---
-	 * <value>
+	 * [<value>]
 	 * : The user ID or username.
+	 *
+	 * ## EXAMPLES
+	 *
+	 * wp sg 2fa reset id 1
 	 */
 	public function __invoke( $args ) {
 		// Bail if no action is provided.
 		if ( ! isset( $args[0] ) ) {
-			return \WP_CLI::error( 'Please provide an action - reset and the user ID or username. Per example "wp sg 2fa reset --user_id=1". This will reset the 2fa setup for user with ID 1.' );
+			return \WP_CLI::error( 'Please provide an action - reset and the user ID/username/all. Per example "wp sg 2fa reset id 1". This will reset the 2fa setup for user with ID 1.' );
 		}
 
 		// Initiate the reset action.
@@ -56,8 +62,20 @@ class Cli_2fa {
 	 * @since 1.1.1
 	 */
 	public function reset( $args ) {
+		// Reset all users 2FA setup if all is selected.
+		if ( 'all' === $args[1] ) {
+			Sg_2fa::get_instance()->reset_all_users_2fa();
+			// Return success message.
+			return \WP_CLI::success( '2FA successfully reset for all users!' );
+		}
+
+		if ( empty( $args[2] ) ) {
+			// Return error message if there is no such user.
+			\WP_CLI::error( 'You need to define user ID or username.' );
+		}
+
 		// Get the user.
-		$user = ( $args[1] == 'id') ? get_user_by( 'ID', $args[2] ) : get_user_by( 'login', $args[2] );
+		$user = ( 'id' === $args[1] ) ? get_user_by( 'ID', $args[2] ) : get_user_by( 'login', $args[2] );
 
 		if ( false === $user ) {
 			// Return error message if there is no such user.

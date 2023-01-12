@@ -25,7 +25,7 @@ abstract class Rest_Helper {
 
 		// Bail if the option key is not set.
 		if ( ! isset( $data[ $key ] ) ) {
-			return true === $bail ? self::send_json( 'Something went wrong', 400 ) : false;
+			return true === $bail ? self::send_response( 'Something went wrong', 400 ) : false;
 		}
 
 		return $data[ $key ];
@@ -54,26 +54,25 @@ abstract class Rest_Helper {
 	 * @param  integer $result      The result of the optimization.
 	 * @param  array   $data        Additional data to be send.
 	 */
-	public static function send_json( $message, $result = 1, $data = array() ) {
+	public static function send_response( $message, $result = 1, $data = array() ) {
 		// Prepare the status code, based on the optimization result.
 		$status_code = 1 === $result ? 200 : 400;
 
-		if ( ! headers_sent() ) {
-			header( 'Content-Type: application/json; charset=' . get_option( 'blog_charset' ) );
-
-			if ( null !== $status_code ) {
-				status_header( $status_code );
-			}
-		}
-
-		echo wp_json_encode(
+		$response = \rest_ensure_response(
 			array(
 				'data'    => $data,
 				'message' => $message,
 				'status'  => $status_code,
 			)
 		);
-		exit;
+
+		$response->set_status( $status_code );
+
+		if ( ! headers_sent() ) {
+			$response->header( 'Content-Type', 'application/json; charset=' . get_option( 'blog_charset' ) );
+		}
+
+		return $response;
 	}
 
 	/**
@@ -88,5 +87,32 @@ abstract class Rest_Helper {
 	 */
 	public function get_response_message( $result, $option ) {
 		return Message_Service::get_response_message( $result, $option );
+	}
+
+	/**
+	 * Prepare dropdown options and selected values to be sent to react.
+	 *
+	 * @since 1.3.3
+	 *
+	 * @param      array $options  The options/label array.
+	 * @param      bool  $value    The current value.
+	 *
+	 * @return     array  Data sent to the react.
+	 */
+	public function prepare_options_selected_values( $options, $value ) {
+		// Prepare the data array.
+		$data = array();
+
+		// Generate the data array for the react app.
+		foreach ( $options as $key => $label ) {
+			$data[] = array(
+				'value'    => $key,
+				'selected' => $key === $value ? 1 : 0,
+				'label'    => $label,
+			);
+		}
+
+		// Return the data.
+		return $data;
 	}
 }

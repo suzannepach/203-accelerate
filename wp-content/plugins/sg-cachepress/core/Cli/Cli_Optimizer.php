@@ -50,7 +50,6 @@ class Cli_Optimizer {
 	 *  - resize-images
 	 *  - web-fonts
 	 *  - fix-insecure-content
-	 *  - database-optimization
 	 *  - preload-combined-css
 	 * ---
 	 * <action>
@@ -86,8 +85,6 @@ class Cli_Optimizer {
 			case 'lazyload':
 			case 'preload-combined-css':
 				return $this->optimize( $args[1], $args[0], $blog_id );
-			case 'database-optimization':
-				return $this->optimize_database( $args[1] );
 			case 'mobile-cache':
 				return $this->optimize_mobile_cache( $args[1] );
 			case 'file-cache':
@@ -174,41 +171,6 @@ class Cli_Optimizer {
 
 		return true === $result ? \WP_CLI::success( $message ) : \WP_CLI::error( $message );
 
-	}
-
-	/**
-	 * Enable/disable Datbase Optimization
-	 *
-	 * @since  5.6.1
-	 *
-	 * @param  string $action Enable/disable the option
-	 *
-	 */
-	public function optimize_database ( $action ) {
-		if ( 'enable' === $action ) {
-			// Check if there is a scheduled event.
-			if ( ! wp_next_scheduled( 'siteground_optimizer_database_optimization_cron' ) ) {
-				// Set the event if it is not running.
-				$response = wp_schedule_event( time(), 'weekly', 'siteground_optimizer_database_optimization_cron' );
-			}
-			// Check if the event was scheduled.
-			if ( false === $response ) {
-				return \WP_CLI::error( 'Could not schedule the automatic optimization. Please, try again,' );
-			}
-			// Enable the option.
-			$result = Options::enable_option( 'siteground_optimizer_database_optimization' );
-			$type = true;
-		} else {
-			// Remove the scheduled event.
-			wp_clear_scheduled_hook( 'siteground_optimizer_database_optimization_cron' );
-			// Disable the option.
-			$result = Options::disable_option( 'siteground_optimizer_database_optimization' );
-			$type = false;
-		}
-		// Set the message.
-		$message = Message_Service::get_response_message( $result, 'database_optimization', $type );
-
-		return true === $result ? \WP_CLI::success( $message ) : \WP_CLI::error( $message );
 	}
 
 	public function optimize_mobile_cache( $action ) {

@@ -196,10 +196,6 @@ class Options {
 		global $blog_id;
 
 		$prefix = $wpdb->get_blog_prefix( $blog_id );
-		$plain_options = array(
-			'cloudflare_email',
-			'cloudflare_auth_key',
-		);
 
 		$options = array();
 
@@ -232,8 +228,7 @@ class Options {
 
 			if (
 				! is_array( $value ) &&
-				null !== filter_var( $value, FILTER_VALIDATE_BOOLEAN ) &&
-				! in_array( $option->name, $plain_options )
+				null !== filter_var( $value, FILTER_VALIDATE_BOOLEAN )
 			) {
 				$value = intval( $value );
 			}
@@ -379,6 +374,38 @@ class Options {
 			$result[] = array(
 				'title' => $title,
 				'value' => $type,
+			);
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Prepare the defaults for Database optimization menu.
+	 *
+	 * @since  7.2.2
+	 *
+	 * @return array $result Array containing the title and value pair for the FE pop-up.
+	 */
+	public function get_database_optimization_defaults() {
+		// List of default supported options and their title.
+		$defaults = array(
+			'optimize_tables'       => 'Perform Database Optimization for MyISAM tables',
+			'delete_auto_drafts'    => 'Delete all automatically created post and page drafts',
+			'delete_revisions'      => 'Delete all page and post revisions',
+			'delete_trashed_posts'  => 'Delete all posts and pages in your Trash',
+			'delete_spam_comments'  => 'Delete all comments marked as Spam',
+			'delete_trash_comments' => 'Delete all comments in your Trash',
+			'expired_transients'    => 'Delete all expired Transients'
+		);
+
+		$result = array();
+
+		// Loop trough all methods and prepare the array to be sent to the FE App.
+		foreach ( $defaults as $method => $title ) {
+			$result[] = array(
+				'title' => $title,
+				'value' => $method
 			);
 		}
 

@@ -7,6 +7,7 @@ use SG_Security\Login_Service\Login_Service;
 use SG_Security\Usernames_Service\Usernames_Service;
 use SG_Security\Message_Service\Message_Service;
 use SiteGround_Helper\Helper_Service;
+use SG_Security\Encryption_Service\Encryption_Service;
 
 /**
  * Rest Helper class that manages the login security.
@@ -21,6 +22,7 @@ class Rest_Helper_Login extends Rest_Helper {
 		$this->sg_2fa              = new Sg_2fa();
 		$this->login_service       = new Login_Service();
 		$this->usernames_service   = new Usernames_Service();
+		$this->encryption          = new Encryption_Service( $this->sg_2fa->encryption_key_file );
 	}
 
 	/**
@@ -36,7 +38,7 @@ class Rest_Helper_Login extends Rest_Helper {
 
 		// Bail if the both urls are the same.
 		if ( $data['login'] === $data['signup'] ) {
-			self::send_json(
+			return self::send_response(
 				__( 'Login and signup URL cannot be the same.', 'sg-security' ),
 				0
 			);
@@ -47,7 +49,7 @@ class Rest_Helper_Login extends Rest_Helper {
 			'wp-login.php' === $data['login'] ||
 			'wp-signup.php' === $data['signup']
 		) {
-			self::send_json(
+			return self::send_response(
 				__( 'You cannot use the default URL.', 'sg-security' ),
 				0
 			);
@@ -59,7 +61,7 @@ class Rest_Helper_Login extends Rest_Helper {
 			update_option( 'sg_security_login_register', str_replace( Helper_Service::get_home_url(), '', $data['signup'] ) );
 		}
 
-		self::send_json(
+		return self::send_response(
 			'Login URL changed!',
 			1,
 			array(
@@ -95,7 +97,7 @@ class Rest_Helper_Login extends Rest_Helper {
 		$data = json_decode( $request->get_body(), true );
 
 		update_option( 'sg_login_access', $data );
-		self::send_json(
+		return self::send_response(
 			'Login access updated!',
 			1,
 			array(
@@ -112,7 +114,25 @@ class Rest_Helper_Login extends Rest_Helper {
 	 * @param  object $request Request data.
 	 */
 	public function sg2fa( $request ) {
-		$this->rest_helper_options->change_option_from_rest( $request, 'sg2fa' );
+		$value = $this->validate_and_get_option_value( $request, 'sg2fa' );
+
+		// If enabling, create encryption key file.
+		if ( 1 === intval( $value ) ) {
+			// Bail if encryption file can not be created.
+			if ( false === $this->encryption->generate_encryption_file() ) {
+				self::send_json(
+					__( 'Unable to create encryption file! Check the wp-content folder permissions or contact your host.', 'sg-security' ),
+					0
+				);
+			}
+
+			// Clear LiteSpeed cache, if existing.
+			if ( class_exists( '\LiteSpeed\Purge' ) ) {
+				\LiteSpeed\Purge::purge_all();
+			}
+		}
+
+		return $this->rest_helper_options->change_option_from_rest( $request, 'sg2fa' );
 	}
 
 	/**
@@ -126,7 +146,7 @@ class Rest_Helper_Login extends Rest_Helper {
 		$params = $request->get_params( $request );
 
 		if ( empty( $params['id'] ) ) {
-			self::send_json(
+			return self::send_response(
 				__( 'Missing ID param!', 'sg-security' ),
 				0
 			);
@@ -134,7 +154,12 @@ class Rest_Helper_Login extends Rest_Helper {
 
 		$response = $this->sg_2fa->reset_user_2fa( $params['id'] );
 
-		self::send_json(
+		// Clear LiteSpeed cache, if existing.
+		if ( class_exists( '\LiteSpeed\Purge' ) ) {
+			\LiteSpeed\Purge::purge_all();
+		}
+
+		return self::send_response(
 			$response['message'],
 			$response['result'],
 			array( 'reset_2fa' => $this->sg_2fa->check_for_users_using_2fa() )
@@ -160,7 +185,7 @@ class Rest_Helper_Login extends Rest_Helper {
 		// Return false, when trying to enable the option, but username updates fail.
 		// Add the failed updates array if any.
 		if ( ! empty( $update_result ) ) {
-			self::send_json(
+			return self::send_response(
 				Message_Service::get_response_message( 0, 'disable_usernames', 0 ),
 				0,
 				array(
@@ -173,7 +198,7 @@ class Rest_Helper_Login extends Rest_Helper {
 		$result = $this->change_option( 'disable_usernames', $value );
 
 		// Set the response message.
-		self::send_json(
+		return self::send_response(
 			Message_Service::get_response_message( $result, 'disable_usernames', $value ),
 			$result,
 			array(
@@ -196,10 +221,10 @@ class Rest_Helper_Login extends Rest_Helper {
 
 		delete_option( 'sg_security_unsuccessful_login' );
 
-		self::send_json(
+		return self::send_response(
 			'Login attempts limited!',
 			1,
-			$this->login_service->get_login_attempts_data( intval( get_option( 'sg_security_login_attempts', 0 ) ) )
+			$this->prepare_options_selected_values( $this->login_service->login_attempts_data, intval( get_option( 'sg_security_login_attempts', 0 ) ) )
 		);
 	}
 }

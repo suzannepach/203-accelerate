@@ -15,7 +15,7 @@ class Editors_Service {
 	 * @param string   $cap     Capability being checked.
 	 */
 	public function disable_file_edit( $caps, $cap ) {
-		if ( in_array( $cap, array( 'edit_themes', 'edit_plugins', 'edit_files' ) ) ) {
+		if ( in_array( $cap, array( 'edit_themes', 'edit_plugins', 'edit_files' ), true ) ) {
 			return array( 'sg-security' );
 		}
 

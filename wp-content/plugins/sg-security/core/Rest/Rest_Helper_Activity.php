@@ -3,7 +3,9 @@ namespace SG_Security\Rest;
 
 use SG_Security\Block_Service\Block_Service;
 use SG_Security\Helper\Helper;
+use SG_Security\Activity_Log\Activity_Log;
 use SG_Security\Activity_Log\Activity_Log_Weekly_Emails;
+use SG_Security\Rest\Rest_Helper_Options;
 
 /**
  * Rest Helper class that manages all of the options.
@@ -21,8 +23,10 @@ class Rest_Helper_Activity extends Rest_Helper {
 	 * The constructor.
 	 */
 	public function __construct() {
-		$this->block_service = new Block_Service();
-		$this->weekly_emails = new Activity_Log_Weekly_Emails();
+		$this->block_service       = new Block_Service();
+		$this->weekly_emails       = new Activity_Log_Weekly_Emails();
+		$this->activity_log        = new Activity_Log();
+		$this->rest_helper_options = new Rest_Helper_Options();
 	}
 
 	/**
@@ -112,12 +116,12 @@ class Rest_Helper_Activity extends Rest_Helper {
 					array(
 						'id'    => 'from',
 						'label' => 'From',
-						'value' => end( $dates ),
+						'value' => ! empty( $filters['from'] ) ? intval( $filters['from'] ) : null,
 					),
 					array(
 						'id'    => 'to',
 						'label' => 'To',
-						'value' => array_shift( $dates ),
+						'value' => ! empty( $filters['to'] ) ? intval( $filters['to'] ) : null,
 					),
 				),
 			),
@@ -126,14 +130,14 @@ class Rest_Helper_Activity extends Rest_Helper {
 				'wp_name'  => 'type',
 				'children' => array(
 					array(
-						'id'          => 1,
-						'label'       => 'By Visitor Type',
-						'optionLabel' => 'label',
-						'optionValue' => 'value',
-						'searchable'  => true,
-						'placeholder' => 'Select or start typing',
-						'options'     => array_values( $visitor_types ),
-						'value'       => ! empty( $filters['type'] ) ? $filters['type'] : null,
+						'id'            => 1,
+						'label'         => 'By Visitor Type',
+						'optionLabel'   => 'label',
+						'optionValue'   => 'value',
+						'searchable'    => true,
+						'placeholder'   => 'Select or start typing',
+						'options'       => array_values( $visitor_types ),
+						'selectedValue' => ! empty( $filters['type'] ) ? $filters['type'] : null,
 					),
 				),
 			),
@@ -142,14 +146,14 @@ class Rest_Helper_Activity extends Rest_Helper {
 				'wp_name'  => 'code',
 				'children' => array(
 					array(
-						'id'          => 2,
-						'label'       => 'By Response',
-						'optionLabel' => 'label',
-						'optionValue' => 'value',
-						'searchable'  => true,
-						'placeholder' => 'Select or start typing',
-						'options'     => array_values( $codes ),
-						'value'       => ! empty( $filters['code'] ) ? $filters['code'] : null,
+						'id'            => 2,
+						'label'         => 'By Response',
+						'optionLabel'   => 'label',
+						'optionValue'   => 'value',
+						'searchable'    => true,
+						'placeholder'   => 'Select or start typing',
+						'options'       => array_values( $codes ),
+						'selectedValue' => ! empty( $filters['code'] ) ? $filters['code'] : null,
 					),
 				),
 			),
@@ -158,13 +162,13 @@ class Rest_Helper_Activity extends Rest_Helper {
 				'wp_name'  => 'ip',
 				'children' => array(
 					array(
-						'placeholder' => 'Select or start typing',
-						'label'       => 'By IP',
-						'optionLabel' => 'label',
-						'optionValue' => 'value',
-						'searchable'  => true,
-						'options'     => array_values( $ips ),
-						'value'       => ! empty( $filters['ip'] ) ? $filters['ip'] : null,
+						'placeholder'   => 'Select or start typing',
+						'label'         => 'By IP',
+						'optionLabel'   => 'label',
+						'optionValue'   => 'value',
+						'searchable'    => true,
+						'options'       => array_values( $ips ),
+						'selectedValue' => ! empty( $filters['ip'] ) ? $filters['ip'] : null,
 					),
 				),
 			),
@@ -227,12 +231,12 @@ class Rest_Helper_Activity extends Rest_Helper {
 					array(
 						'id' => 'from',
 						'label' => 'From',
-						'value' => end( $dates ),
+						'value' => ! empty( $filters['from'] ) ? intval( $filters['from'] ) : null,
 					),
 					array(
 						'id' => 'to',
 						'label' => 'To',
-						'value' => array_shift( $dates ),
+						'value' => ! empty( $filters['to'] ) ? intval( $filters['to'] ) : null,
 					),
 				),
 			),
@@ -241,14 +245,14 @@ class Rest_Helper_Activity extends Rest_Helper {
 				'wp_name'  => 'user',
 				'children' => array(
 					array(
-						'id'          => 1,
-						'label'       => 'By User',
-						'optionLabel' => 'label',
-						'optionValue' => 'value',
-						'placeholder' => 'Select or start typing',
-						'searchable'  => true,
-						'options'     => array_values( $users ),
-						'value'       => ! empty( $filters['user'] ) ? $filters['user'] : null,
+						'id'            => 1,
+						'label'         => 'By User',
+						'optionLabel'   => 'label',
+						'optionValue'   => 'value',
+						'placeholder'   => 'Select or start typing',
+						'searchable'    => true,
+						'options'       => array_values( $users ),
+						'selectedValue' => ! empty( $filters['user'] ) ? $filters['user'] : null,
 					),
 				),
 			),
@@ -257,14 +261,14 @@ class Rest_Helper_Activity extends Rest_Helper {
 				'wp_name'  => 'activity',
 				'children' => array(
 					array(
-						'id'          => 2,
-						'label'       => 'By Activity',
-						'optionLabel' => 'label',
-						'optionValue' => 'value',
-						'searchable'  => true,
-						'placeholder' => 'Select or start typing',
-						'options'     => array_values( $activities ),
-						'value'       => ! empty( $filters['activity'] ) ? $filters['activity'] : null,
+						'id'            => 2,
+						'label'         => 'By Activity',
+						'optionLabel'   => 'label',
+						'optionValue'   => 'value',
+						'searchable'    => true,
+						'placeholder'   => 'Select or start typing',
+						'options'       => array_values( $activities ),
+						'selectedValue' => ! empty( $filters['activity'] ) ? $filters['activity'] : null,
 					),
 				),
 			),
@@ -288,7 +292,7 @@ class Rest_Helper_Activity extends Rest_Helper {
 		// Bail if table doesn't exist.
 		if ( ! Helper::table_exists( $wpdb->sgs_visitors ) ) {
 			// Send the options to react app.
-			self::send_json(
+			return self::send_response(
 				'',
 				0,
 				array(
@@ -325,7 +329,7 @@ class Rest_Helper_Activity extends Rest_Helper {
 		}
 
 		// Send the options to react app.
-		self::send_json(
+		return self::send_response(
 			'',
 			1,
 			array(
@@ -355,7 +359,7 @@ class Rest_Helper_Activity extends Rest_Helper {
 		// Bail if table doesn't exist.
 		if ( ! Helper::table_exists( $wpdb->sgs_visitors ) ) {
 			// Send the options to react app.
-			self::send_json(
+			return self::send_response(
 				'',
 				0,
 				array(
@@ -393,7 +397,7 @@ class Rest_Helper_Activity extends Rest_Helper {
 		}
 
 		// Send the options to react app.
-		self::send_json(
+		return self::send_response(
 			'',
 			1,
 			array(
@@ -433,7 +437,7 @@ class Rest_Helper_Activity extends Rest_Helper {
 			);
 		}
 
-		if ( 'system' === $log_entry['object_id']  ) {
+		if ( 'system' === $log_entry['object_id'] ) {
 			return array(
 				'nicename'     => __( 'Server Systems', 'sg-security' ),
 				'blocked'      => 0,
@@ -491,7 +495,7 @@ class Rest_Helper_Activity extends Rest_Helper {
 		}
 
 		if ( ! empty( $filters['user'] ) ) {
-			$where .= ' AND `visitor_id` = ' . esc_sql( $filters['user'] );
+			$where .= ' AND `visitor_id` = "' . esc_sql( $filters['user'] ) . '"';
 		}
 
 		if ( ! empty( $filters['activity'] ) ) {
@@ -499,11 +503,11 @@ class Rest_Helper_Activity extends Rest_Helper {
 		}
 
 		if ( ! empty( $filters['from'] ) ) {
-			$where .= ' AND `ts` <= ' . esc_sql( $filters['from'] );
+			$where .= ' AND `ts` >= "' . esc_sql( $filters['from'] ) . '"';
 		}
 
 		if ( ! empty( $filters['to'] ) ) {
-			$where .= ' AND `ts` >= ' . esc_sql( $filters['to'] );
+			$where .= ' AND `ts` <= "' . esc_sql( $filters['to'] ) . '"';
 		}
 
 		if ( ! empty( $filters['ip'] ) ) {
@@ -515,12 +519,19 @@ class Rest_Helper_Activity extends Rest_Helper {
 		}
 
 		if ( ! empty( $paged ) ) {
-			$offset .= ' OFFSET ' . ( ( esc_sql( $paged ) * $this->number_of_entries ) - $this->number_of_entries );
+			$offset .= ' OFFSET ' .  intval( ( esc_sql( $paged ) * $this->number_of_entries ) - $this->number_of_entries );
 		}
 
 		return $select . $where . $order . $limit . $offset . ';';
 	}
 
+	/**
+	 * Gets the request filters.
+	 *
+	 * @param      object $request  The request
+	 *
+	 * @return     array   The request filters.
+	 */
 	public function get_request_filters( $request ) {
 		$body    = json_decode( $request->get_body(), 1 );
 		$filters = array();
@@ -528,8 +539,8 @@ class Rest_Helper_Activity extends Rest_Helper {
 		if ( ! empty( $body['filters'] ) ) {
 			foreach ( $body['filters'] as $filter ) {
 				if ( 'date' === $filter['wp_name'] ) {
-					$filters['from'] = $filter['children'][0]['value'];
-					$filters['to'] = $filter['children'][1]['value'];
+					$filters['from'] = ! empty( $filter['children'][0]['selectedValue'] ) ? $filter['children'][0]['selectedValue'] : $filter['children'][0]['value'];
+					$filters['to'] = ! empty( $filter['children'][1]['selectedValue'] ) ? $filter['children'][1]['selectedValue'] : $filter['children'][1]['value'];
 
 					continue;
 				}
@@ -552,7 +563,7 @@ class Rest_Helper_Activity extends Rest_Helper {
 		$body   = json_decode( $request->get_body(), true );
 
 		if ( empty( $params['id'] ) ) {
-			self::send_json(
+			return self::send_response(
 				__( 'Missing ID param!', 'sg-security' ),
 				0
 			);
@@ -560,7 +571,7 @@ class Rest_Helper_Activity extends Rest_Helper {
 
 		$response = $this->block_service->block_ip( $params['id'], $body['block'] );
 
-		self::send_json(
+		return self::send_response(
 			$response['message'],
 			$response['result']
 		);
@@ -579,7 +590,7 @@ class Rest_Helper_Activity extends Rest_Helper {
 
 		// Bail if IP is not passed.
 		if ( empty( $body['ip'] ) ) {
-			self::send_json(
+			return self::send_response(
 				__( 'Missing IP param!', 'sg-security' ),
 				0
 			);
@@ -595,7 +606,7 @@ class Rest_Helper_Activity extends Rest_Helper {
 		update_option( 'sg_security_unsuccessful_login', $login_attempts );
 
 		// Send the response.
-		self::send_json(
+		return self::send_response(
 			__( 'IP Unblocked.', 'sg-security' ),
 			1
 		);
@@ -615,7 +626,7 @@ class Rest_Helper_Activity extends Rest_Helper {
 		$body = json_decode( $request->get_body(), true );
 
 		if ( empty( $params['id'] ) ) {
-			self::send_json(
+			return self::send_response(
 				__( 'Missing ID param!', 'sg-security' ),
 				0
 			);
@@ -633,7 +644,7 @@ class Rest_Helper_Activity extends Rest_Helper {
 		}
 
 		// Send the response.
-		self::send_json(
+		return self::send_response(
 			$response['message'],
 			$response['result']
 		);
@@ -650,7 +661,7 @@ class Rest_Helper_Activity extends Rest_Helper {
 		$params = $request->get_params( $request );
 
 		if ( empty( $params['id'] ) ) {
-			self::send_json(
+			return self::send_response(
 				__( 'Missing ID param!', 'sg-security' ),
 				0
 			);
@@ -658,7 +669,7 @@ class Rest_Helper_Activity extends Rest_Helper {
 
 		$response = $this->block_service->get_visitor_status( $params['id'] );
 
-		self::send_json(
+		return self::send_response(
 			'',
 			$response['result'],
 			$response['data']
@@ -712,7 +723,7 @@ class Rest_Helper_Activity extends Rest_Helper {
 
 		foreach ( $limit_login_attempts as $ip => $attempt ) {
 			// Check if IP is blocked.
-			if ( empty ( $attempt['timestamp'] ) ) {
+			if ( empty( $attempt['timestamp'] ) ) {
 				continue;
 			}
 
@@ -728,7 +739,7 @@ class Rest_Helper_Activity extends Rest_Helper {
 		}
 
 		// Send the options to react app.
-		self::send_json(
+		return self::send_response(
 			'',
 			1,
 			array(
@@ -748,7 +759,7 @@ class Rest_Helper_Activity extends Rest_Helper {
 		$data = $this->weekly_emails->weekly_report_receipients();
 
 		// Send the options to react app.
-		self::send_json(
+		return self::send_response(
 			'',
 			1,
 			array(
@@ -771,7 +782,7 @@ class Rest_Helper_Activity extends Rest_Helper {
 		// Update the option.
 		update_option( 'sg_security_notification_emails', array_unique( array_column( $data['entries'], 'email' ) ) );
 
-		self::send_json(
+		return self::send_response(
 			__( 'Notification emails updated.', 'sg-security' ),
 			1,
 			array(
@@ -779,6 +790,41 @@ class Rest_Helper_Activity extends Rest_Helper {
 					$this->weekly_emails->weekly_report_receipients(),
 				),
 			)
+		);
+	}
+
+	/**
+	 * Enable or disable the activity log.
+	 *
+	 * @since 1.3.3
+	 *
+	 * @param object $request Request data.
+	 */
+	public function manage_activity_log( $request ) {
+		return $this->rest_helper_options->change_option_from_rest( $request, 'disable_activity_log' );
+	}
+
+	/**
+	 * Manage the activity log lifetime.
+	 *
+	 * @since 1.3.3
+	 *
+	 * @param object $request Request data.
+	 */
+	public function activity_log_lifetime( $request ) {
+		// Validate the request.
+		$log_lifetime = intval( $this->validate_and_get_option_value( $request, 'log_lifetime' ) );
+
+		// Update the activity log lifetime.
+		update_option( 'sgs_activity_log_lifetime', $log_lifetime );
+
+		// Delete the old log records from the database.
+		$this->activity_log->delete_old_activity_logs();
+
+		return self::send_response(
+			'Activity log lifetime updated!',
+			1,
+			$this->prepare_options_selected_values( array_combine( range( 1, 12 ), range( 1, 12 ) ), intval( get_option( 'sgs_activity_log_lifetime', 12 ) ) )
 		);
 	}
 }

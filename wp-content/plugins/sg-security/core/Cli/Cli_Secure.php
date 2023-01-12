@@ -23,6 +23,23 @@ use SG_Security\Loader\Loader;
  * @since 1.0.2
  */
 class Cli_Secure {
+
+	/**
+	 * The array that maps features with their option.
+	 *
+	 * @var array
+	 */
+	public $mapping = array(
+		'protect-system-folders' => 'lock_system_folders',
+		'hide-wordpress-version' => 'wp_remove_version',
+		'plugins-themes-editor'  => 'disable_file_edit',
+		'xml-rpc'                => 'disable_xml_rpc',
+		'rss-atom-feed'          => 'disable_feed',
+		'xss-protection'         => 'xss_protection',
+		'2fa'                    => 'sg2fa',
+		'disable-admin-user'     => 'disable_usernames',
+	);
+
 	/**
 	 * Enable specific optimization for SG Security plugin.
 	 *
@@ -41,14 +58,14 @@ class Cli_Secure {
 	 *  - 2fa
 	 *  - disable-admin-user
 	 * ---
-	 * <action>
+	 * [<action>]
 	 * : The action: enable\disable.
 	 * Whether to enable or disable the optimization.
 	 */
 	public function __invoke( $args ) {
-		// Bail if no action is provided.
-		if ( ! isset( $args[0] ) ) {
-			return \WP_CLI::error( 'Please choose between enable and disable' );
+		// Get the status of the feature if no action is set.
+		if ( ! isset( $args[1] ) ) {
+			return $this->get_feature_status( $args[0] );
 		}
 
 		switch ( $args[0] ) {
@@ -74,25 +91,14 @@ class Cli_Secure {
 	 */
 	public function optimize( $args ) {
 
-		$mapping = array(
-			'protect-system-folders' => 'lock_system_folders',
-			'hide-wordpress-version' => 'wp_remove_version',
-			'plugins-themes-editor'  => 'disable_file_edit',
-			'xml-rpc'                => 'disable_xml_rpc',
-			'rss-atom-feed'          => 'disable_feed',
-			'xss-protection'         => 'xss_protection',
-			'2fa'                    => 'sg2fa',
-			'disable-admin-user'     => 'disable_usernames',
-		);
-
 		// Check the input of the user and proceed depending on the option.
 		switch ( $args[1] ) {
 			case 'enable':
-				$result = Options_Service::enable_option( $mapping[ $args[0] ] );
+				$result = Options_Service::enable_option( $this->mapping[ $args[0] ] );
 				break;
 
 			case 'disable':
-				$result = Options_Service::change_option( $mapping[ $args[0] ], 0 );
+				$result = Options_Service::change_option( $this->mapping[ $args[0] ], 0 );
 				break;
 
 			default:
@@ -129,5 +135,23 @@ class Cli_Secure {
 
 		// Update option in database.
 		$this->optimize( $args );
+	}
+
+	/**
+	 * Get the status of a specific feature.
+	 *
+	 * @since 1.3.7
+	 *
+	 * @param  string $feature The feature we want to check.
+	 */
+	public function get_feature_status( $feature ) {
+		// Check if option is enabled.
+		$maybe_enabled = Options_Service::is_enabled( $this->mapping[ $feature ] );
+
+		// Set the proper status based on the options status.
+		$status = $maybe_enabled ? \WP_CLI::colorize( '%gEnabled%n' ) : \WP_CLI::colorize( '%rDisabled%n' );
+
+		// Return the status.
+		\WP_CLI::success( $feature . ' Status: ' . $status );
 	}
 }

@@ -207,28 +207,6 @@ class Login_Service {
 	}
 
 	/**
-	 * Get login attempts data for the react app.
-	 *
-	 * @since  1.0.0
-	 *
-	 * @param  int $value The current value.
-	 *
-	 * @return array      Login attempts data.
-	 */
-	public function get_login_attempts_data( $value ) {
-		$data = array();
-
-		foreach ( $this->login_attempts_data as $key => $label ) {
-			$data[] = array(
-				'value'    => $key,
-				'selected' => $key === $value ? 1 : 0,
-				'label'    => $label,
-			);
-		}
-
-		return $data;
-	}
-	/**
 	 * Search an IP range for a given IP.
 	 *
 	 * @since  1.2.0

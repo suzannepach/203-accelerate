@@ -3,7 +3,7 @@ Contributors: Hristo Sg, siteground, sstoqnov, stoyangeorgiev, elenachavdarova, 
 Tags: nginx, caching, speed, memcache, memcached, performance, siteground, nginx, supercacher
 Requires at least: 4.7
 Requires PHP: 7.0
-Tested up to: 6.0
+Tested up to: 6.1
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -108,6 +108,17 @@ If you need to add a specific query parameter which will be ignored in the cache
 		$ignored_query_params[] = 'query_param2';
 
 		return $ignored_query_params;
+	}
+
+If you need to exclude certain URLs from your website being cached you can use the filter we have designed for that purpose. Make sure to surround the url part with forward slashes. Wildcards can be used as well. You can check the below example:
+
+	add_filter( 'sgo_exclude_urls_from_cache', 'sgo_add_excluded_urls_from_cache');
+	function sgo_add_excluded_urls_from_cache( $excluded_urls ) {
+		// The part of the URL which needs to be excluded from cache.
+		$excluded_urls[] = '/excluded_url/';
+		$excluded_urls[] = '/wildcard/exclude/*';
+
+		return $excluded_urls;
 	}
 
 = SiteGround Optimizer Environment Page =
@@ -250,6 +261,13 @@ You can exclude inline script from being combined using the filter we’ve desig
 		return $exclude_list;
 	}
 
+You can exclude all inline scripts from being combined using the filter we’ve designed for that purpose. Here’s an example of the code, you can add to your functions.php file:
+
+	add_filter( 'sgo_javascript_combine_exclude_all_inline', '__return_true' );
+
+You can exclude all inline scripts from being combined using the filter we’ve designed for that purpose. Here’s an example of the code, you can add to your functions.php file:
+
+	add_filter( 'sgo_javascript_combine_exclude_all_inline_modules', '__return_true' );
 
 You can exclude script from being loaded asynchronously  using the filter we’ve designed for that purpose. Here’s an example of the code, you can add to your functions.php file:
 
@@ -277,6 +295,14 @@ You can exclude url or url that contain specific query param using the following
 		$exclude_urls[] = 'http://mydomain.com/page-slug';
 
 		return $exclude_urls;
+	}
+
+You can exclude static resources from the removal of their query strings using the filter we’ve designed for that purpose. Here’s an example of the code, you can add to your functions.php file:
+
+	add_filter( 'sgo_rqs_exclude', 'sgo_rqs_exclude_scripts' );
+	function sgo_rqs_exclude_scripts( $exclude_list ) {
+		$exclude_list[] = 'part-of-the-resource-path.js';
+		return $exclude_list;
 	}
 
 You can exclude images from Lazy Load using the following filter:
@@ -359,7 +385,17 @@ Environment:
 * `wp sg optimize fix-insecure-content enable|disable` - enables or disables Insecure Content Fix
 * `wp sg heartbeat frontend|dashboard|post --frequency=<frequency>` - Adjust Heartbeat control frequency for a specific location
 * `wp sg dns-prefetch add|remove|urls <value>` - add, remove or list urls in the DNS Prefetch list.
-* `wp sg optimize database-optimization enable|disable` - enables or disables the DB Optimization
+* `wp sg database-optimization enable|disable|update|status --options=<database_optimization>` - enables or disables the DB Optimization, update for specific options only, show a full list of enabled options.
+
+= Available for the database-optimization options: =
+
+* delete_auto_drafts
+* delete_revisions
+* delete_trashed_posts
+* delete_spam_comments
+* delete_trash_comments
+* expired_transients
+* optimize_tables
 
 Frontend:
 * `wp sg optimize css enable|disable` - enables or disables CSS minification
@@ -427,6 +463,60 @@ Our plugin uses a cookie in order to function properly. It does not store person
 1. Go to Plugins -> Installed Plugins and click the 'Activate' link under the WordPress SiteGround Optimizer listing
 
 == Changelog ==
+
+= Version 7.2.9 =
+Release Date: Dec 2nd, 2022
+
+* Fix for missing apache_response_headers function.
+
+= Version 7.2.8 =
+Release Date: Dec 1st, 2022
+
+* Improved namespace performance on other hosts.
+* Improved WooCommerce Square plugin support.
+
+= Version 7.2.7 =
+Release Date: Nov 30rd, 2022
+
+* Improved Memcache Health status checks
+* Improved FileBased Cache cleanup
+* Improved FileBased Cache Headers checks
+* Improved LazyLoad for sidebar images
+* Improved Speed Test results
+* Improved Test URL cache status
+
+= Version 7.2.6 =
+Release Date: Nov 21st, 2022
+
+* Discontinue of Cloudflare support
+
+= Version 7.2.5 =
+Release Date: October 18th, 2022
+
+* Improved Database Optimization interface
+* Improved Multisite Memcached support
+
+= Version 7.2.4 =
+Release Date: October 11th, 2022
+
+* Memcached Service bug fix
+
+= Version 7.2.3 =
+Release Date: October 11th, 2022
+
+* Install Service fix
+
+= Version 7.2.2 =
+Release Date: October 10th, 2022
+
+* New filter - Exclude URL from cache
+* New filter - Exclude inline scripts from combination
+* Improved Database Optimization options
+* Improved Memcached service
+* Improved Toolset Types plugin support
+* Improved admin menu ordering
+* Legacy code removed
+
 = Version 7.2.1 =
 Release Date: August 10th, 2022
 
@@ -445,7 +535,7 @@ Release Date: June 23rd, 2022
 * Improved Memcached service
 
 = Version 7.1.4 =
-Release Date: June 21th, 2022
+Release Date: June 21st, 2022
 
 * Improved older PHP versions support
 

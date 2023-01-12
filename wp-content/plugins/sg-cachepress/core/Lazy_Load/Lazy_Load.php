@@ -35,6 +35,10 @@ class Lazy_Load {
 				'hook'   => 'widget_text',
 			),
 			array(
+				'option' => 'textwidgets',
+				'hook'   => 'widget_block_content',
+			),
+			array(
 				'option' => 'thumbnails',
 				'hook'   => 'post_thumbnail_html',
 			),

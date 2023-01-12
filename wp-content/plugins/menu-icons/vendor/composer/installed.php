@@ -1,9 +1,9 @@
 <?php return array(
     'root' => array(
         'name' => 'codeinwp/wp-menu-icons',
-        'pretty_version' => 'v0.13.0',
-        'version' => '0.13.0.0',
-        'reference' => '789aafe06b2183d940c0bdc43f6f81a49f84abc0',
+        'pretty_version' => 'v0.13.2',
+        'version' => '0.13.2.0',
+        'reference' => '3d2b34af71c45d63cea043054a93e7df346b4d1e',
         'type' => 'wordpress-plugin',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -44,7 +44,7 @@
         'codeinwp/themeisle-sdk' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => 'bab0314e1f6e2f811116a2da7736b94cbe6af90f',
+            'reference' => '04ab7589bf32dbfddbf66bbb69bb0ab2eb8d7c27',
             'type' => 'library',
             'install_path' => __DIR__ . '/../codeinwp/themeisle-sdk',
             'aliases' => array(
@@ -53,9 +53,9 @@
             'dev_requirement' => false,
         ),
         'codeinwp/wp-menu-icons' => array(
-            'pretty_version' => 'v0.13.0',
-            'version' => '0.13.0.0',
-            'reference' => '789aafe06b2183d940c0bdc43f6f81a49f84abc0',
+            'pretty_version' => 'v0.13.2',
+            'version' => '0.13.2.0',
+            'reference' => '3d2b34af71c45d63cea043054a93e7df346b4d1e',
             'type' => 'wordpress-plugin',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

@@ -11,7 +11,6 @@ use SiteGround_Optimizer\Rest\Rest;
 use SiteGround_Optimizer\Images_Optimizer\Images_Optimizer;
 use SiteGround_Optimizer\Heartbeat_Control\Heartbeat_Control;
 use SiteGround_Helper\Helper_Service;
-use SiteGround_Optimizer\DNS\Cloudflare;
 use SiteGround_Optimizer\File_Cacher\File_Cacher;
 
 /**
@@ -38,7 +37,6 @@ class Rest_Helper_Options extends Rest_Helper {
 		'environment' => array(
 			'ssl_enabled',
 			'fix_insecure_content',
-			'database_optimization',
 			'enable_gzip_compression',
 			'enable_browser_caching',
 		),
@@ -287,8 +285,6 @@ class Rest_Helper_Options extends Rest_Helper {
 
 		switch ( $params['page_id'] ) {
 			case 'caching':
-				// Get the CF status.
-				$has_cloudflare = Cloudflare::has_cloudflare();
 
 				// Options requiring additional action.
 				$page_data = array(
@@ -301,28 +297,16 @@ class Rest_Helper_Options extends Rest_Helper {
 						'selected' => get_option( $this->option_prefix . 'excluded_urls', array() ),
 					),
 					'file_caching_interval_cleanup' => File_Cacher::get_instance()->get_intervals(),
-					'has_cloudflare' => $has_cloudflare,
-				);
-
-				// Finish preparing the options for the page if CF is not active.
-				if ( 0 === $has_cloudflare ) {
-					break;
-				}
-
-				// Add the CF Settings.
-				$page_data = array_merge(
-					$page_data,
-					array(
-						'cloudflare_optimization_status' => intval( get_option( $this->option_prefix . 'cloudflare_optimization_status', 0 ) ),
-						'cloudflare_email'               => get_option( $this->option_prefix . 'cloudflare_email', '' ),
-						'cloudflare_auth_key'            => get_option( $this->option_prefix . 'cloudflare_auth_key', '' ),
-					)
 				);
 				break;
 			case 'environment':
 				$page_data = array(
-					'heartbeat_dropdowns' => $this->heartbeat_control->prepare_intervals(),
-					'heartbeat_control'   => $this->heartbeat_control->is_enabled(),
+					'heartbeat_dropdowns'        => $this->heartbeat_control->prepare_intervals(),
+					'heartbeat_control'          => $this->heartbeat_control->is_enabled(),
+					'database_optimization'      => array(
+						'default'  => $this->options->get_database_optimization_defaults(),
+						'selected' => array_values( get_option( $this->option_prefix . 'database_optimization', array() ) ),
+					)
 				);
 				break;
 			case 'frontend':

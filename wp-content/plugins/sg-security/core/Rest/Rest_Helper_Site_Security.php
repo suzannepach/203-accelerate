@@ -6,7 +6,6 @@ use SG_Security\Readme_Service\Readme_Service;
 use SG_Security\Htaccess_Service\Directory_Service;
 use SG_Security\Htaccess_Service\Headers_Service;
 use SG_Security\Htaccess_Service\Xmlrpc_Service;
-use SG_Security\Htaccess_Service\Hsts_Service;
 use SG_Security\Message_Service\Message_Service;
 use SG_Security\Options_Service\Options_Service;
 
@@ -22,7 +21,6 @@ class Rest_Helper_Site_Security extends Rest_Helper {
 		$this->readme_service      = new Readme_Service();
 		$this->rest_helper_options = new Rest_Helper_Options();
 		$this->directory_service   = new Directory_Service();
-		$this->hsts_service        = new Hsts_Service();
 		$this->xmlrpc_service      = new Xmlrpc_Service();
 	}
 
@@ -37,7 +35,7 @@ class Rest_Helper_Site_Security extends Rest_Helper {
 		$value = $this->validate_and_get_option_value( $request, 'lock_system_folders' );
 		$this->directory_service->toggle_rules( $value );
 
-		$this->rest_helper_options->change_option_from_rest( $request, 'lock_system_folders' );
+		return $this->rest_helper_options->change_option_from_rest( $request, 'lock_system_folders' );
 	}
 
 	/**
@@ -48,7 +46,7 @@ class Rest_Helper_Site_Security extends Rest_Helper {
 	 * @param  object $request Request data.
 	 */
 	public function disable_editors( $request ) {
-		$this->rest_helper_options->change_option_from_rest( $request, 'disable_file_edit' );
+		return $this->rest_helper_options->change_option_from_rest( $request, 'disable_file_edit' );
 	}
 
 	/**
@@ -59,7 +57,7 @@ class Rest_Helper_Site_Security extends Rest_Helper {
 	 * @param  object $request Request data.
 	 */
 	public function hide_wp_version( $request ) {
-		$this->rest_helper_options->change_option_from_rest( $request, 'wp_remove_version' );
+		return $this->rest_helper_options->change_option_from_rest( $request, 'wp_remove_version' );
 	}
 
 	/**
@@ -74,13 +72,13 @@ class Rest_Helper_Site_Security extends Rest_Helper {
 		$result = $this->xmlrpc_service->toggle_rules( $value );
 
 		if ( false === $result ) {
-			self::send_json(
+			return self::send_response(
 				Message_Service::get_response_message( $result, 'disable_xml_rpc', $value ),
 				$result
 			);
 		}
 
-		$this->rest_helper_options->change_option_from_rest( $request, 'disable_xml_rpc' );
+		return $this->rest_helper_options->change_option_from_rest( $request, 'disable_xml_rpc' );
 	}
 
 	/**
@@ -91,7 +89,7 @@ class Rest_Helper_Site_Security extends Rest_Helper {
 	 * @param  object $request Request data.
 	 */
 	public function disable_feeds( $request ) {
-		$this->rest_helper_options->change_option_from_rest( $request, 'disable_feed' );
+		return $this->rest_helper_options->change_option_from_rest( $request, 'disable_feed' );
 	}
 
 	/**
@@ -102,22 +100,7 @@ class Rest_Helper_Site_Security extends Rest_Helper {
 	 * @param  object $request Request data.
 	 */
 	public function xss_protection( $request ) {
-		$this->rest_helper_options->change_option_from_rest( $request, 'xss_protection' );
-	}
-
-	/**
-	 * Enable HSTS protection.
-	 *
-	 * @since  1.1.0
-	 *
-	 * @param  object $request Request data.
-	 */
-	public function hsts_protection( $request ) {
-		$value = $this->validate_and_get_option_value( $request, 'hsts_protection' );
-
-		$this->hsts_service->toggle_rules( $value );
-
-		$this->rest_helper_options->change_option_from_rest( $request, 'hsts_protection' );
+		return $this->rest_helper_options->change_option_from_rest( $request, 'xss_protection' );
 	}
 
 	/**
@@ -136,6 +119,6 @@ class Rest_Helper_Site_Security extends Rest_Helper {
 		}
 
 		// Change the option in the DB, so that on the next update the hook for deleting the readme is called.
-		$this->rest_helper_options->change_option_from_rest( $request, 'delete_readme' );
+		return $this->rest_helper_options->change_option_from_rest( $request, 'delete_readme' );
 	}
 }

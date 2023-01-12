@@ -28,5 +28,9 @@ class Cli {
 
 		// Reset the 2FA setup per user.
 		\WP_CLI::add_command( 'sg 2fa', 'SG_Security\Cli\Cli_2fa' );
+
+		// Get Custom Login URL status or disable it.
+		\WP_CLI::add_command( 'sg custom-login', 'SG_Security\Cli\Cli_Custom_Login_Url' );
+
 	}
 }

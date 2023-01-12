@@ -42,7 +42,6 @@ class Settings {
 		'heartbeat_control',
 		'database_optimization',
 		'dns_prefetch',
-		'cloudflare_optimization',
 		'async_javascript_exclude',
 		'excluded_lazy_load_classes',
 		'post_types_exclude',

@@ -188,7 +188,7 @@ class Helper_Service {
 	 */
 	public static function is_siteground() {
 		// Bail if open_basedir restrictions are set, and we are not able to check certain directories.
-		if ( ! empty( ini_get( 'open_basedir' ) ) ){
+		if ( ! empty( ini_get( 'open_basedir' ) ) ) {
 			return 0;
 		}
 

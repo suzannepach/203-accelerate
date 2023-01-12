@@ -367,7 +367,7 @@ class Js_Combinator extends Abstract_Combinator {
 		'var dateNow',
 		'platform.stumbleupon.com',
 		'berocket_aapf_time_to_fix_products_style',
-  			'$("#myCarousel',
+		'$("#myCarousel',
 		'fbq(\'trackCustom\'',
 		'fusetag.setTargeting',
 		'dfd-button-hover-in',
@@ -433,7 +433,7 @@ class Js_Combinator extends Abstract_Combinator {
 		'<script\b', // Opening script tag.
 			'([^>]*)', // Tag attributes.
 		'>', // Closing script tag.
-			'(?:\/\*\s*<!\[CDATA\[\s*\*\/)?\s*', //  Match CDATA.
+			'(?:\/\*\s*<!\[CDATA\[\s*\*\/)?\s*', // Match CDATA.
 			'([\s\S]*?)', // The script content, if any.
 			'\s*(?:\/\*\s*\]\]>\s*\*\/)?', // Anything else until closing tag.
 		'<\/script>', // Closing script tag.
@@ -501,6 +501,7 @@ class Js_Combinator extends Abstract_Combinator {
 		'wp-polyfill',
 		'wp-url',
 		'wp-hooks',
+		'wc-square',
 	);
 
 	/**
@@ -624,7 +625,7 @@ class Js_Combinator extends Abstract_Combinator {
 		$excluded   = array();
 
 		// Remove excluded script handles using regex.
-		foreach( $this->combined_scripts_exclude_regex as $regex ) {
+		foreach ( $this->combined_scripts_exclude_regex as $regex ) {
 			$excluded_handles = array_merge( $excluded_handles, Helper::get_script_handle_regex( $regex, $registered ) );
 		}
 
@@ -747,6 +748,19 @@ class Js_Combinator extends Abstract_Combinator {
 	 * @return string         Script content.
 	 */
 	public function try_to_process_inline_script( $script ) {
+		// Check if all inline scripts are excluded from combination via filter.
+		if ( true === apply_filters( 'sgo_javascript_combine_exclude_all_inline', false ) ) {
+			return;
+		}
+
+		// Check if all inline module scripts are excluded from combination via filter.
+		if (
+			preg_match( '~script type=["\']module["\']~', $script ) &&
+			true === apply_filters( 'sgo_javascript_combine_exclude_all_inline_modules', false )
+		) {
+			return;
+		}
+
 		preg_match(
 			/**
 			Build the regular expression.

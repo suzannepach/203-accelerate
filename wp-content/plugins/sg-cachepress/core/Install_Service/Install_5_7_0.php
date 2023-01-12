@@ -36,19 +36,6 @@ class Install_5_7_0 extends Install {
 					'link'  => 'frontend',
 				),
 			),
-			array(
-				'type'         => 'default',
-				'title'        => __( 'Full-page Caching on CloudFlare', 'sg-cachepress' ),
-				'text'         => __( 'This optimization links your WordPress site with Cloudflare and sets the necessary rules and workers in order to enable full-page caching on Cloudflare edges in order to improve your TTFB and overall site performance.', 'sg-cachepress' ),
-				'icon'         => 'presentational-cloudflare',
-				'icon_color'   => 'salmon',
-				'optimization' => 'cloudflare_optimization',
-				'button' => array(
-					'text'  => __( 'Enable Now', 'sg-cachepress' ),
-					'color' => 'primary',
-					'link'  => 'cloudflare',
-				),
-			),
 		) );
 
 		if ( Options::is_enabled( 'siteground_optimizer_combine_google_fonts' ) ) {

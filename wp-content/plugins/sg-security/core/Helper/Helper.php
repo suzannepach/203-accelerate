@@ -12,40 +12,24 @@ use \WP_Session_Tokens;
 class Helper {
 
 	/**
-	 * Get the current user's ip address.
+	 * Get the current user's IP address.
 	 *
 	 * @since  1.0.0
 	 *
-	 * @return string The users's ip.
+	 * @return string The users's IP.
 	 */
 	public static function get_current_user_ip() {
-
-		$keys = array(
-			'HTTP_CLIENT_IP',
-			'HTTP_X_FORWARDED_FOR',
-			'HTTP_X_FORWARDED',
-			'HTTP_X_CLUSTER_CLIENT_IP',
-			'HTTP_FORWARDED_FOR',
-			'HTTP_FORWARDED',
-			'REMOTE_ADDR',
-		);
-
-		foreach ( $keys as $key ) {
-			// Bail if the key doesn't exists.
-			if ( ! isset( $_SERVER[ $key ] ) ) {
-				continue;
-			}
-
-			// Bail if the IP is not valid.
-			if ( ! filter_var( $_SERVER[ $key ], FILTER_VALIDATE_IP ) ) { //phpcs:ignore
-				continue;
-			}
-
-			return preg_replace( '/^::1$/', '127.0.0.1', $_SERVER[ $key ] ); //phpcs:ignore
+		// Bail if the key doesn't exists or IP not valid.
+		if (
+			! isset( $_SERVER['REMOTE_ADDR'] ) ||
+			! filter_var( $_SERVER['REMOTE_ADDR'], FILTER_VALIDATE_IP )
+		) {
+			// Return the local IP by default.
+			return '127.0.0.1';
 		}
 
-		// Return the local IP by default.
-		return '127.0.0.1';
+		// Return the users's IP Address.
+		return preg_replace( '/^::1$/', '127.0.0.1', $_SERVER['REMOTE_ADDR'] ); //phpcs:ignore
 	}
 
 	/**
@@ -104,6 +88,7 @@ class Helper {
 	public function custom_wp_die_callback( $message, $title, $args ) {
 		// Call the default wp_die_handler if the custom param is not set or a WP_Error object is present.
 		if ( is_object( $message ) || empty( $args['sgs_error'] ) ) {
+			$args['exit'] = true;
 			_default_wp_die_handler( $message, $title, $args );
 		}
 
@@ -146,60 +131,5 @@ class Helper {
 
 		// Destroy all sessions.
 		WP_Session_Tokens::destroy_all_for_all_users();
-	}
-
-	/**
-	 * Encrypt data method.
-	 *
-	 * @since  1.2.4
-	 *
-	 * @param  string $data The string we will encrypt.
-	 * @param  string $key  The string used for encryption key.
-	 *
-	 * @return string       The encrypted data.
-	 */
-	public static function sgs_encrypt( $data, $key ) {
-		// Remove the base64 encoding from our key.
-		$encryption_key = base64_decode( $key . AUTH_SALT );
-
-		// Define cipher and generate an initialization vector.
-		$cipher = 'AES-256-CBC';
-		$ivlen  = openssl_cipher_iv_length( $cipher );
-		$iv     = openssl_random_pseudo_bytes( $ivlen );
-
-		$raw_value = openssl_encrypt( implode( '|', $data ), $cipher, $encryption_key, OPENSSL_RAW_DATA, $iv );
-
-		// Return the encrypted data.
-		return base64_encode( $iv . $raw_value );
-	}
-
-	/**
-	 * Decrypt data method.
-	 *
-	 * @since  1.2.4
-	 *
-	 * @param  string $data The string we will decrypt.
-	 * @param  string $key  The string used as an encryption key.
-	 *
-	 * @return string       The decrypted data.
-	 */
-	public static function sgs_decrypt( $data, $key ) {
-		// Remove the base64 encoding from our data.
-		$raw_value = base64_decode( $data, true );
-
-		// Remove the base64 encoding from our key.
-		$encryption_key = base64_decode( $key . AUTH_SALT );
-
-		// Define cipher and get the initialization vector.
-		$cipher = 'AES-256-CBC';
-		$ivlen  = openssl_cipher_iv_length( $cipher );
-		$iv     = substr( $raw_value, 0, $ivlen );
-
-		$raw_value = substr( $raw_value, $ivlen );
-
-		// Return the decrypted data.
-		$decrypted = openssl_decrypt( $raw_value, 'AES-256-CBC', $encryption_key, OPENSSL_RAW_DATA, $iv );
-
-		return explode( '|', $decrypted );
 	}
 }

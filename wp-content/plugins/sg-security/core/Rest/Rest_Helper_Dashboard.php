@@ -31,7 +31,7 @@ class Rest_Helper_Dashboard extends Rest_Helper {
 		}
 
 		// Send the response.
-		self::send_json(
+		return self::send_response(
 			'',
 			1,
 			$response
@@ -44,7 +44,7 @@ class Rest_Helper_Dashboard extends Rest_Helper {
 	 * @since  1.0.0
 	 */
 	public function hardening() {
-		self::send_json(
+		return self::send_response(
 			'',
 			1,
 			array(
@@ -74,7 +74,7 @@ class Rest_Helper_Dashboard extends Rest_Helper {
 	 * @since  1.0.2
 	 */
 	public function ebook() {
-		self::send_json(
+		return self::send_response(
 			'',
 			1,
 			$this->get_remote_banners()
@@ -92,7 +92,7 @@ class Rest_Helper_Dashboard extends Rest_Helper {
 		$show = $this->validate_and_get_option_value( $request, 'show', false );
 
 		if ( false === $show ) {
-			self::send_json(
+			return self::send_response(
 				'',
 				1,
 				array(
@@ -103,7 +103,7 @@ class Rest_Helper_Dashboard extends Rest_Helper {
 
 		update_option( 'sg_security_show_rating', $show );
 
-		self::send_json(
+		return self::send_response(
 			'',
 			1,
 			array(
@@ -125,7 +125,7 @@ class Rest_Helper_Dashboard extends Rest_Helper {
 
 		// Bail if the request fails.
 		if ( 200 !== wp_remote_retrieve_response_code( $response ) ) {
-			self::send_json_error( 'Error' );
+			return self::send_response( 'Error fetching banners', 0, array() );
 		}
 
 		// Get the locale.
@@ -136,7 +136,7 @@ class Rest_Helper_Dashboard extends Rest_Helper {
 
 		// Get the body of the response.
 		$body = wp_remote_retrieve_body( $response );
-		
+
 		// Decode the json response.
 		$banners = json_decode( $body, true );
 

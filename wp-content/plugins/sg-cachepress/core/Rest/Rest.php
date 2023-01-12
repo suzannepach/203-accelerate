@@ -26,7 +26,6 @@ class Rest {
 		'misc'        => 'rest_helper_misc',
 		'images'      => 'rest_helper_images',
 		'environment' => 'rest_helper_environment',
-		'cloudflare'  => 'rest_helper_cloudflare',
 		'dashboard'   => 'rest_helper_dashboard',
 	);
 
@@ -463,31 +462,6 @@ class Rest {
 				'permission_callback' => array( $this, 'check_permissions' ),
 			)
 		);
-	}
-
-	/**
-	 * Register Cloudflare routes.
-	 *
-	 * @since  5.7
-	 */
-	public function register_cloudflare_rest_routes() {
-
-		register_rest_route(
-			self::REST_NAMESPACE, '/cloudflare/', array(
-				'methods'             => 'PUT',
-				'callback'            => array( $this->rest_helper_cloudflare, 'manage_cloudflare' ),
-				'permission_callback' => array( $this, 'check_permissions' ),
-			)
-		);
-
-		register_rest_route(
-			self::REST_NAMESPACE, '/purge-cloudflare-cache/', array(
-				'methods'             => 'GET',
-				'callback'            => array( $this->rest_helper_cloudflare, 'purge_cloudflare_cache_from_rest' ),
-				'permission_callback' => array( $this, 'check_permissions' ),
-			)
-		);
-
 	}
 
 	/**

@@ -102,7 +102,6 @@ class Analysis {
 			'data'                     => array(),
 			'timeStamp'                => time(),
 			'optimizations'            => array(),
-			'human_readable_timestamp' => date( 'd M Y, G:i e' ),
 		);
 		$options = array();
 
@@ -338,6 +337,11 @@ class Analysis {
 			if ( $test_data['scores']['score']['score'] < 2 ) {
 				$test_data['scores']['score']['score'] = $test_data['scores']['score']['score'] * 100;
 			}
+
+			// Show human readable timestamp with local timezone.
+			$date = new \DateTime( '@'.$test_data['timeStamp'] );
+			$date->setTimezone( new \DateTimeZone( \wp_timezone_string() ));
+			$test_data['human_readable_timestamp'] = $date->format( 'd M Y, G:i e' );
 
 			$data[] = array(
 				'option_name' => $result['option_name'],

@@ -1,9 +1,6 @@
 <?php
 namespace SiteGround_Optimizer\Modules;
 
-require_once \SiteGround_Optimizer\DIR . '/vendor/pear/net_dns2/Net/DNS2.php';
-
-use SiteGround_Optimizer\DNS\Cloudflare;
 use SiteGround_Optimizer\Multisite\Multisite;
 use SiteGround_Optimizer\Options\Options;
 use SiteGround_Helper\Helper_Service;
@@ -260,9 +257,6 @@ class Modules {
 		'analytics'   => array(
 			'title' => 'Speed Test',
 		),
-		'cloudflare'  => array(
-			'title' => 'Cloudflare',
-		),
 	);
 
 	/**
@@ -277,7 +271,6 @@ class Modules {
 	public $multisite_tabs = array(
 		'global'     => 'Global Settings',
 		'defaults'   => 'Per Site Defaults',
-		'cloudflare' => 'CloudFlare',
 	);
 
 	/**

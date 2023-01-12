@@ -214,6 +214,11 @@ trait File_Cacher_Trait {
 	 * @return boolean True if nocache headers exist, false otherwise.
 	 */
 	public function has_nocache_headers() {
+		// Bail if the method is not supported.
+		if ( ! function_exists( 'apache_response_headers' ) ) {
+			return false;
+		}
+
 		// Define the ignore cache headers.
 		$ignore_headers = apply_filters(
 			'sgo_file_cache_ignore_headers',
@@ -222,13 +227,13 @@ trait File_Cacher_Trait {
 			)
 		);
 
-		foreach ( apache_request_headers() as $header => $value ) {
+		foreach ( \apache_response_headers() as $header => $value ) {
 			$lowercase_header = strtolower( $header );
 
 			// Do not cache if any of the ignore headers exists and matche the ignore header value.
 			if (
 				array_key_exists( $lowercase_header, $ignore_headers ) &&
-				trim( $value ) === $ignore_headers[ $lowercase_header ]
+				is_int( stripos( trim( $value ), $ignore_headers[ $lowercase_header ] ) )
 			) {
 				return true;
 			}

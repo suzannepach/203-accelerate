@@ -127,14 +127,14 @@ class Message_Service {
 						__( 'Common usernames are disabled.', 'sg-security' ),
 					),
 				),
-				'hsts_protection' => array(
+				'disable_activity_log' => array(
 					array(
-						__( 'Failed to disable Force HTTP Strict-Transport-Security (HSTS).', 'sg-security' ),
-						__( 'Force HTTP Strict-Transport-Security (HSTS) is disabled.', 'sg-security' ),
+						__( 'Failed to enable Activity Log.', 'sg-security' ),
+						__( 'Activity Log is enabled.', 'sg-security' ),
 					),
 					array(
-						__( 'Failed to enable Force HTTP Strict-Transport-Security (HSTS).', 'sg-security' ),
-						__( 'Force HTTP Strict-Transport-Security (HSTS) is enabled.', 'sg-security' ),
+						__( 'Failed to disable Activity Log.', 'sg-security' ),
+						__( 'Activity Log is disabled.', 'sg-security' ),
 					),
 				),
 			),

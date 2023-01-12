@@ -23,6 +23,21 @@ class Database_Optimizer {
 	public $background_process;
 
 	/**
+	 * Accepted database optimization methods.
+	 *
+	 * @var array
+	 */
+	public $accepted_methods = array(
+		'optimize_tables',
+		'delete_auto_drafts',
+		'delete_revisions',
+		'delete_trashed_posts',
+		'delete_spam_comments',
+		'delete_trash_comments',
+		'expired_transients',
+	);
+
+	/**
 	 * The constructor.
 	 *
 	 * @since 5.6.0
@@ -44,21 +59,26 @@ class Database_Optimizer {
 	 * @since  5.6.0
 	 */
 	public function optimize_database() {
-		// The methods that should be called to optimize the database.
-		$methods = array(
-			'delete_auto_drafts',
-			'delete_revisions',
-			'delete_trashed_posts',
-			'delete_spam_comments',
-			'delete_trash_comments',
-			'expired_transients',
-			'optimize_tables',
-			'clear_memcache',
-		);
+		// Get the user-selected optimizations.
+		$methods = get_option( 'siteground_optimizer_database_optimization', array() );
 
+		// Bail if the methods array is empty.
+		if ( empty( $methods ) ) {
+			return;
+		}
+
+		// Check if the methods in the db match the ones we expect.
 		foreach ( $methods as $method ) {
+			// Skip method if not allowed.
+			if ( ! in_array( $method, $this->accepted_methods ) ) {
+				continue;
+			}
+			// Add the method to the queuе.
 			$this->background_process->push_to_queue( $method );
 		}
+
+		// Clear memcache at the end of queue
+		$this->background_process->push_to_queue( 'clear_memcache' );
 
 		// Dispatch.
 		$this->background_process->save()->dispatch();

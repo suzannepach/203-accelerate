@@ -83,7 +83,7 @@ class Supercacher_Helper {
 	 */
 	public static function is_url_excluded( $url ) {
 		// Get excluded urls.
-		$parts = \get_option( 'siteground_optimizer_excluded_urls' );
+		$parts = apply_filters( 'sgo_exclude_urls_from_cache', \get_option( 'siteground_optimizer_excluded_urls', array() ) );
 
 		// Bail if there are no excluded urls.
 		if ( empty( $parts ) ) {

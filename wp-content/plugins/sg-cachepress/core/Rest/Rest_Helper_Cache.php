@@ -230,9 +230,8 @@ class Rest_Helper_Cache extends Rest_Helper {
 	public function test_cache( $request ) {
 		// Get the url.
 		$url           = $this->validate_and_get_option_value( $request, 'url' );
-		$is_cloudflare = Options::is_enabled( 'siteground_optimizer_cloudflare_optimization_status' );
 
-		$is_cached = Supercacher::test_cache( $url, true, (bool) $is_cloudflare );
+		$is_cached = Supercacher::test_cache( $url, true );
 
 		// Send the response.
 		self::send_json_response(
@@ -273,9 +272,7 @@ class Rest_Helper_Cache extends Rest_Helper {
 	 * @since  5.0.0
 	 */
 	public function enable_memcache() {
-		$port = $this->memcache->get_memcached_port();
-
-		if ( empty( $port ) ) {
+		if ( ! file_exists( Memcache::UNIX_SOCK_FILE ) ) {
 			wp_send_json_error(
 				array(
 					'message' => __( 'SiteGround Optimizer was unable to connect to the Memcached server and it was disabled. Please, check your SiteGround control panel and turn it on if disabled.', 'sg-cachepress' ),
@@ -299,7 +296,7 @@ class Rest_Helper_Cache extends Rest_Helper {
 				)
 			);
 		} else {
-			if ( 11211 === $port ) {
+			if ( false === stat( Memcache::UNIX_SOCK_FILE ) ) {
 				wp_send_json_error(
 					array(
 						'message' => __( 'SiteGround Optimizer was unable to connect to the Memcached server and it was disabled. Please, check your SiteGround control panel and turn it on if disabled.', 'sg-cachepress' ),

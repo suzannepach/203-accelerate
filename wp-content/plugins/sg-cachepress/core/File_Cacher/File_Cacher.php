@@ -588,7 +588,7 @@ class File_Cacher extends Supercacher {
 	 * @since  7.0.1
 	 */
 	public function schedule_cleanup() {
-		$interval = intval( get_option( 'siteground_optimizer_file_caching_interval_cleanup', 0 ) );
+		$interval = intval( get_option( 'siteground_optimizer_file_caching_interval_cleanup', 604800 ) );
 
 		wp_clear_scheduled_hook( 'siteground_optimizer_clear_cache_dir' );
 
@@ -996,6 +996,7 @@ class File_Cacher extends Supercacher {
 
 		return false;
 	}
+
 	/**
 	 * Toggle the File Cache on and off.
 	 *
@@ -1027,6 +1028,9 @@ class File_Cacher extends Supercacher {
 				$data['enable_cache'] = 1;
 				$data['autoflush_cache'] = 1;
 			}
+
+			// Schedule cleanup.
+			$file_cacher->schedule_cleanup();
 		} else {
 			$file_cacher->remove_config();
 			$file_cacher->remove_advanced_cache();

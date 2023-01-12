@@ -20,8 +20,5 @@ class Install_6_0_3 extends Install {
 	 * @since 6.0.3
 	 */
 	public function install() {
-		if ( 1 === intval( get_option( 'siteground_optimizer_cloudflare_optimization', 0 ) ) ) {
-			update_option( 'siteground_optimizer_cloudflare_optimization_status', 1 );
-		}
 	}
 }

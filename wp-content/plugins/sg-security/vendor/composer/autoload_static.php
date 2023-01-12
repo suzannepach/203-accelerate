@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit5c1feac748d7384f98ac772268853925
+class ComposerStaticInitd22f06c48998ddb20cea0be3a175f574
 {
     public static $prefixLengthsPsr4 = array (
         'S' => 
@@ -22,6 +22,7 @@ class ComposerStaticInit5c1feac748d7384f98ac772268853925
         ),
         'C' => 
         array (
+            'Composer\\Installers\\' => 20,
             'CharlesRumley\\Tests\\' => 20,
             'CharlesRumley\\' => 14,
         ),
@@ -56,6 +57,10 @@ class ComposerStaticInit5c1feac748d7384f98ac772268853925
         array (
             0 => __DIR__ . '/..' . '/pragmarx/random/src',
         ),
+        'Composer\\Installers\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers',
+        ),
         'CharlesRumley\\Tests\\' => 
         array (
             0 => __DIR__ . '/..' . '/charles-rumley/php-po-to-json/tests',
@@ -84,10 +89,10 @@ class ComposerStaticInit5c1feac748d7384f98ac772268853925
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit5c1feac748d7384f98ac772268853925::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit5c1feac748d7384f98ac772268853925::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit5c1feac748d7384f98ac772268853925::$prefixesPsr0;
-            $loader->classMap = ComposerStaticInit5c1feac748d7384f98ac772268853925::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInitd22f06c48998ddb20cea0be3a175f574::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitd22f06c48998ddb20cea0be3a175f574::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInitd22f06c48998ddb20cea0be3a175f574::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInitd22f06c48998ddb20cea0be3a175f574::$classMap;
 
         }, null, ClassLoader::class);
     }

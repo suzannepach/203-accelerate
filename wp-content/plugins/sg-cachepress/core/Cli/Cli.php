@@ -4,7 +4,7 @@ namespace SiteGround_Optimizer\Cli;
 /**
  * SG CachePress Cli main plugin class
  */
-class Cli {	
+class Cli {
 	/**
 	 * Init supercacher children.
 	 *
@@ -36,6 +36,9 @@ class Cli {
 
 		// Import/Export settings.
 		\WP_CLI::add_command( 'sg settings', 'SiteGround_Optimizer\Cli\Cli_Settings' );
+
+		// Database Optimizer.
+		\WP_CLI::add_command( 'sg database-optimization', 'SiteGround_Optimizer\Cli\Cli_Database_Optimizer' );
 	}
 
 }

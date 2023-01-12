@@ -37,8 +37,23 @@ if ( ! class_exists( 'SiteGround_Data/Settings_Page' ) ) {
 		 */
 		public function __construct() {
 			foreach ( $this->settings as $option ) {
+				// Record timestamp of when the option was created.
+				add_action( "add_option_$option", array( $this, 'add_option_change_timestamp' ), 10, 3 );
+				// Record timestamp of when the option was updated.
 				add_action( "update_option_$option", array( $this, 'update_option_change_timestamp' ), 10, 3 );
 			}
+		}
+
+		/**
+		 * Set a flag when the option has been created.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param string $option The option name.
+		 * @param string $value  The option value.
+		*/
+		public function add_option_change_timestamp( $option, $value ) {
+		       update_option( $option . '_timestamp', time() );
 		}
 
 		/**

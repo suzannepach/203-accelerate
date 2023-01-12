@@ -93,32 +93,51 @@ class Rest_Helper_Environment extends Rest_Helper {
 	/**
 	 * Enable/disable db optimization.
 	 *
-	 * @since  @version
+	 * @since  6.0.0
 	 *
 	 * @param  object $request Request data.
 	 */
 	public function manage_database_optimization( $request ) {
-		// Validate rest request and prepare data.
-		$data = $this->validate_rest_request( $request, array( 'database_optimization' ) );
+		// Get the Selected list values.
+		$selected = $this->validate_and_get_option_value( $request, 'selected' );
+		$default  = $this->validate_and_get_option_value( $request, 'default' );
+
+		// Get the previous state of the record.
+		$previously_selected = get_option( 'siteground_optimizer_database_optimization', array() );
 
 		// Update the option in the database.
-		$result = $this->options->change_option( 'siteground_optimizer_database_optimization', $data['value'] );
+		update_option( 'siteground_optimizer_database_optimization', $selected );
 
 		// Remove the cron job.
 		wp_clear_scheduled_hook( 'siteground_optimizer_database_optimization_cron' );
 
 		// Enable the optimization.
-		if ( 1 === $data['value'] ) {
+		if ( ! empty( $selected ) ) {
 			// Check if the event is currently runing.
 			wp_schedule_event( time(), 'weekly', 'siteground_optimizer_database_optimization_cron' );
 		}
 
+		// Default message for enable/disable
+		$message = 'database_optimization';
+		$type    = empty( $selected ) ? 0 : 1;
+
+		// Check if we need to modify the message.
+		if (
+			1 === $type &&
+			! empty( $previously_selected ) && 
+			count( $selected ) !== count( $previously_selected )
+		) {
+			// Modify for updated message.
+			$message = 'database_optimization_updated';
+			$type    = null;
+		}
+
 		// Send the response.
-		self::send_json_response(
-			$result,
-			self::get_response_message( $result, 'database_optimization', $data['value'] ),
+		self::send_json_success(
+			self::get_response_message( true, $message, $type ),
 			array(
-				'database_optimization' => 1 === intval( $result ) ? $data['value'] : intval( ! $data['value'] ),
+				'default'  => $default,
+				'selected' => array_values( $selected ),
 			)
 		);
 	}

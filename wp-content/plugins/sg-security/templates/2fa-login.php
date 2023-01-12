@@ -1,7 +1,7 @@
 <?php
 	$backup_codes_action = add_query_arg(
 		array(
-			'action'      => 'load_sgs2fabc',
+			'action' => 'load_sgs2fabc',
 		),
 		wp_login_url()
 	);

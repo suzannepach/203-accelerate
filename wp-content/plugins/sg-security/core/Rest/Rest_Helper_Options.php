@@ -35,7 +35,7 @@ class Rest_Helper_Options extends Rest_Helper {
 		$result = $this->change_option( $option, $value );
 
 		// Set the response message.
-		self::send_json(
+		return self::send_response(
 			Message_Service::get_response_message( $result, $option, $value ),
 			$result,
 			array(
@@ -66,7 +66,6 @@ class Rest_Helper_Options extends Rest_Helper {
 				'disable_feed'        => intval( get_option( 'sg_security_disable_feed', 0 ) ),
 				'xss_protection'      => intval( get_option( 'sg_security_xss_protection', 0 ) ),
 				'xss_protection'      => intval( get_option( 'sg_security_xss_protection', 0 ) ),
-				'hsts_protection'     => intval( get_option( 'sg_security_hsts_protection', 0 ) ),
 				'delete_readme'       => intval( get_option( 'sg_security_delete_readme', 0 ) ),
 			),
 			'login'    => array(
@@ -75,7 +74,7 @@ class Rest_Helper_Options extends Rest_Helper {
 				'disable_usernames' => intval( get_option( 'sg_security_disable_usernames', 0 ) ),
 				'usernames_data'    => $this->usernames_service->check_for_common_usernames(),
 				'login_access'      => get_option( 'sg_login_access', array() ),
-				'login_attempts'    => $this->login_service->get_login_attempts_data( intval( get_option( 'sg_security_login_attempts', 0 ) ) ),
+				'login_attempts'    => $this->prepare_options_selected_values( $this->login_service->login_attempts_data, intval( get_option( 'sg_security_login_attempts', 0 ) ) ),
 				'login_url' => array(
 					array(
 						'type'     => 'custom',
@@ -93,14 +92,18 @@ class Rest_Helper_Options extends Rest_Helper {
 					),
 				),
 			),
+			'activity' => array(
+				'disable_activity_log' => intval( get_option( 'sg_security_disable_activity_log', 0 ) ),
+				'log_lifetime'         => $this->prepare_options_selected_values( array_combine( range( 1, 12 ), range( 1, 12 ) ), intval( get_option( 'sgs_activity_log_lifetime', 12 ) ) ),
+			),
 		);
 
 		// Send the error message if page does not exist.
 		if ( ! array_key_exists( $data['page'], $pages ) ) {
-			self::send_json( '', 0 );
+			return self::send_response( '', 0 );
 		}
 
 		// Send the response to react app.
-		self::send_json( '', 1, $pages[ $data['page'] ] );
+		return self::send_response( '', 1, $pages[ $data['page'] ] );
 	}
 }

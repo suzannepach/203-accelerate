@@ -3,12 +3,14 @@ namespace SG_Security\Custom_Login_Url;
 
 use SG_Security\Helper\Helper;
 use SiteGround_Helper\Helper_Service;
+use SG_Security\Helper\User_Roles_Trait;
+use SG_Security\Options_Service\Options_Service;
 
 /**
  * Custom_Login_Url class which disable the WordPress feed.
  */
 class Custom_Login_Url {
-
+	use User_Roles_Trait;
 	/**
 	 * Sg Security token
 	 *
@@ -165,6 +167,10 @@ class Custom_Login_Url {
 		$action = isset( $_GET['action'] ) ? $_GET['action'] : '';
 
 		if ( 'rp' === $action ) {
+			return;
+		}
+
+		if ( 'resetpass' === $action ) {
 			return;
 		}
 
@@ -424,9 +430,64 @@ class Custom_Login_Url {
 		$new_url = add_query_arg( $this->token, $this->options['new_slug'], $match[2] );
 
 		// Replace the URL in the HTML.
-		$login = str_replace( $match[2], $new_url, $login);
+		$login = str_replace( $match[2], $new_url, $login );
 
 		// Return the updated HTML.
 		return $login;
+	}
+
+	/**
+	 * Block administrators from logging-in through third party login forms when Custom Login URL is enabled.
+	 *
+	 * @since 1.3.3
+	 *
+	 * @param  \WP_User $user      \WP_User object of the user that is trying to login.
+	 * @return \WP_Error|\WP_User  If successful, the original \WP_User object, otherwise a \WP_Error object.
+	 */
+	public function maybe_block_custom_login( $user ) {
+		// Check if the referer slug is set.
+		if ( ! isset( $_SERVER['HTTP_REFERER'] ) ) {
+			return $user;
+		}
+
+		$error = new \WP_Error( 'authentication_failed', __( '<strong>ERROR</strong>: You are trying to login with an administrative account. Please, use the Custom Login URL instead.', 'sg-security' ) );
+
+		// Set the user roles that are not allowed to login through custom forms and intersect them with the roles of the current user trying to log in.
+		$user_admin_roles = array_intersect( $user->roles, $this->get_admin_user_roles() );
+
+		// Check if the user has admin roles, if not - continue with the login.
+		if ( empty( $user_admin_roles ) ) {
+			return $user;
+		}
+
+		// Get referer parts by parsing its url.
+		$referer = str_replace(
+			array( home_url(), '/' ),
+			array( '', '' ),
+			$_SERVER['HTTP_REFERER']
+		);
+
+		// Parse the URL into query and path array items.
+		$referer_parts = parse_url( $referer );
+
+		// Bail if query is not set.
+		if ( empty( $referer_parts['query'] ) ) {
+			return $error;
+		}
+
+		// Retrieve the query from the URL.
+		parse_str( $referer_parts['query'], $referer_query );
+
+		// Get the sgs-token if it's set.
+		$sgs_token = ! empty( $referer_query['sgs-token'] ) ? esc_attr( $referer_query['sgs-token'] ) : '';
+
+		if (
+			$referer === $this->options['new_slug'] ||
+			$this->options['new_slug'] === $sgs_token
+		) {
+			return $user;
+		}
+
+		return $error;
 	}
 }

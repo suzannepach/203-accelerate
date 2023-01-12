@@ -39,7 +39,8 @@ class Admin {
 
 	public $dequeued_styles = array(
 		'auxin-front-icon', // Phlox Theme.
-		'mks_shortcodes_simple_line_icons' // Meks Flexible Shortcodes.
+		'mks_shortcodes_simple_line_icons', // Meks Flexible Shortcodes.
+		'onthego-admin-styles', // Toolset Types
 	);
 
 	/**
@@ -376,16 +377,18 @@ class Admin {
 		global $submenu;
 
 		if ( empty( $submenu['sg-cachepress'] ) ) {
-			return;
+			return $menu_order;
 		}
 
 		// Hide the dashboard page on Multisite applications.
 		if ( is_multisite() ) {
 			unset( $submenu['sg-cachepress'][0] );
-			return;
+			return $menu_order;
 		}
 
 		$submenu['sg-cachepress'][0][0] = __( 'Dashboard', 'sg-cachepress' );
+
+		return $menu_order;
 	}
 
 	/**

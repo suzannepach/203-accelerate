@@ -28,7 +28,7 @@ class Rest_Helper_Post_Hack_Actions extends Rest_Helper {
 	public function resinstall_plugins() {
 		$result = $this->plugins_service->reinstall_plugins();
 		// Reinstall plugins.
-		self::send_json(
+		return self::send_response(
 			$this->get_response_message( $result, 'reinstall_plugins' ),
 			$result
 		);
@@ -46,7 +46,7 @@ class Rest_Helper_Post_Hack_Actions extends Rest_Helper {
 
 		$this->password_service->invalidate_passwords();
 		// Force password reset.
-		self::send_json(
+		return self::send_response(
 			$this->get_response_message( 1, 'force_password_reset' )
 		);
 	}
@@ -62,7 +62,7 @@ class Rest_Helper_Post_Hack_Actions extends Rest_Helper {
 		WP_Session_Tokens::destroy_all_for_all_users();
 
 		// Logout all users.
-		self::send_json(
+		return self::send_response(
 			$this->get_response_message( 1, 'logout_users' )
 		);
 	}

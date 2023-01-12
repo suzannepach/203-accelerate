@@ -442,47 +442,21 @@ class WP_Object_Cache {
 	}
 
 	function __construct() {
-		
-		$memcached_servers = array(
-					'default' => array(
-					'@changedefaults@'
-			)
-		);
+		$this->mc['default'] = new Memcached();
 
-		if ( isset( $memcached_servers ) )
-			$buckets = $memcached_servers;
-		else
-			$buckets = array( '127.0.0.1' );
+		// Unix socket to connect to.
+		$per_user_unix_socket = "/home/.tmp/memcached.sock";
 
-		reset( $buckets );
-		if ( is_int( key( $buckets ) ) )
-			$buckets = array( 'default' => $buckets );
+		$stat = @stat( $per_user_unix_socket );
 
-		foreach ( $buckets as $bucket => $servers ) {
-			$this->mc[$bucket] = new Memcached();
+		if ( ! $stat ) {
+			error_log( 'Memcache disabled from SiteTools' );
+			@rename( __FILE__, dirname( __FILE__ ) . '/object-cache-socket-missing.php' );
+		}
 
-			$instances = array();
-			foreach ( $servers as $server ) {
-				@list( $node, $port ) = explode( ':', $server );
-				// Use UNIX socket (if exists) for local connections
-				if ( $server == 'localhost:11211' || $server == '127.0.0.1:11211' ) {
-					$per_user_unix_socket = "/home/.tmp/memcached.sock";
-					$stat = @stat( $per_user_unix_socket );
-					if ( $stat !== false && ( $stat["mode"] & 0140000 ) == 0140000 ) {
-						// We have UNIX socket, use it
-						$instances[] = array( $per_user_unix_socket, 0, 1 );
-						break;
-					}
-				}
-				if ( empty( $port ) )
-					$port = ini_get( 'memcache.default_port' );
-				$port = intval( $port );
-				if ( !$port )
-					$port = 11211;
-
-				$instances[] = array( $node, $port, 1 );
-			}
-			$this->mc[$bucket]->addServers( $instances );
+		if ( ( $stat["mode"] & 0140000 ) == 0140000 ) {
+			// Use UNIX socket for memcached connection
+			$this->mc['default']->addServer( $per_user_unix_socket, 0, 1 );
 		}
 
 		global $blog_id, $table_prefix;

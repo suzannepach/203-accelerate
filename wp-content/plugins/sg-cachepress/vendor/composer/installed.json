@@ -102,18 +102,172 @@
             "install-path": "../charles-rumley/php-po-to-json"
         },
         {
-            "name": "matthiasmullie/minify",
-            "version": "1.3.68",
-            "version_normalized": "1.3.68.0",
+            "name": "composer/installers",
+            "version": "v1.12.0",
+            "version_normalized": "1.12.0.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/matthiasmullie/minify.git",
-                "reference": "c00fb02f71b2ef0a5f53fe18c5a8b9aa30f48297"
+                "url": "https://github.com/composer/installers.git",
+                "reference": "d20a64ed3c94748397ff5973488761b22f6d3f19"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/matthiasmullie/minify/zipball/c00fb02f71b2ef0a5f53fe18c5a8b9aa30f48297",
-                "reference": "c00fb02f71b2ef0a5f53fe18c5a8b9aa30f48297",
+                "url": "https://api.github.com/repos/composer/installers/zipball/d20a64ed3c94748397ff5973488761b22f6d3f19",
+                "reference": "d20a64ed3c94748397ff5973488761b22f6d3f19",
+                "shasum": ""
+            },
+            "require": {
+                "composer-plugin-api": "^1.0 || ^2.0"
+            },
+            "replace": {
+                "roundcube/plugin-installer": "*",
+                "shama/baton": "*"
+            },
+            "require-dev": {
+                "composer/composer": "1.6.* || ^2.0",
+                "composer/semver": "^1 || ^3",
+                "phpstan/phpstan": "^0.12.55",
+                "phpstan/phpstan-phpunit": "^0.12.16",
+                "symfony/phpunit-bridge": "^4.2 || ^5",
+                "symfony/process": "^2.3"
+            },
+            "time": "2021-09-13T08:19:44+00:00",
+            "type": "composer-plugin",
+            "extra": {
+                "class": "Composer\\Installers\\Plugin",
+                "branch-alias": {
+                    "dev-main": "1.x-dev"
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Composer\\Installers\\": "src/Composer/Installers"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Kyle Robinson Young",
+                    "email": "kyle@dontkry.com",
+                    "homepage": "https://github.com/shama"
+                }
+            ],
+            "description": "A multi-framework Composer library installer",
+            "homepage": "https://composer.github.io/installers/",
+            "keywords": [
+                "Craft",
+                "Dolibarr",
+                "Eliasis",
+                "Hurad",
+                "ImageCMS",
+                "Kanboard",
+                "Lan Management System",
+                "MODX Evo",
+                "MantisBT",
+                "Mautic",
+                "Maya",
+                "OXID",
+                "Plentymarkets",
+                "Porto",
+                "RadPHP",
+                "SMF",
+                "Starbug",
+                "Thelia",
+                "Whmcs",
+                "WolfCMS",
+                "agl",
+                "aimeos",
+                "annotatecms",
+                "attogram",
+                "bitrix",
+                "cakephp",
+                "chef",
+                "cockpit",
+                "codeigniter",
+                "concrete5",
+                "croogo",
+                "dokuwiki",
+                "drupal",
+                "eZ Platform",
+                "elgg",
+                "expressionengine",
+                "fuelphp",
+                "grav",
+                "installer",
+                "itop",
+                "joomla",
+                "known",
+                "kohana",
+                "laravel",
+                "lavalite",
+                "lithium",
+                "magento",
+                "majima",
+                "mako",
+                "mediawiki",
+                "miaoxing",
+                "modulework",
+                "modx",
+                "moodle",
+                "osclass",
+                "pantheon",
+                "phpbb",
+                "piwik",
+                "ppi",
+                "processwire",
+                "puppet",
+                "pxcms",
+                "reindex",
+                "roundcube",
+                "shopware",
+                "silverstripe",
+                "sydes",
+                "sylius",
+                "symfony",
+                "tastyigniter",
+                "typo3",
+                "wordpress",
+                "yawik",
+                "zend",
+                "zikula"
+            ],
+            "support": {
+                "issues": "https://github.com/composer/installers/issues",
+                "source": "https://github.com/composer/installers/tree/v1.12.0"
+            },
+            "funding": [
+                {
+                    "url": "https://packagist.com",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/composer",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/composer/composer",
+                    "type": "tidelift"
+                }
+            ],
+            "install-path": "./installers"
+        },
+        {
+            "name": "matthiasmullie/minify",
+            "version": "1.3.69",
+            "version_normalized": "1.3.69.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/matthiasmullie/minify.git",
+                "reference": "a61c949cccd086808063611ef9698eabe42ef22f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/matthiasmullie/minify/zipball/a61c949cccd086808063611ef9698eabe42ef22f",
+                "reference": "a61c949cccd086808063611ef9698eabe42ef22f",
                 "shasum": ""
             },
             "require": {
@@ -129,7 +283,7 @@
             "suggest": {
                 "psr/cache-implementation": "Cache implementation to use with Minify::cache"
             },
-            "time": "2022-04-19T08:28:56+00:00",
+            "time": "2022-08-01T09:00:18+00:00",
             "bin": [
                 "bin/minifycss",
                 "bin/minifyjs"
@@ -164,7 +318,7 @@
             ],
             "support": {
                 "issues": "https://github.com/matthiasmullie/minify/issues",
-                "source": "https://github.com/matthiasmullie/minify/tree/1.3.68"
+                "source": "https://github.com/matthiasmullie/minify/tree/1.3.69"
             },
             "funding": [
                 {
@@ -231,60 +385,6 @@
             "install-path": "../matthiasmullie/path-converter"
         },
         {
-            "name": "pear/net_dns2",
-            "version": "v1.5.2",
-            "version_normalized": "1.5.2.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/mikepultz/netdns2.git",
-                "reference": "d5dbae0b0c0567923d25b3ae5e2bf1e9cbcedf76"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/mikepultz/netdns2/zipball/d5dbae0b0c0567923d25b3ae5e2bf1e9cbcedf76",
-                "reference": "d5dbae0b0c0567923d25b3ae5e2bf1e9cbcedf76",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.4"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^9"
-            },
-            "time": "2020-10-11T17:33:54+00:00",
-            "type": "library",
-            "installation-source": "dist",
-            "autoload": {
-                "psr-0": {
-                    "Net_DNS2": ""
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-2-Clause"
-            ],
-            "authors": [
-                {
-                    "name": "Mike Pultz",
-                    "email": "mike@mikepultz.com",
-                    "homepage": "https://mikepultz.com/",
-                    "role": "lead"
-                }
-            ],
-            "description": "Native PHP DNS Resolver and Updater Library",
-            "homepage": "https://netdns2.com/",
-            "keywords": [
-                "PEAR",
-                "dns",
-                "network"
-            ],
-            "support": {
-                "issues": "https://github.com/mikepultz/netdns2/issues",
-                "source": "https://github.com/mikepultz/netdns2"
-            },
-            "install-path": "../pear/net_dns2"
-        },
-        {
             "name": "sepia/po-parser",
             "version": "4.2.2",
             "version_normalized": "4.2.2.0",
@@ -346,9 +446,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.siteground.com:wordpress/siteground-data.git",
-                "reference": "58ba53b8a5711c0cd33be62ebedf99cc2ec180ec"
+                "reference": "c264465ed26f2a8509b2a2b59ccc64c73971b343"
             },
-            "time": "2022-06-09T12:55:21+00:00",
+            "require": {
+                "siteground/siteground-helper": "master@dev"
+            },
+            "time": "2022-09-21T06:27:54+00:00",
             "default-branch": true,
             "type": "library",
             "installation-source": "source",
@@ -371,7 +474,7 @@
             "version_normalized": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://gitlab.siteground.com/wordpress/siteground-emails.git",
+                "url": "git@gitlab.siteground.com:wordpress/siteground-emails.git",
                 "reference": "488bda959c356fd330d0ecfb45885fc0f421f5b7"
             },
             "time": "2022-05-04T06:04:35+00:00",
@@ -391,7 +494,7 @@
             "version_normalized": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://gitlab.siteground.com/wordpress/siteground-helper.git",
+                "url": "git@gitlab.siteground.com:wordpress/siteground-helper.git",
                 "reference": "b735bf5df36006a0e8435a6ba79b5b5cfa0e66dc"
             },
             "time": "2022-02-10T07:23:42+00:00",
@@ -411,10 +514,10 @@
             "version_normalized": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://gitlab.siteground.com/wordpress/siteground-i18n.git",
-                "reference": "b242d643714a172f4d000e3b6a05a6069c8dd30b"
+                "url": "git@gitlab.siteground.com:wordpress/siteground-i18n.git",
+                "reference": "714db79a69f373acd8f8023aededc27e94463041"
             },
-            "time": "2022-01-31T13:14:49+00:00",
+            "time": "2022-11-22T15:52:04+00:00",
             "default-branch": true,
             "type": "library",
             "installation-source": "source",

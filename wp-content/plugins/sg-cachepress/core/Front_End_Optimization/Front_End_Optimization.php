@@ -55,6 +55,7 @@ class Front_End_Optimization {
 		'wp-hooks',
 		'houzez-google-map-api',
 		'wpascript',
+		'wc-square',
 	);
 
 	/**

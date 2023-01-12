@@ -133,7 +133,7 @@ class Cache {
 
 		if (
 			( @file_exists( '/etc/yum.repos.d/baseos.repo' ) && @file_exists( '/Z' ) ) &&
-			empty( $_COOKIE[ 'wordpress_logged_in_' . "COOKIEHASH" ] )
+			empty( $_COOKIE[ $this->logged_in_cookie ] )
 		) {
 			$should_send_miss = false;
 		}

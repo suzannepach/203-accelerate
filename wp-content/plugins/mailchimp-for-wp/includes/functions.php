@@ -227,12 +227,20 @@ function mc4wp_get_request_ip_address() {
 		return $_SERVER['REMOTE_ADDR'];
 	}
 
-	if ( isset ( $ip_address ) ) {
+	if ( isset( $ip_address ) ) {
 		if ( ! is_array( $ip_address ) ) {
 			$ip_address = explode( ',', $ip_address );
 		}
 
-		return trim( $ip_address[0] );
+		// use first IP in list
+		$ip_address = trim( $ip_address[0] );
+
+		// if IP address is not valid, simply return null
+		if ( ! filter_var( $ip_address, FILTER_VALIDATE_IP ) ) {
+			return null;
+		}
+
+		return $ip_address;
 	}
 
 	return null;

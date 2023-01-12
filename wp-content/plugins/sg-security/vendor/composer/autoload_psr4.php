@@ -13,6 +13,7 @@ return array(
     'SG_Security\\' => array($baseDir . '/core'),
     'PragmaRX\\Recovery\\' => array($vendorDir . '/pragmarx/recovery/src'),
     'PragmaRX\\Random\\' => array($vendorDir . '/pragmarx/random/src'),
+    'Composer\\Installers\\' => array($vendorDir . '/composer/installers/src/Composer/Installers'),
     'CharlesRumley\\Tests\\' => array($vendorDir . '/charles-rumley/php-po-to-json/tests'),
     'CharlesRumley\\' => array($vendorDir . '/charles-rumley/php-po-to-json/src'),
 );

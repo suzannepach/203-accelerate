@@ -48,16 +48,6 @@ class Activity_Log {
 	public $visitors_table = 'sgs_log_visitors';
 
 	/**
-	 * Set logs to exspire after specific time. Default 12 days.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @var int The expire time.
-	 */
-	const LOG_LIFETIME = 12;
-
-
-	/**
 	 * Child classes that have to be initialized.
 	 *
 	 * @var array
@@ -184,13 +174,8 @@ class Activity_Log {
 			return false;
 		}
 
-		// Set custom log lifetime interval in days. The intval covers the cases for string, array and sql injections.
-		$log_lifetime = intval( apply_filters( 'sgs_set_activity_log_lifetime', self::LOG_LIFETIME ) );
-
-		// If the custom value is less than 1 day or more than 12, fallback to the default lifetime.
-		if ( ( 1 > $log_lifetime ) || ( $log_lifetime > 12 ) ) {
-			$log_lifetime = self::LOG_LIFETIME;
-		}
+		// Get the activity log lifetime.
+		$log_lifetime = self::get_activity_log_lifetime();
 
 		$wpdb->query(
 			$wpdb->prepare(
@@ -227,5 +212,24 @@ class Activity_Log {
 
 		// Restore to the current blog.
 		restore_current_blog();
+	}
+
+	/**
+	 * Get the activity log lifetime.
+	 *
+	 * @since 1.3.3
+	 *
+	 * @return int $log_lifetime How many days the log is preserved, 12 by default.
+	 */
+	public static function get_activity_log_lifetime() {
+		// Set custom log lifetime interval in days. The intval covers the cases for string, array and sql injections.
+		$log_lifetime = intval( apply_filters( 'sgs_set_activity_log_lifetime', get_option( 'sgs_activity_log_lifetime', 12 ) ) );
+
+		// If the custom value is less than 1 day or more than 12, fallback to the default lifetime.
+		if ( ( 1 > $log_lifetime ) || ( $log_lifetime > 12 ) ) {
+			$log_lifetime = 12;
+		}
+
+		return $log_lifetime;
 	}
 }

@@ -3,6 +3,7 @@ namespace SG_Security\Activity_Log;
 
 use SiteGround_Helper\Helper_Service;
 use SiteGround_Emails\Email_Service;
+use SG_Security\Activity_Log\Activity_Log;
 
 /**
  * Activity Log Weekly Emails class
@@ -37,6 +38,11 @@ class Activity_Log_Weekly_Emails extends Activity_Log_Helper {
 	 * @return string $message_body HTML of the message body.
 	 */
 	static function generate_message_body() {
+		// Do not sent the message if activity log lifetime is set to less than 8 days.
+		if ( 8 > Activity_Log::get_activity_log_lifetime() ) {
+			return false;
+		}
+
 		$weekly_emails = new Activity_Log_Weekly_Emails();
 
 		// Activity Log page URL.
@@ -121,7 +127,7 @@ class Activity_Log_Weekly_Emails extends Activity_Log_Helper {
 	 *
 	 * @return bool/array false if we fail the request/Array with data.
 	 */
-	private function get_remote_assets( ){
+	private function get_remote_assets() {
 		// Get the banner content.
 		$response = wp_remote_get( 'https://sgwpdemo.com/jsons/sg-security-emails.json' );
 
@@ -199,7 +205,7 @@ class Activity_Log_Weekly_Emails extends Activity_Log_Helper {
 			WHERE `action` = "visit"
 			AND `visitor_type` = "Human"
 			AND `type` = "unknown"
-			AND `ts` BETWEEN ' . $start_date .' AND ' . $end_date . ' ;'
+			AND `ts` BETWEEN ' . $start_date . ' AND ' . $end_date . ' ;'
 		);
 	}
 
@@ -221,7 +227,7 @@ class Activity_Log_Weekly_Emails extends Activity_Log_Helper {
 			WHERE `action` = "visit"
 			AND `visitor_type` <>"Human" AND `visitor_type` <>"unknown"
 			AND `type` = "unknown"
-			AND `ts` BETWEEN ' . $start_date .' AND ' . $end_date . ' ;'
+			AND `ts` BETWEEN ' . $start_date . ' AND ' . $end_date . ' ;'
 		);
 	}
 

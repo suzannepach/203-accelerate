@@ -2,7 +2,7 @@
 Contributors: Hristo Sg, siteground, sstoqnov, stoyangeorgiev, elenachavdarova, ignatggeorgiev
 Tags: security, firewall, malware scanner, web application firewall, two factor authentication, block hackers, country blocking, clean hacked site, blocklist, waf, login security
 Requires at least: 4.7
-Tested up to: 6.0
+Tested up to: 6.1
 Requires PHP: 7.0
 Stable tag: trunk
 License: GPLv3
@@ -56,6 +56,13 @@ function add_user_roles_to_2fa( $roles ) {
     $roles[] = 'your_role';
     return $roles;
 }
+`
+
+You can change the location of 2FA encryption key file using SGS_ENCRYPTION_KEY_FILE_PATH constant defined in wp-config.php file. Make sure to use full path to the file. Example:
+
+`
+// Custom path to SG Security Encryption key file.
+define ( 'SGS_ENCRYPTION_KEY_FILE_PATH', '/home/fullpathtofile/sgs_encrypt_key.php');
 `
 
 = Disable Common Usernames =
@@ -126,9 +133,6 @@ Disable Themes & Plugins Editor in the WordPress admin to prevent potential codi
 = Disable XML-RPC =
 You can Disable XML-RPC protocol which was recently used in a number of exploits. Keep in mind that when disabled, it will prevent WordPress from communicating with third-party systems. We recommend using this, unless you specifically need it.
 
-= Force HTTP Strict-Transport-Security (HSTS) =
-HSTS (HTTP Strict-Transport-Security) is a response header. It allows the website to tell browsers that it should only be accessed using HTTPS, instead of using HTTP. Тhis prevents "man-in-the-middle" attacks and ensures that regular visitors will redirected to the secure version of the website.
-
 = Disable RSS and ATOM Feeds =
 Disable RSS and ATOM Feeds to prevent content scraping and specific attacks against your site. It’s recommended to use this at all times, unless you have readers using your site via RSS readers.
 
@@ -152,6 +156,14 @@ function set_custom_log_lifetime() {
 }
 `
 
+If you need to disable the activity log, you can use the following filter. Keep in mind that this will also disable the Weekly Activity Log Emails.
+
+`
+add_action( 'init', 'deactivate_activity_log' );
+function deactivate_activity_log() {
+    update_option( 'sg_security_disable_activity_log', 1 );
+}
+`
 
 == Post-Hack Actions ==
 
@@ -184,7 +196,8 @@ In version 1.0.2 we've added full WP-CLI support for all plugin options and func
 * `wp sg log ip add|remove|list <name> --ip=<ip>` - add/list/remove user defined pingbots listed in the activity log by ip
 * `wp sg log ua add|remove|list <name> ` - add/list/remove user defined bots listed in the activity log by user agent
 * `wp sg list log-unknown|log-registered|log-blocked --days=<days>` - List specific access log for a specific period
-* `wp sg 2fa reset id ID` - Resets the 2fa setup for the user ID.
+* `wp sg 2fa reset id|username|all ID|username` - Resets the 2fa setup for the user ID, username or all users.
+* `wp sg custom-login status|disable` - Shows the status or disables the Custom Login URL functionality.
 
 = Requirements =
 * WordPress 4.7
@@ -209,6 +222,63 @@ In version 1.0.2 we've added full WP-CLI support for all plugin options and func
 1. Go to Plugins -> Installed Plugins and click the 'Activate' link under the WordPress SiteGround Security listing
 
 == Changelog ==
+
+= Version 1.3.8 =
+Release Date: Dec 6th, 2022
+
+* Improved Rest response
+* Improved Settings Page checks
+* Improved Disable Themes & Plugins Editor
+
+= Version 1.3.7 =
+Release Date: Nov 15th, 2022
+
+* SG Security Dashboard bugfix
+* Improved 2FA Encryption key validation
+* Improved Custom Login/Register URL validation
+* Improved LiteSpeed Cache support
+* Option to use custom 2FA encryption key filepath
+
+= Version 1.3.6 =
+Release Date: Nov 8th, 2022
+
+* Improved 2FA security with encryption
+* Improved Access Log filters
+* New WP-CLI command: reset all users 2FA setup
+
+= Version 1.3.5 =
+Release Date: Oct 18th, 2022
+
+* Improved Custom Login URL
+* Improved Activity log
+
+= Version 1.3.4 =
+Release Date: Oct 10th, 2022
+
+* Install service fix
+
+= Version 1.3.3 =
+Release Date: Oct 10th, 2022
+
+* New Manage Activity Log option
+* New filter - Disable activity log
+* Improved Custom login url
+* Improved WP-CLI support
+* Improved Jetpack plugin support
+* Improved error handling
+* Minor bug fixes
+* Legacy code removed
+
+= Version 1.3.2 =
+Release Date: Sept 21st, 2022
+
+* 2FA Backup codes security strengthening
+
+= Version 1.3.1 =
+Release Date: Sept 13th, 2022
+
+* 2FA Authentication Security Strengthening
+* IP Address detection Security Strengthening
 
 = Version 1.3.0 =
 Release Date: July 14th, 2022

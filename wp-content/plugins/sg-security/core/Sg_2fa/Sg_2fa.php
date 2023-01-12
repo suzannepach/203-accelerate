@@ -1,16 +1,20 @@
 <?php
 namespace SG_Security\Sg_2fa;
 
-use PHPGangsta_GoogleAuthenticator;
 use SG_Security;
-
+use SG_Security\Encryption_Service\Encryption_Service;
+use SG_Security\Helper\User_Roles_Trait;
+use PHPGangsta_GoogleAuthenticator;
 use PragmaRX\Recovery\Recovery;
 use \WP_Session_Tokens;
+use SiteGround_Helper\Helper_Service;
 
 /**
  * Class that manages 2FA related services.
  */
 class Sg_2fa {
+
+	use User_Roles_Trait;
 	/**
 	 * The singleton instance.
 	 *
@@ -21,13 +25,16 @@ class Sg_2fa {
 	public static $instance;
 
 	/**
-	 * Roles that should be forced to use 2FA.
+	 * User meta used by 2FA.
 	 *
 	 * @var array
 	 */
-	public $roles = array(
-		'editor',
-		'administrator',
+	public $user_2fa_meta = array(
+		// If the list is updated we need to update it in the uninstall file as well.
+		'configured',
+		'secret',
+		'qr',
+		'backup_codes',
 	);
 
 	/**
@@ -36,8 +43,11 @@ class Sg_2fa {
 	 * @since 1.0.0
 	 */
 	public function __construct() {
+		// File path to the encryption key. If changed needs to be updated in uninstall as well.
+		$this->encryption_key_file  = defined( 'SGS_ENCRYPTION_KEY_FILE_PATH' ) ? SGS_ENCRYPTION_KEY_FILE_PATH : WP_CONTENT_DIR . '/sgs_encrypt_key.php';
 		$this->google_authenticator = new PHPGangsta_GoogleAuthenticator();
 		$this->recovery             = new Recovery();
+		$this->encryption           = new Encryption_Service( $this->encryption_key_file );
 	}
 
 	/**
@@ -55,31 +65,23 @@ class Sg_2fa {
 	}
 
 	/**
-	 * Get the roles that apply for 2FA.
-	 *
-	 * @since 1.2.0
-	 *
-	 * @return array The roles, that have 2FA enabled.
-	 */
-	public function get_2fa_user_roles() {
-		return apply_filters( 'sg_security_2fa_roles', $this->roles );
-	}
-
-	/**
 	 * Generate QR code for specific user.
 	 *
 	 * @since  1.0.0
 	 *
-	 * @param  object $user The WP_USER object.
+	 * @param  int $user_id WordPress user ID.
 	 *
 	 * @return string       The QR code URL.
 	 */
-	public function generate_qr_code( $user ) {
+	public function generate_qr_code( $user_id ) {
+		// Get the user by ID.
+		$user = get_user_by( 'ID', $user_id );
+
 		// Build the title for the authenticator.
 		$title = get_home_url() . ' (' . $user->user_email . ')';
 
 		// Get the user secret code.
-		$secret = get_user_meta( $user->ID, 'sg_security_2fa_secret', true ); // phpcs:ignore
+		$secret = $this->get_user_secret( $user->ID ); // phpcs:ignore
 
 		// Return the URL.
 		return $this->google_authenticator->getQRCodeGoogleUrl( $title, $secret );
@@ -97,7 +99,7 @@ class Sg_2fa {
 	 */
 	public function check_authentication_code( $code, $user_id ) {
 		// Get the user secret.
-		$secret = get_user_meta( $user_id, 'sg_security_2fa_secret', true ); // phpcs:ignore
+		$secret = $this->get_user_secret( $user_id ); // phpcs:ignore
 
 		// Verify the code.
 		return $this->google_authenticator->verifyCode( $secret, $code, 2 );
@@ -111,12 +113,17 @@ class Sg_2fa {
 	 * @return bool  True on success, false on failure.
 	 */
 	public function enable_2fa() {
+		// Remove admin notice for file creation.
+		delete_option( 'sg_security_2fa_encryption_file_notice' );
+
+		// Get all users which needs to have 2FA enabled.
 		$users = get_users(
 			array(
-				'role__in' => $this->get_2fa_user_roles(),
+				'role__in' => $this->get_admin_user_roles(),
 			)
 		);
 
+		// Bail if there are no such users found.
 		if ( empty( $users ) ) {
 			return true;
 		}
@@ -125,30 +132,15 @@ class Sg_2fa {
 			// Get the user by the user id.
 			$user = get_userdata( $user->data->ID );
 
-			if ( empty( array_intersect( $this->get_2fa_user_roles(), $user->roles ) ) ) {
+			if ( empty( array_intersect( $this->get_admin_user_roles(), $user->roles ) ) ) {
 				continue;
 			}
 
 			$session_tokens = WP_Session_Tokens::get_instance( $user->data->ID );
 			$session_tokens->destroy_all();
-
-			$this->enable_2fa_for_user( $user->data->ID );
 		}
 
 		return true;
-	}
-
-	/**
-	 * Enable the 2FA for an user.
-	 *
-	 * @since 1.1.1
-	 *
-	 * @param int  $user_id The user ID.
-	 */
-	public function enable_2fa_for_user( $user_id ) {
-		$this->generate_user_secret( $user_id );
-		$this->generate_user_qr( $user_id );
-		$this->generate_user_backup_codes( $user_id );
 	}
 
 	/**
@@ -156,13 +148,22 @@ class Sg_2fa {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param mixed $old_value Old option value.
 	 * @param mixed $new_value New option value.
+	 * @param mixed $old_value Old option value.
 	 */
-	public function handle_option_change( $old_value, $new_value ) {
+	public function handle_option_change( $new_value, $old_value ) {
+		if (
+			1 === intval( $new_value ) &&
+			false === $this->encryption->generate_encryption_file()
+		) {
+			return $old_value;
+		}
+
 		if ( 1 == $new_value ) {
 			$this->enable_2fa();
 		}
+
+		return $new_value;
 	}
 
 	/**
@@ -170,13 +171,13 @@ class Sg_2fa {
 	 *
 	 * @since  1.0.0
 	 *
-	 * @param  int   $user_id WordPress user ID.
+	 * @param  int $user_id WordPress user ID.
 	 *
 	 * @return mixed          True on success, false on failure, user ID if the secret exists.
 	 */
 	public function generate_user_secret( $user_id ) {
 		// Check if the user has secret code.
-		$secret = get_user_meta( $user_id, 'sg_security_2fa_secret', true ); // phpcs:ignore
+		$secret = $this->get_user_secret( $user_id ); // phpcs:ignore
 
 		// Bail if the user already has a secret code.
 		if ( ! empty( $secret ) ) {
@@ -187,35 +188,7 @@ class Sg_2fa {
 		return update_user_meta( // phpcs:ignore
 			$user_id,
 			'sg_security_2fa_secret',
-			$this->google_authenticator->createSecret() // Generate the secret code.
-		);
-	}
-
-	/**
-	 * Generate the user QR code link.
-	 *
-	 * @since  1.1.1
-	 *
-	 * @param  int   $user_id WordPress user ID.
-	 *
-	 * @return mixed          True on success, false on failure, user ID if the QR exists.
-	 */
-	public function generate_user_qr( $user_id ) {
-		// Check if the user has a QR code.
-		$qr = get_user_meta( $user_id, 'sg_security_2fa_qr', true ); // phpcs:ignore
-		// Get the user by ID.
-		$user = get_user_by( 'ID', $user_id );
-
-		// Bail if the user already has a QR code.
-		if ( ! empty( $qr ) ) {
-			return $user_id;
-		}
-
-		// Add the user QR.
-		return update_user_meta( // phpcs:ignore
-			$user_id,
-			'sg_security_2fa_qr',
-			$this->generate_qr_code( $user ) // Generate the QR code.
+			$this->encryption->sgs_encrypt( $this->google_authenticator->createSecret() ) // Generate and encrypt the secret code.
 		);
 	}
 
@@ -234,15 +207,17 @@ class Sg_2fa {
 
 		// Bail if the user already has a backup codes.
 		if ( ! empty( $backup_codes ) ) {
-			return $user_id;
+			return array();
 		}
 
-		// Add the user backup_codes meta.
-		return update_user_meta( // phpcs:ignore
-			$user_id,
-			'sg_security_2fa_backup_codes',
-			$this->recovery->numeric()->setCount( 8 )->setBlocks( 1 )->setChars( 8 )->toArray() // Generate the backup codes.
-		);
+		// Generate the backup codes.
+		$generated_backup_codes = $this->recovery->numeric()->setCount( 8 )->setBlocks( 1 )->setChars( 8 )->toArray();
+
+		// Store the backup codes hashed.
+		$this->store_hashed_user_meta( $user_id, 'sg_security_2fa_backup_codes', $generated_backup_codes );
+
+		// Return the codes so we can show them to the user once.
+		return $generated_backup_codes;
 	}
 
 	/**
@@ -263,104 +238,21 @@ class Sg_2fa {
 			return false;
 		}
 
-		$key = array_search( $code, $codes );
+		// Validate the backup code.
+		foreach ( $codes as $index => $hashed_code ) {
+			if ( wp_check_password( $code, $hashed_code ) ) {
+				// Remove the used key.
+				unset( $codes[ $index ] );
+
+				// Update user meta with the removed code data.
+				update_user_meta( $user, 'sg_security_2fa_backup_codes', $codes );
+
+				return true;
+			}
+		}
 
 		// Bail if the code doesn't exists in the user backup codes.
-		if ( false === $key ) {
-			return false;
-		}
-
-		// Remove the used key.
-		unset( $codes[ $key ] );
-
-		// Add additional backup codes to the user meta, if the user has used 4 or more backup codes.
-		$this->maybe_add_additional_backup_codes( $codes, $user );
-
-		return true;
-	}
-
-	/**
-	 * Adds additional backup codes to the user meta, if the user has used 4 or more backup codes.
-	 *
-	 * @since  1.1.0
-	 *
-	 * @param  array $codes   Existing user backup codes.
-	 * @param  int   $user_id The user ID.
-	 */
-	public function maybe_add_additional_backup_codes( $codes, $user_id ) {
-		// Add additional backup codes to the user meta.
-		if ( 5 > count( $codes ) ) {
-			$codes = array_merge(
-				$codes, // The existing codes.
-				$this->recovery->numeric()->setCount( 4 )->setBlocks( 1 )->setChars( 8 )->toArray() // Generate 4 new backup codes.
-			);
-
-			// Set a flag that additional codes have been generated, so we can show an admin notice to the user.
-			update_user_meta( $user_id, 'sgs_additional_codes_added', 1 ); // phpcs:ignore
-		}
-
-		update_user_meta( // phpcs:ignore
-			$user_id,
-			'sg_security_2fa_backup_codes',
-			$codes
-		);
-	}
-
-	/**
-	 * Show the Security by SiteGround Section in the user profile
-	 *
-	 * @since 1.1.2
-	 *
-	 * @param object $user WP_User object.
-	 */
-	public function show_profile_security( $user ) {
-		// Get the users backup codes.
-		$backup_codes = get_user_meta( $user->ID, 'sg_security_2fa_backup_codes', true ); // phpcs:ignore
-
-		// Get the user secret code.
-		$secret = get_user_meta( $user->ID, 'sg_security_2fa_secret', true ); // phpcs:ignore
-
-		// Get the user QR code.
-		$qr = get_user_meta( $user->ID, 'sg_security_2fa_qr', true ); // phpcs:ignore
-
-		// Bail if we do not have backup codes and secret.
-		if ( empty( $backup_codes ) && empty( $secret ) ) {
-			return;
-		}
-
-		// Include the Security by SiteGround heading.
-		include_once SG_Security\DIR . '/templates/2fa-user-profile-section.php';
-	}
-
-	/**
-	 * Displays an admin notice that additional backup codes have been generated.
-	 *
-	 * @since  1.1.0
-	 */
-	public function show_backup_codes_notice() {
-		$current_user = wp_get_current_user();
-
-		if ( empty( get_user_meta( $current_user->data->ID, 'sgs_additional_codes_added', true ) ) ) { // phpcs:ignore
-			return;
-		}
-		?>
-		<div class="notice notice-success" style="position: relative">
-			<p>
-				<?php _e( 'There are new 2FA backup codes available. Visit <a href="' . get_edit_profile_url( $current_user->data->ID ) . '">your profile page</a> to view them.', 'sg-security' ); ?>
-			</p>
-		</div>
-		<?php
-	}
-
-	/**
-	 * Dismiss notice handle.
-	 *
-	 * @since  1.1.0
-	 */
-	public function dismiss_backup_codes_notice() {
-		$current_user = wp_get_current_user();
-
-		delete_user_meta( $current_user->data->ID, 'sgs_additional_codes_added' ); // phpcs:ignore
+		return false;
 	}
 
 	/**
@@ -405,8 +297,13 @@ class Sg_2fa {
 			require_once ABSPATH . '/wp-admin/includes/template.php';
 		}
 
+		// Jetpack SSO Hiding 2FA form.
+		if ( class_exists( 'Jetpack_SSO' ) ) {
+			remove_filter( 'login_body_class', array( \Jetpack_SSO::get_instance(), 'login_body_class' ) );
+		}
+
 		login_header();
-		
+
 		// Include the template.
 		include_once $path;
 
@@ -419,31 +316,20 @@ class Sg_2fa {
 	 *
 	 * @since  1.1.1
 	 *
-	 * @param  int   $user_id  WordPress user ID.
+	 * @param  int $user_id  WordPress user ID.
 	 *
 	 * @return array $response Responce to react app.
 	 */
 	public function reset_user_2fa( $user_id ) {
-		// User meta used by 2FA setup.
-		$clear_meta = array(
-			'configured',
-			'secret',
-			'qr',
-			'backup_codes',
-		);
-
 		// Bail if there is no such user.
 		if ( false === get_user_by( 'ID', $user_id ) ) {
 			return false;
 		}
 
 		// Delete the 2FA user meta and reset the 2FA configuration setting.
-		foreach ( $clear_meta as $meta ) {
+		foreach ( $this->user_2fa_meta as $meta ) {
 			delete_user_meta( $user_id, 'sg_security_2fa_' . $meta ); // phpcs:ignore
 		}
-
-		// Add the required 2fa user metas.
-		$this->enable_2fa_for_user( $user_id );
 
 		return array(
 			'message' => __( 'User 2FA reset!', 'sg-security' ),
@@ -478,10 +364,15 @@ class Sg_2fa {
 	 * @since  1.1.0
 	 */
 	public function load_backup_codes_form() {
+		// Get cookie data.
 		$cookie_data = $this->get_2fa_nonce_cookie();
+
+		// Bail if cookie data is empty.
 		if ( empty( $cookie_data ) ) {
 			return;
 		}
+
+		// Load the backup code login form.
 		$this->load_form(
 			array(
 				'template' => '2fa-login-backup-code.php',
@@ -496,7 +387,7 @@ class Sg_2fa {
 	 *
 	 * @since  1.2.6
 	 *
-	 * @param  int   $user_id WordPress user ID.
+	 * @param  int $user_id WordPress user ID.
 	 */
 	public function set_2fa_dnc_cookie( $user_id ) {
 		// Generate random token.
@@ -523,13 +414,13 @@ class Sg_2fa {
 		// 2FA user cookie name.
 		$sg_2fa_user_cookie = 'sg_security_2fa_dnc_cookie';
 
-		// Bail if the cookie doens't exists.
+		// Bail if the cookie doesn't exists.
 		if ( ! isset( $_COOKIE[ $sg_2fa_user_cookie ] ) ) {
 			return false;
 		}
 
 		// Parse the cookie.
-		$cookie_data = explode('|', $_COOKIE[ $sg_2fa_user_cookie ] );
+		$cookie_data = explode( '|', $_COOKIE[ $sg_2fa_user_cookie ] );
 
 		if (
 			// If the 2FA is configured for the user.
@@ -553,7 +444,7 @@ class Sg_2fa {
 		$this->load_form(
 			array(
 				'template'     => 'backup-codes.php',
-				'backup_codes' => get_user_meta( $user_id, 'sg_security_2fa_backup_codes', true ), // phpcs:ignore
+				'backup_codes' => $this->generate_user_backup_codes( $user_id ),
 				'redirect_to'  => ! empty( $_POST['redirect_to'] ) ? $_POST['redirect_to'] : get_admin_url(), // phpcs:ignore
 			)
 		);
@@ -564,15 +455,13 @@ class Sg_2fa {
 	 *
 	 * @since 1.1.1
 	 *
-	 * @param int $user_id WordPress user ID.
+	 * @param int $id WordPress user ID.
 	 */
-	public function show_qr_backup_code_used( $id ) {
+	public function show_qr_backup_code_used() {
 		$this->load_form(
 			array(
-				'template'    => 'backup-code-used.php',
-				'qr'          => get_user_meta( wp_unslash( $id ), 'sg_security_2fa_qr', true ), // phpcs:ignore
-				'secret'      => get_user_meta( wp_unslash( $id ), 'sg_security_2fa_secret', true ), // phpcs:ignore
-				'redirect_to' => ! empty( $_POST['redirect_to'] ) ? $_POST['redirect_to'] : get_admin_url(), // phpcs:ignore
+				'template'     => 'backup-code-used.php',
+				'redirect_to'  => ! empty( $_POST['redirect_to'] ) ? $_POST['redirect_to'] : get_admin_url(), // phpcs:ignore
 			)
 		);
 	}
@@ -611,12 +500,7 @@ class Sg_2fa {
 	 */
 	public function init_2fa( $user_login, $user ) {
 		// Bail if the user role does not allow 2FA setup.
-		if ( empty( array_intersect( $this->get_2fa_user_roles(), $user->roles ) ) ) {
-			return;
-		}
-
-		// Bail if the user doesn't have secret.
-		if ( empty( get_user_meta( $user->ID, 'sg_security_2fa_secret', true ) ) ) { // phpcs:ignore
+		if ( empty( array_intersect( $this->get_admin_user_roles(), $user->roles ) ) ) {
 			return;
 		}
 
@@ -625,14 +509,20 @@ class Sg_2fa {
 			return;
 		}
 
+		// Validate the encryption key.
+		if ( false === $this->encryption->get_encryption_key() ) {
+			// Disable the 2FA and show admin notice.
+			return $this->disable_2fa_show_notice();
+		}
+
 		// Remove the auth cookie.
 		wp_clear_auth_cookie();
 
-		$random_hash = bin2hex( random_bytes( 18 ) );
+		$user_cookie_part = bin2hex( random_bytes( 18 ) );
 
-		setcookie('sgs_2fa_login_nonce', $user->ID . '|' . $random_hash , time() + DAY_IN_SECONDS, SITECOOKIEPATH, COOKIE_DOMAIN );
+		setcookie( 'sgs_2fa_login_nonce', $user->ID . '|' . $user_cookie_part, time() + DAY_IN_SECONDS, SITECOOKIEPATH, COOKIE_DOMAIN );
 
-		update_user_meta( $user->ID, 'sgs_2fa_login_nonce', $random_hash );
+		update_user_meta( $user->ID, 'sgs_2fa_login_nonce', wp_hash( $user_cookie_part ) );
 
 		if ( 1 == get_user_meta( $user->ID, 'sg_security_2fa_configured', true ) ) { // phpcs:ignore
 			// Load the 2fa form.
@@ -645,14 +535,17 @@ class Sg_2fa {
 			);
 		}
 
+		// Generate user secret code.
+		$this->generate_user_secret( $user->ID );
+
 		// Load the 2fa form.
 		$this->load_form(
 			array(
 				'action'   => esc_url( add_query_arg( 'action', 'sgs2fa', wp_login_url() ) ),
 				'template' => '2fa-initial-setup-form.php',
 				'error'    => '',
-				'qr'       => get_user_meta( $user->ID, 'sg_security_2fa_qr', true ), // phpcs:ignore
-				'secret'   => get_user_meta( $user->ID, 'sg_security_2fa_secret', true ), // phpcs:ignore
+				'qr'       => $this->generate_qr_code( $user->ID ),
+				'secret'   => $this->get_user_secret( $user->ID ),
 			)
 		);
 	}
@@ -663,10 +556,10 @@ class Sg_2fa {
 	 * @since  1.1.0
 	 */
 	public function validate_2fabc_login() {
-		// Get the nonce cookie.
+		// Get the cookie data.
 		$cookie_data = $this->get_2fa_nonce_cookie();
 
-		// Bail if the cookie doens't exists.
+		// Bail if cookie data is empty.
 		if ( empty( $cookie_data ) ) {
 			return;
 		}
@@ -708,24 +601,31 @@ class Sg_2fa {
 		}
 
 		// Show QR code.
-		$this->show_qr_backup_code_used( $cookie_data[0] );
+		$this->show_qr_backup_code_used();
 	}
 
 	/**
 	 * Validate 2FA login
 	 *
 	 * @since  1.1.0
-	 *
-	 * @param object $user WP_User object.
 	 */
-	public function validate_2fa_login( $user ) {
+	public function validate_2fa_login() {
+		// Get the cookie data.
 		$cookie_data = $this->get_2fa_nonce_cookie();
 
+		// Bail if cookie data is empty.
 		if ( empty( $cookie_data ) ) {
 			return;
 		}
 
+		// Validate the encryption key.
+		if ( false === $this->encryption->get_encryption_key() ) {
+			// Disable the 2FA and show admin notice.
+			return $this->disable_2fa_show_notice();
+		}
+
 		$result = false;
+
 		// Check if the 2fa code is set, if not, don't try to apply it's value.
 		if ( isset( $_POST['sgc2facode'] ) ) {
 			$result = $this->check_authentication_code( wp_unslash( $_POST['sgc2facode'] ), wp_unslash( $cookie_data[0] ) ); // phpcs:ignore
@@ -744,8 +644,8 @@ class Sg_2fa {
 				// Arguments for initial 2fa setup.
 				$args = array_merge( $args, array(
 					'template' => '2fa-initial-setup-form.php',
-					'qr'       => get_user_meta( $cookie_data[0], 'sg_security_2fa_qr', true ), // phpcs:ignore
-					'secret'   => get_user_meta( $cookie_data[0], 'sg_security_2fa_secret', true ), // phpcs:ignore
+					'qr'       => $this->generate_qr_code( $cookie_data[0] ),
+					'secret'   => $this->get_user_secret( $cookie_data[0] ),
 				) );
 			}
 
@@ -812,7 +712,7 @@ class Sg_2fa {
 	 * @return mixed Cookie data if the cookie exists, null otherwise.
 	 */
 	public function get_2fa_nonce_cookie() {
-		// Bail if the cookie doens't exists.
+		// Bail if the cookie doesn't exists.
 		if ( empty( $_COOKIE['sgs_2fa_login_nonce'] ) ) {
 			return;
 		}
@@ -827,7 +727,7 @@ class Sg_2fa {
 		}
 
 		// Bail if the nonce is invalid.
-		if ( $meta_nonce !== $cookie_data[1] ) { // phpcs:ignore
+		if ( ! hash_equals( $meta_nonce, wp_hash( $cookie_data[1] ) ) ) {
 			return;
 		}
 
@@ -846,7 +746,7 @@ class Sg_2fa {
 		// Get all users with 2FA configured.
 		$users = get_users(
 			array(
-				'role__in'   => $this->get_2fa_user_roles(),
+				'role__in'   => $this->get_admin_user_roles(),
 				'orderby'    => 'user_login',
 				'order'      => 'ASC',
 				'fields'     => array(
@@ -864,5 +764,135 @@ class Sg_2fa {
 		);
 
 		return $users;
+	}
+
+	/**
+	 * Stores a hashed user meta.
+	 *
+	 * @since 1.3.2
+	 *
+	 * @param  int    $user_id  The user ID
+	 * @param  string $meta     The user meta
+	 * @param  array  $data     The data to be hashed
+	 *
+	 * @return int|bool Meta ID if the key didn't exist, true on successful update, false on failure.
+	 */
+	public function store_hashed_user_meta( $user_id, $meta, $data = array() ) {
+		// Bail if data is not an array.
+		if ( ! is_array( $data ) ) {
+			return false;
+		}
+
+		// Prepare the array.
+		$hashed_data = array();
+
+		// Hash the data.
+		foreach ( $data as $key => $value ) {
+			$hashed_value = wp_hash_password( $value );
+			$hashed_data[] = $hashed_value;
+		}
+
+		// Add the user hashed meta.
+		return update_user_meta( $user_id, $meta, $hashed_data );
+	}
+
+	/**
+	 * Gets the user secret.
+	 *
+	 * @since 1.3.6
+	 *
+	 * @param      int $user_id  The user identifier
+	 */
+	public function get_user_secret( $user_id ) {
+		// Get the encrypted secret code of the user.
+		$user_secret = get_user_meta( $user_id, 'sg_security_2fa_secret', true );
+
+		// Bail if the user ID or meta value does not exist.
+		if ( empty( $user_secret ) ) {
+			return;
+		}
+
+		// Decrypt and return the secret code.
+		return $this->encryption->sgs_decrypt( $user_secret );
+	}
+
+	/**
+	 * Reset 2FA for all users.
+	 *
+	 * @since 1.3.6
+	 */
+	public function reset_all_users_2fa() {
+		// Delete the 2FA user meta and reset the 2FA configuration setting.
+		foreach ( $this->user_2fa_meta as $meta ) {
+			delete_metadata( 'user', 0, 'sg_security_2fa_' . $meta, '', true );
+		}
+	}
+
+	/**
+	 * Disables the 2FA and shows admin notice.
+	 */
+	public function disable_2fa_show_notice() {
+		// Disable 2FA.
+		update_option( 'sg_security_sg2fa', 0 ); // phpcs:ignore
+		// Reset all users 2FA setup.
+		$this->reset_all_users_2fa();
+		// Show admin notice for file creation failure.
+		update_option( 'sg_security_2fa_encryption_file_notice', 1 ); // phpcs:ignore
+	}
+
+	/**
+	 * Displays an admin notice that we were not able to create encryption file.
+	 *
+	 * @since  1.3.6
+	 */
+	public function show_notices() {
+		// Bail if there is no need of a notice.
+		if ( empty( get_option( 'sg_security_2fa_encryption_file_notice', false ) ) ) {
+			return;
+		}
+
+		printf(
+			'<div class="notice notice-error sg sg-section__content" style="position: relative; margin-top: 1em; display:block!important;"><p>%1$s</p><button type="button" class="notice-dismiss dismiss-sg-security-notice" data-link="%2$s"><span class="screen-reader-text">Dismiss this notice.</span></button></div>',
+			__( 'SG Security: We were not able to create encryption file used by 2FA, so the Two Factor Authentication service was disabled. Please check your website files and folders permissions or contact your hosting provider for assistance.', 'sg-security' ), // phpcs:ignore
+			admin_url( 'admin-ajax.php?action=dismiss_sgs_2fa_notice&notice=2fa_encryption_file_notice' ) // phpcs:ignore
+		);
+	}
+
+	/**
+	 * Hide notices.
+	 *
+	 * @since  1.3.6
+	 */
+	public function hide_notice() {
+		if ( empty( $_GET['notice'] ) ) {
+			return;
+		}
+
+		update_option( 'sg_security_' . $_GET['notice'], 0 ); // phpcs:ignore
+
+		wp_send_json_success();
+	}
+
+	/**
+	 * Check if encryption file was migrated over and move it back to wp-content directory.
+	 *
+	 * @since  1.3.6
+	 */
+	public function move_encryption_file() {
+		// Setup the WP Filesystem.
+		$wp_filesystem = Helper_Service::setup_wp_filesystem();
+
+		// Bail if the encryption file already exists.
+		if ( $wp_filesystem->is_file( $this->encryption_key_file ) ) {
+			return;
+		}
+
+		// Check if the file was migrated over with SG Migrator.
+		if ( ! $wp_filesystem->is_file( WP_PLUGIN_DIR . '/sg-security/sgs_encrypt_key.php' ) ) {
+			return;
+		}
+
+		// Move the file back to the original location.
+		$wp_filesystem->move( WP_PLUGIN_DIR . '/sg-security/sgs_encrypt_key.php', $this->encryption_key_file );
 	}
 }

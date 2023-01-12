@@ -4,7 +4,6 @@ namespace SiteGround_Optimizer\Admin;
 use SiteGround_Optimizer\Supercacher\Supercacher;
 use SiteGround_Optimizer\File_Cacher\File_Cacher;
 use SiteGround_Optimizer\Options\Options;
-use SiteGround_Optimizer\DNS\Cloudflare;
 
 /**
  * Add purge button functionality to admin bar.
@@ -89,11 +88,6 @@ class Admin_Bar {
 		// Flush File-Based cache if enabled.
 		if ( Options::is_enabled( 'siteground_optimizer_file_caching' ) ) {
 			File_Cacher::get_instance()->purge_everything();
-		}
-
-		// Flush the Cloudflare cache if the optimization is enabled.
-		if ( Options::is_enabled( 'siteground_optimizer_cloudflare_optimization_status' ) ) {
-			Cloudflare::get_instance()->purge_cache();
 		}
 
 		wp_safe_redirect( $_SERVER['HTTP_REFERER'] );

@@ -103,6 +103,9 @@ class Cli_Status {
 			case 'browser-caching':
 				$status = $this->htaccess_service->is_enabled( $type );
 				break;
+			case 'database-optimization':
+				$status = empty( get_option( 'siteground_optimizer_database_optimization', array() ) ) ? false : true;
+				break;
 			default:
 				$this->validate_multisite( $type, $blog_id );
 				$status = $this->get_option_status( $mapping[ $type ], $blog_id );

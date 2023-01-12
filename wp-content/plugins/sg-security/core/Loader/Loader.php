@@ -194,6 +194,11 @@ class Loader {
 	 */
 	public function add_install_service_hooks() {
 		add_action( 'upgrader_process_complete', array( $this->install_service, 'install' ) );
+
+		// Force the installation process if it is not completed.
+		if ( false === get_option( 'sgs_install_1_3_7', false ) ) {
+			add_action( 'init', array( $this->install_service, 'install') );
+		}
 	}
 
 	/**
@@ -203,7 +208,8 @@ class Loader {
 	 */
 	public function add_admin_hooks() {
 		add_action( 'admin_menu', array( $this->admin, 'add_plugin_pages' ) );
-		add_filter( 'custom_menu_order', array( $this->admin, 'reorder_submenu_pages' ) );
+		add_filter( 'custom_menu_order', '__return_true' );
+		add_filter( 'menu_order', array( $this->admin, 'reorder_submenu_pages' ) );
 		add_action( 'admin_enqueue_scripts', array( $this->admin, 'enqueue_styles' ), 11 );
 		add_action( 'admin_enqueue_scripts', array( $this->admin, 'enqueue_scripts' ) );
 		add_action( 'admin_print_styles', array( $this->admin, 'admin_print_styles' ) );
@@ -253,6 +259,7 @@ class Loader {
 		add_action( 'wp_ajax_dismiss_sg_security_notice', array( $this->custom_login_url, 'hide_notice' ) );
 		add_action( 'admin_notices', array( $this->custom_login_url, 'show_notices' ) );
 		add_filter( 'wpdiscuz_login_link', array( $this->custom_login_url, 'custom_login_for_wpdiscuz' ) );
+		add_action( 'wp_authenticate_user', array( $this->custom_login_url, 'maybe_block_custom_login' ) );
 	}
 
 	/**
@@ -346,23 +353,20 @@ class Loader {
 	 * @since 1.0.0
 	 */
 	public function add_sg_2fa_hooks() {
-		add_action( 'update_option_sg_security_sg2fa', array( $this->sg_2fa, 'handle_option_change' ), 10, 2 );
-		add_action( 'add_option_sg_security_sg2fa', array( $this->sg_2fa, 'handle_option_change' ), 10, 2 );
+		add_filter( 'pre_update_option_sg_security_sg2fa', array( $this->sg_2fa, 'handle_option_change' ), 10, 2 );
+		add_action( 'admin_notices', array( $this->sg_2fa, 'show_notices' ) );
+		add_action( 'wp_ajax_dismiss_sgs_2fa_notice', array( $this->sg_2fa, 'hide_notice' ) );
 
 		// Bail if the option is not enabled.
 		if ( ! Options_Service::is_enabled( 'sg2fa' ) ) {
 			return;
 		}
 
+		add_action( 'wp_login', array( $this->sg_2fa, 'move_encryption_file' ), 9, 2 );
 		add_action( 'wp_login', array( $this->sg_2fa, 'init_2fa' ), 10, 2 );
 		add_action( 'login_form_sgs2fa', array( $this->sg_2fa, 'validate_2fa_login' ) );
 		add_action( 'login_form_sgs2fabc', array( $this->sg_2fa, 'validate_2fabc_login' ) );
 		add_action( 'login_form_load_sgs2fabc', array( $this->sg_2fa, 'load_backup_codes_form' ) );
-		add_action( 'user_register', array( $this->sg_2fa, 'enable_2fa_for_user' ), 1 );
-		add_action( 'show_user_profile', array( $this->sg_2fa, 'show_profile_security' ), 10, 1 );
-		add_action( 'edit_user_profile', array( $this->sg_2fa, 'show_profile_security' ), 10, 1 );
-		add_action( 'admin_notices', array( $this->sg_2fa, 'show_backup_codes_notice' ) );
-		add_action( 'admin_print_scripts-profile.php', array( $this->sg_2fa, 'dismiss_backup_codes_notice' ) );
 	}
 
 	/**
@@ -394,6 +398,12 @@ class Loader {
 	public function add_activity_log_hooks() {
 		// Fires only for Multisite. Add log, visitors table if network active.
 		add_action( 'wp_insert_site', array( $this->activity_log, 'create_subsite_log_tables' ) );
+
+		// Disable activity log and weekly reports email.
+		if ( 1 === intval( get_option( 'sg_security_disable_activity_log', 0 ) ) ) {
+			$this->activity_log->weekly_emails->weekly_report_email->unschedule_event();
+			return;
+		}
 
 		// Set the cron job for deleting the old logs.
 		add_action( 'init', array( $this->activity_log, 'set_sgs_logs_cron' ) );
