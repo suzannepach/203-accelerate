@@ -2,8 +2,8 @@
 Contributors: wpninjasllc, kstover, jameslaws, kbjohnson90, klhall1987, krmoorhouse, jmcelhaney, wpnzach, ericwindhamsd
 Tags: forms, contact form, email form, form builder, custom form, pdf form, registration form, payment form, login form, contact me, signature form, upload form, file upload form, conditional form, feedback form, appointment form, quote form, survey form, contact button, signup form, form plugin, contact form plugin, subscription form, email subscription form, newsletter form, donation form, booking form, quote request form, multi page form, conditional logic form, subscription form, application form, employment verification form, star rating form, rating form, event form, mailchimp form, campaign monitor form, constant contact form, mailpoet form, aweber form, cleverreach form, emma form, convertkit form, active campaign form, salesforce form, zoho form, capsule form, insightly form, pipelinedeals form, onepagecrm form
 Requires at least: 5.6
-Tested up to: 6.0.2
-Stable tag: 3.6.14
+Tested up to: 6.1.1
+Stable tag: 3.6.15
 License: GPLv2 or later
 
 The 100% beginner friendly WordPress form builder. Drag & drop form fields to build beautiful, professional contact forms in minutes.
@@ -303,14 +303,29 @@ This section describes how to install the plugin and get it working.
 
 == Upgrade Notice ==
 
-= 3.6.14 (2 September 2022) =
+= 3.6.15 (10 January 2023) =
 *Bug Fixes:*
-  * Fixes an issue with trailing commas
-  * Fixes an issue for some users on PHP7.4 and below.
+  * Resolves add-on manager fatal error
+  * Prevents image in HTML loading error for WP 6.1
+  * Correct multiple accessibility warnings
+  * Enables empty step in number field
+  * Enables default zero value
 *Other Enhancements:*
   * Update 'tested to'
+  * Set resolutions to prevent vulnerable child dependencies
 
 == Changelog ==
+= 3.6.15 (10 January 2023) =
+*Bug Fixes:*
+  * Resolves add-on manager fatal error
+  * Prevents image in HTML loading error for WP 6.1
+  * Correct multiple accessibility warnings
+  * Enables empty step in number field
+  * Enables default zero value
+*Other Enhancements:*
+  * Update 'tested to'
+  * Set resolutions to prevent vulnerable child dependencies
+  
 = 3.6.14 (2 September 2022) =
 *Bug Fixes:*
   * Fixes an issue with trailing commas
